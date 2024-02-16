@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "forums",
+  "info": {
+    "singularName": "forum",
+    "pluralName": "forums",
+    "displayName": "Forum",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "learning_space": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-space.learning-space",
+      "inversedBy": "forum"
+    },
+    "channels": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::channel.channel",
+      "mappedBy": "forum"
+    }
+  }
+}

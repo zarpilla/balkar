@@ -690,7 +690,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -718,6 +717,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'plugin::users-permissions.user',
       'manyToOne',
       'plugin::users-permissions.role'
+    >;
+    learning_spaces: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'manyToMany',
+      'api::learning-space.learning-space'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -783,6 +787,245 @@ export interface PluginI18NLocale extends Schema.CollectionType {
   };
 }
 
+export interface ApiChannelChannel extends Schema.CollectionType {
+  collectionName: 'channels';
+  info: {
+    singularName: 'channel';
+    pluralName: 'channels';
+    displayName: 'Channel';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    forum: Attribute.Relation<
+      'api::channel.channel',
+      'manyToOne',
+      'api::forum.forum'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::channel.channel',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::channel.channel',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiForumForum extends Schema.CollectionType {
+  collectionName: 'forums';
+  info: {
+    singularName: 'forum';
+    pluralName: 'forums';
+    displayName: 'Forum';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    description: Attribute.RichText;
+    learning_space: Attribute.Relation<
+      'api::forum.forum',
+      'oneToOne',
+      'api::learning-space.learning-space'
+    >;
+    channels: Attribute.Relation<
+      'api::forum.forum',
+      'oneToMany',
+      'api::channel.channel'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::forum.forum',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::forum.forum',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
+  collectionName: 'learning_spaces';
+  info: {
+    singularName: 'learning-space';
+    pluralName: 'learning-spaces';
+    displayName: 'Learning space';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    banner: Attribute.Media &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    publicDescription: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    privateDescription: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    modules: Attribute.Component<'spaces.module', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    forum: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'api::forum.forum'
+    >;
+    users: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToMany',
+      'api::learning-space.learning-space'
+    >;
+    locale: Attribute.String;
+  };
+}
+
+export interface ApiMessageMessage extends Schema.CollectionType {
+  collectionName: 'messages';
+  info: {
+    singularName: 'message';
+    pluralName: 'messages';
+    displayName: 'Message';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    message: Attribute.Text;
+    users_permissions_user: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    parent: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'api::message.message'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSubmissionSubmission extends Schema.CollectionType {
+  collectionName: 'submissions';
+  info: {
+    singularName: 'submission';
+    pluralName: 'submissions';
+    displayName: 'Submission';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    file: Attribute.Media;
+    learning_space: Attribute.Relation<
+      'api::submission.submission',
+      'oneToOne',
+      'api::learning-space.learning-space'
+    >;
+    users_permissions_user: Attribute.Relation<
+      'api::submission.submission',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    moduleId: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::submission.submission',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::submission.submission',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -801,6 +1044,11 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::i18n.locale': PluginI18NLocale;
+      'api::channel.channel': ApiChannelChannel;
+      'api::forum.forum': ApiForumForum;
+      'api::learning-space.learning-space': ApiLearningSpaceLearningSpace;
+      'api::message.message': ApiMessageMessage;
+      'api::submission.submission': ApiSubmissionSubmission;
     }
   }
 }

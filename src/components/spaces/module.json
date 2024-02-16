@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_spaces_modules",
+  "info": {
+    "displayName": "Module",
+    "icon": "arrowDown",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "topics": {
+      "type": "component",
+      "repeatable": true,
+      "component": "spaces.topic"
+    },
+    "moduleType": {
+      "type": "enumeration",
+      "enum": [
+        "Content",
+        "Monitoring"
+      ],
+      "default": "Content"
+    }
+  }
+}
