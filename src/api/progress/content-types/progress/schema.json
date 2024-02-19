@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "progresses",
+  "info": {
+    "singularName": "progress",
+    "pluralName": "progresses",
+    "displayName": "Progress",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "learning_space": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-space.learning-space"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "topicId": {
+      "type": "integer"
+    },
+    "moduleId": {
+      "type": "integer"
+    }
+  }
+}

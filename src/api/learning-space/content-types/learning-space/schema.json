@@ -77,6 +77,22 @@
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
       "mappedBy": "learning_spaces"
+    },
+    "uid": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "uid"
+    },
+    "public": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean"
     }
   }
 }

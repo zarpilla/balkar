@@ -585,6 +585,53 @@ export interface PluginContentReleasesReleaseAction
   };
 }
 
+export interface PluginI18NLocale extends Schema.CollectionType {
+  collectionName: 'i18n_locale';
+  info: {
+    singularName: 'locale';
+    pluralName: 'locales';
+    collectionName: 'locales';
+    displayName: 'Locale';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 50;
+        },
+        number
+      >;
+    code: Attribute.String & Attribute.Unique;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUsersPermissionsPermission
   extends Schema.CollectionType {
   collectionName: 'up_permissions';
@@ -740,53 +787,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface PluginI18NLocale extends Schema.CollectionType {
-  collectionName: 'i18n_locale';
-  info: {
-    singularName: 'locale';
-    pluralName: 'locales';
-    collectionName: 'locales';
-    displayName: 'Locale';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
-  };
-  attributes: {
-    name: Attribute.String &
-      Attribute.SetMinMax<
-        {
-          min: 1;
-          max: 50;
-        },
-        number
-      >;
-    code: Attribute.String & Attribute.Unique;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'plugin::i18n.locale',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'plugin::i18n.locale',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiChannelChannel extends Schema.CollectionType {
   collectionName: 'channels';
   info: {
@@ -816,6 +816,45 @@ export interface ApiChannelChannel extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::channel.channel',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiEnrollmentEnrollment extends Schema.CollectionType {
+  collectionName: 'enrollments';
+  info: {
+    singularName: 'enrollment';
+    pluralName: 'enrollments';
+    displayName: 'Enrollment';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    users_permissions_user: Attribute.Relation<
+      'api::enrollment.enrollment',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    learning_space: Attribute.Relation<
+      'api::enrollment.enrollment',
+      'oneToOne',
+      'api::learning-space.learning-space'
+    >;
+    date: Attribute.DateTime;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::enrollment.enrollment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::enrollment.enrollment',
       'oneToOne',
       'admin::user'
     > &
@@ -922,6 +961,18 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'manyToMany',
       'plugin::users-permissions.user'
     >;
+    uid: Attribute.UID &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    public: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -986,6 +1037,47 @@ export interface ApiMessageMessage extends Schema.CollectionType {
   };
 }
 
+export interface ApiProgressProgress extends Schema.CollectionType {
+  collectionName: 'progresses';
+  info: {
+    singularName: 'progress';
+    pluralName: 'progresses';
+    displayName: 'Progress';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    learning_space: Attribute.Relation<
+      'api::progress.progress',
+      'oneToOne',
+      'api::learning-space.learning-space'
+    >;
+    users_permissions_user: Attribute.Relation<
+      'api::progress.progress',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    topicId: Attribute.Integer;
+    moduleId: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::progress.progress',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::progress.progress',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSubmissionSubmission extends Schema.CollectionType {
   collectionName: 'submissions';
   info: {
@@ -1026,6 +1118,40 @@ export interface ApiSubmissionSubmission extends Schema.CollectionType {
   };
 }
 
+export interface ApiTranslationTranslation extends Schema.CollectionType {
+  collectionName: 'translations';
+  info: {
+    singularName: 'translation';
+    pluralName: 'translations';
+    displayName: 'Translation';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    key: Attribute.UID<'api::translation.translation', 'ca'>;
+    en: Attribute.Text;
+    ca: Attribute.Text;
+    enHtml: Attribute.RichText;
+    caHtml: Attribute.RichText;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::translation.translation',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::translation.translation',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1040,15 +1166,18 @@ declare module '@strapi/types' {
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
+      'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'plugin::i18n.locale': PluginI18NLocale;
       'api::channel.channel': ApiChannelChannel;
+      'api::enrollment.enrollment': ApiEnrollmentEnrollment;
       'api::forum.forum': ApiForumForum;
       'api::learning-space.learning-space': ApiLearningSpaceLearningSpace;
       'api::message.message': ApiMessageMessage;
+      'api::progress.progress': ApiProgressProgress;
       'api::submission.submission': ApiSubmissionSubmission;
+      'api::translation.translation': ApiTranslationTranslation;
     }
   }
 }

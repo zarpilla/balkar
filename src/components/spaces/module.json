@@ -22,6 +22,9 @@
         "Monitoring"
       ],
       "default": "Content"
+    },
+    "uploadFiles": {
+      "type": "boolean"
     }
   }
 }

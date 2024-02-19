@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "enrollments",
+  "info": {
+    "singularName": "enrollment",
+    "pluralName": "enrollments",
+    "displayName": "Enrollment"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "learning_space": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-space.learning-space"
+    },
+    "date": {
+      "type": "datetime"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "translations",
+  "info": {
+    "singularName": "translation",
+    "pluralName": "translations",
+    "displayName": "Translation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "key": {
+      "type": "uid",
+      "targetField": "ca"
+    },
+    "en": {
+      "type": "text"
+    },
+    "ca": {
+      "type": "text"
+    },
+    "enHtml": {
+      "type": "richtext"
+    },
+    "caHtml": {
+      "type": "richtext"
+    }
+  }
+}

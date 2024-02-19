@@ -2,15 +2,18 @@
   "collectionName": "components_spaces_topics",
   "info": {
     "displayName": "Topic",
-    "icon": "arrowRight"
+    "icon": "arrowRight",
+    "description": ""
   },
   "options": {},
   "attributes": {
     "name": {
       "type": "string"
     },
-    "content": {
-      "type": "blocks"
+    "contents": {
+      "type": "component",
+      "repeatable": true,
+      "component": "spaces.content"
     }
-  }
+  }  
 }

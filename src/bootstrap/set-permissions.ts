@@ -46,14 +46,18 @@ async function setPermissions(roleType, newPermissions) {
 async function start() {
     await setPermissions("authenticated",
       {
-        "api::learning-space.learning-space": ["find", "findOne"],
+        "api::learning-space.learning-space": ["find", "findOne", "findUid", "findMine"],
+        "api::translation.translation": ["find"],
+        "api::enrollment.enrollment": ["enroll"],
+        "api::progress.progress": ["complete", "notcomplete"],
+        "api::submission.submission": ["create"],
       }
     );
 
     await setPermissions("public",
       {
-        "api::application.application": ["findMine"],
         "api::account.account": ["create"],
+        "api::translation.translation": ["find"],
       }
 
     );
