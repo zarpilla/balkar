@@ -50,14 +50,18 @@ async function start() {
         "api::translation.translation": ["find"],
         "api::enrollment.enrollment": ["enroll"],
         "api::progress.progress": ["complete", "notcomplete"],
-        "api::submission.submission": ["create"],
+        "api::submission.submission": ["create", "delete"],
+        "api::forum.forum": ["find", "findOne", "findUid"],
+        "api::channel.channel": ["findMessages"],
+        "api::message.message": ["create", "find", "findOne"],
+        
       }
     );
 
     await setPermissions("public",
       {
-        "api::account.account": ["create"],
         "api::translation.translation": ["find"],
+        "api::learning-space.learning-space": ["findUid"],
       }
 
     );

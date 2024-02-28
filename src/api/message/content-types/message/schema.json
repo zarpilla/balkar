@@ -12,18 +12,37 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "message": {
-      "type": "text"
-    },
     "users_permissions_user": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "parent": {
+    "channel": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::message.message"
+      "target": "api::channel.channel"
+    },
+    "text": {
+      "type": "richtext"
+    },
+    "children": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::message.message",
+      "mappedBy": "parent"
+    },
+    "parent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::message.message",
+      "inversedBy": "children"
+    },
+    "file": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

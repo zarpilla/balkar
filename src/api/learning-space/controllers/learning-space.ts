@@ -23,6 +23,7 @@ export default factories.createCoreController(
               "banner",
               "modules.topics.contents",
               "modules.topics.contents.media",
+              "forum",
             ],
           }
         );
@@ -31,79 +32,92 @@ export default factories.createCoreController(
           ctx.status = 504;
           ctx.body = { ok: false };
         } else {
-          const enrollments = await strapi.entityService.findMany(
-            "api::enrollment.enrollment",
-            {
-              filters: {
-                users_permissions_user: ctx.state.user.id,
-              },
-              populate: ["learning_space"],
-            }
-          );
-
           const space: any = spaces[0];
 
-          const enrollment = enrollments.find(
-            (enrollment) => enrollment.learning_space.id === space.id
-          );
           const contentType = strapi.contentType(
             "api::learning-space.learning-space"
           );
 
-          if (enrollment) {
-            space.enrolled = true;
-          } else {
-            space.enrolled = false;
-          }
+          if (ctx.state.user) {
+            const enrollments = await strapi.entityService.findMany(
+              "api::enrollment.enrollment",
+              {
+                filters: {
+                  users_permissions_user: ctx.state.user.id,
+                },
+                populate: ["learning_space"],
+              }
+            );
 
-          const progresses = await strapi.entityService.findMany(
-            "api::progress.progress",
-            {
-              filters: {
-                users_permissions_user: ctx.state.user.id,
-                learning_space: space.id,
-              },
+            const enrollment = enrollments.find(
+              (enrollment) => enrollment.learning_space.id === space.id
+            );
+
+            if (enrollment) {
+              space.enrolled = true;
+            } else {
+              space.enrolled = false;
             }
-          )
 
-          for await (const module of space.modules) {
-            for await (const topic of module.topics) {
-              const progress = progresses.find((progress:any) => progress.topicId === topic.id);
-              if (progress) {
-                topic.completed = true;
-              } else {
-                topic.completed = false;
+            const progresses = await strapi.entityService.findMany(
+              "api::progress.progress",
+              {
+                filters: {
+                  users_permissions_user: ctx.state.user.id,
+                  learning_space: space.id,
+                },
+              }
+            );
+
+            for await (const module of space.modules) {
+              for await (const topic of module.topics) {
+                const progress = progresses.find(
+                  (progress: any) => progress.topicId === topic.id
+                );
+                if (progress) {
+                  topic.completed = true;
+                } else {
+                  topic.completed = false;
+                }
+              }
+              module.completedPct =
+                module.topics && module.topics.length
+                  ? module.topics.filter((topic: any) => topic.completed)
+                      .length / module.topics.length
+                  : 0;
+            }
+
+            space.completedPct =
+              space.modules.filter((m) => m.completedPct === 1).length /
+              space.modules.length;
+
+            const submissions = await strapi.entityService.findMany(
+              "api::submission.submission",
+              {
+                filters: {
+                  users_permissions_user: ctx.state.user.id,
+                  learning_space: space.id,
+                },
+                populate: ["file"],
+              }
+            );
+
+            for await (const module of space.modules) {
+              const moduleSubmissions = submissions.filter(
+                (submission: any) => submission.moduleId === module.id
+              );
+              if (moduleSubmissions) {
+                module.submissions = moduleSubmissions;
               }
             }
-            module.completedPct = module.topics && module.topics.length ? module.topics.filter((topic:any) => topic.completed).length / module.topics.length : 0;
           }
-
-          space.completedPct = space.modules.filter(m => m.completedPct === 1).length / space.modules.length;
-
-
-          const submissions = await strapi.entityService.findMany(
-            "api::submission.submission",
-            {
-              filters: {
-                users_permissions_user: ctx.state.user.id,
-                learning_space: space.id,
-              },
-              populate: ["file"],
-            }
-          )
-
-          for await (const module of space.modules) {
-            const moduleSubmissions = submissions.filter((submission:any) => submission.moduleId === module.id);
-            if (moduleSubmissions) {
-              module.submissions = moduleSubmissions;
-            }
-          }
-
-          const sanitizedResults = await sanitize.contentAPI.output(
+          const sanitizedResults: any = await sanitize.contentAPI.output(
             space,
             contentType,
             { auth: ctx.state.auth }
           );
+
+          sanitizedResults.forum = space.forum;
 
           ctx.body = sanitizedResults;
         }
@@ -161,26 +175,33 @@ export default factories.createCoreController(
             },
             populate: ["learning_space"],
           }
-        )
+        );
 
         for await (const space of spacesEnrolled) {
           for await (const module of space.modules) {
             for await (const topic of module.topics) {
-              const progress = progresses.find((progress:any) => progress.topicId === topic.id && progress.learning_space.id === space.id);
+              const progress = progresses.find(
+                (progress: any) =>
+                  progress.topicId === topic.id &&
+                  progress.learning_space.id === space.id
+              );
               if (progress) {
                 topic.completed = true;
               } else {
                 topic.completed = false;
               }
             }
-            module.completedPct = module.topics && module.topics.length ? module.topics.filter((topic:any) => topic.completed).length / module.topics.length : 0;
+            module.completedPct =
+              module.topics && module.topics.length
+                ? module.topics.filter((topic: any) => topic.completed).length /
+                  module.topics.length
+                : 0;
           }
-  
-          space.completedPct = space.modules.filter(m => m.completedPct === 1).length / space.modules.length;
+
+          space.completedPct =
+            space.modules.filter((m) => m.completedPct === 1).length /
+            space.modules.length;
         }
-
-        
-
 
         const contentType = strapi.contentType(
           "api::learning-space.learning-space"

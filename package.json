@@ -13,6 +13,7 @@
     "@strapi/plugin-cloud": "4.20.1",
     "@strapi/plugin-i18n": "4.20.1",
     "@strapi/plugin-users-permissions": "4.20.1",
+    "@strapi/provider-email-sendgrid": "^4.20.1",
     "@strapi/strapi": "4.20.1",
     "lodash": "^4.17.21",
     "pg": "8.8.0",

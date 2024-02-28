@@ -805,6 +805,7 @@ export interface ApiChannelChannel extends Schema.CollectionType {
       'manyToOne',
       'api::forum.forum'
     >;
+    order: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1009,17 +1010,28 @@ export interface ApiMessageMessage extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    message: Attribute.Text;
     users_permissions_user: Attribute.Relation<
       'api::message.message',
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    parent: Attribute.Relation<
+    channel: Attribute.Relation<
       'api::message.message',
       'oneToOne',
+      'api::channel.channel'
+    >;
+    text: Attribute.RichText;
+    children: Attribute.Relation<
+      'api::message.message',
+      'oneToMany',
       'api::message.message'
     >;
+    parent: Attribute.Relation<
+      'api::message.message',
+      'manyToOne',
+      'api::message.message'
+    >;
+    file: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

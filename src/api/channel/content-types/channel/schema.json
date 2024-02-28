@@ -20,6 +20,9 @@
       "relation": "manyToOne",
       "target": "api::forum.forum",
       "inversedBy": "channels"
+    },
+    "order": {
+      "type": "integer"
     }
   }
 }
