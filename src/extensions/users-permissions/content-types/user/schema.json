@@ -70,6 +70,25 @@
       "relation": "manyToMany",
       "target": "api::learning-space.learning-space",
       "inversedBy": "users"
+    },
+    "name": {
+      "type": "string"
+    },
+    "lastname": {
+      "type": "string"
+    },
+    "avatar": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "user_avatar": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-avatar.user-avatar",
+      "inversedBy": "users_permissions_user"
     }
   }
 }

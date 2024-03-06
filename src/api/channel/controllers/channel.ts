@@ -16,52 +16,40 @@ export default factories.createCoreController(
           {
             limit: ctx.query._limit || 5,
             start: ctx.query._start || 0,
-            sort: { createdAt: 'desc' },
+            sort: { createdAt: "desc" },
             filters: {
               parent: null,
               channel: ctx.params.id,
             },
-            populate: ["users_permissions_user", "children", "children.users_permissions_user", "file", "children.file"],
+            populate: [
+              "users_permissions_user",
+              "children",
+              "children.users_permissions_user",
+              "file",
+              "children.file",
+              "users_permissions_user.user_avatar",
+              "users_permissions_user.user_avatar.avatar",
+              "children.users_permissions_user.user_avatar",
+              "children.users_permissions_user.user_avatar.avatar",
+            ],
           }
         );
 
         messages.forEach((message: any) => {
-            message.userId = message.users_permissions_user.id;
-            message.username = message.users_permissions_user.username;
-            message.users_permissions_user = undefined;
-            message.channelId = parseInt(ctx.params.id);
-            message.children.forEach((child: any) => {
-                child.userId = child.users_permissions_user.id;
-                child.username = child.users_permissions_user.username;
-                child.users_permissions_user = undefined;
-            })
+          message.userId = message.users_permissions_user.id;
+          message.username = `${message.users_permissions_user.name} ${message.users_permissions_user.lastname}`;
+          message.avatar = message.users_permissions_user.user_avatar ? message.users_permissions_user.user_avatar.avatar.url : null;
+          message.users_permissions_user = undefined;
+          message.channelId = parseInt(ctx.params.id);
+          message.children.forEach((child: any) => {
+            child.userId = child.users_permissions_user.id;
+            child.username = `${child.users_permissions_user.name} ${child.users_permissions_user.lastname}`;
+            child.avatar = child.users_permissions_user.user_avatar ? child.users_permissions_user.user_avatar.avatar.url : null;
+            child.users_permissions_user = undefined;
+          });
 
-            message.children = _.orderBy(message.children, ['createdAt'], ['desc']);
+          message.children = _.orderBy(message.children, ["id"], ["asc"]);
         });
-
-        // const contentType = strapi.contentType(
-        //   "api::message.message"
-        // );
-
-        // const contentType2 = strapi.contentType(
-        //     "plugin::users-permissions.permission"
-        //   );
-
-        // console.log('messages', messages)
-
-        // const sanitizedResults0 = await sanitize.contentAPI.output(
-        //     messages[0].users_permissions_user,
-        //     contentType2,
-        //   { auth: ctx.state.auth }
-        // );
-
-        // console.log('sanitizedResults0', sanitizedResults0)
-
-        // const sanitizedResults = await sanitize.contentAPI.output(
-        //     messages,
-        //   contentType,
-        //   { auth: ctx.state.auth }
-        // );
 
         ctx.body = {
           data: messages,

@@ -770,6 +770,14 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToMany',
       'api::learning-space.learning-space'
     >;
+    name: Attribute.String;
+    lastname: Attribute.String;
+    avatar: Attribute.Media;
+    user_avatar: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::user-avatar.user-avatar'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1164,6 +1172,41 @@ export interface ApiTranslationTranslation extends Schema.CollectionType {
   };
 }
 
+export interface ApiUserAvatarUserAvatar extends Schema.CollectionType {
+  collectionName: 'user_avatars';
+  info: {
+    singularName: 'user-avatar';
+    pluralName: 'user-avatars';
+    displayName: 'UserAvatar';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    users_permissions_user: Attribute.Relation<
+      'api::user-avatar.user-avatar',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    avatar: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-avatar.user-avatar',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-avatar.user-avatar',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1190,6 +1233,7 @@ declare module '@strapi/types' {
       'api::progress.progress': ApiProgressProgress;
       'api::submission.submission': ApiSubmissionSubmission;
       'api::translation.translation': ApiTranslationTranslation;
+      'api::user-avatar.user-avatar': ApiUserAvatarUserAvatar;
     }
   }
 }

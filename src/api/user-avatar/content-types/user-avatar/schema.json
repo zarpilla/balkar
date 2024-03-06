@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_avatars",
+  "info": {
+    "singularName": "user-avatar",
+    "pluralName": "user-avatars",
+    "displayName": "UserAvatar",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_avatar"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}
