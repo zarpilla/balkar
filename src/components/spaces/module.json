@@ -25,6 +25,11 @@
     },
     "uploadFiles": {
       "type": "boolean"
+    },
+    "contents": {
+      "type": "component",
+      "repeatable": true,
+      "component": "spaces.content"
     }
   }
 }

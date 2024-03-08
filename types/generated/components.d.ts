@@ -24,6 +24,7 @@ export interface SpacesModule extends Schema.Component {
     moduleType: Attribute.Enumeration<['Content', 'Monitoring']> &
       Attribute.DefaultTo<'Content'>;
     uploadFiles: Attribute.Boolean;
+    contents: Attribute.Component<'spaces.content', true>;
   };
 }
 

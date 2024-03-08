@@ -78,17 +78,23 @@
       "type": "string"
     },
     "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "user_avatar": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::user-avatar.user-avatar",
       "inversedBy": "users_permissions_user"
+    },
+    "interests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::interest.interest"
     }
   }
 }

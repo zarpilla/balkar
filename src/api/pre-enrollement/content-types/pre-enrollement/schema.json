@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pre_enrollements",
+  "info": {
+    "singularName": "pre-enrollement",
+    "pluralName": "pre-enrollements",
+    "displayName": "PreEnrollement"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "email": {
+      "type": "string"
+    },
+    "uid": {
+      "type": "string"
+    }
+  }
+}

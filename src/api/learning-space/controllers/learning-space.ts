@@ -20,6 +20,8 @@ export default factories.createCoreController(
             populate: [
               "modules",
               "modules.topics",
+              "modules.contents",
+              "modules.contents.media",
               "banner",
               "modules.topics.contents",
               "modules.topics.contents.media",
@@ -146,6 +148,8 @@ export default factories.createCoreController(
             populate: [
               "modules",
               "modules.topics",
+              "modules.contents",
+              "modules.contents.media",
               "banner",
               "modules.topics.contents",
               "modules.topics.contents.media",

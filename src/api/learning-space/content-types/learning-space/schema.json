@@ -93,6 +93,15 @@
         }
       },
       "type": "boolean"
+    },
+    "global": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean",
+      "default": false
     }
   }
 }

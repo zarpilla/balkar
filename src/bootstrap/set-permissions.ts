@@ -48,12 +48,13 @@ async function start() {
       {
         "api::learning-space.learning-space": ["find", "findOne", "findUid", "findMine"],
         "api::translation.translation": ["find"],
-        "api::enrollment.enrollment": ["enroll"],
+        "api::enrollment.enrollment": ["enroll", "autoenroll"],
         "api::progress.progress": ["complete", "notcomplete"],
         "api::submission.submission": ["create", "delete"],
         "api::forum.forum": ["find", "findOne", "findUid"],
         "api::channel.channel": ["findMessages"],
         "api::message.message": ["create", "find", "findOne", "findChildren"],
+        "api::interest.interest": ["find", "findOne"],
         "plugin::users-permissions.user": ["update"],
         "api::user-avatar.user-avatar": ["find", "findOne", "create", "update", "delete", "findMine"],
         
@@ -64,6 +65,7 @@ async function start() {
       {
         "api::translation.translation": ["find"],
         "api::learning-space.learning-space": ["findUid"],
+        "api::pre-enrollement.pre-enrollement": ["create"],
       }
 
     );

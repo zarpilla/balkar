@@ -778,6 +778,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToOne',
       'api::user-avatar.user-avatar'
     >;
+    interests: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::interest.interest'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -913,6 +918,37 @@ export interface ApiForumForum extends Schema.CollectionType {
   };
 }
 
+export interface ApiInterestInterest extends Schema.CollectionType {
+  collectionName: 'interests';
+  info: {
+    singularName: 'interest';
+    pluralName: 'interests';
+    displayName: 'Interest';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name_ca: Attribute.String;
+    name_en: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::interest.interest',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::interest.interest',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
   collectionName: 'learning_spaces';
   info: {
@@ -982,6 +1018,13 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    global: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1050,6 +1093,36 @@ export interface ApiMessageMessage extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPreEnrollementPreEnrollement extends Schema.CollectionType {
+  collectionName: 'pre_enrollements';
+  info: {
+    singularName: 'pre-enrollement';
+    pluralName: 'pre-enrollements';
+    displayName: 'PreEnrollement';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    email: Attribute.String;
+    uid: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::pre-enrollement.pre-enrollement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::pre-enrollement.pre-enrollement',
       'oneToOne',
       'admin::user'
     > &
@@ -1228,8 +1301,10 @@ declare module '@strapi/types' {
       'api::channel.channel': ApiChannelChannel;
       'api::enrollment.enrollment': ApiEnrollmentEnrollment;
       'api::forum.forum': ApiForumForum;
+      'api::interest.interest': ApiInterestInterest;
       'api::learning-space.learning-space': ApiLearningSpaceLearningSpace;
       'api::message.message': ApiMessageMessage;
+      'api::pre-enrollement.pre-enrollement': ApiPreEnrollementPreEnrollement;
       'api::progress.progress': ApiProgressProgress;
       'api::submission.submission': ApiSubmissionSubmission;
       'api::translation.translation': ApiTranslationTranslation;
