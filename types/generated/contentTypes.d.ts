@@ -783,6 +783,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::interest.interest'
     >;
+    location: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -819,6 +820,11 @@ export interface ApiChannelChannel extends Schema.CollectionType {
       'api::forum.forum'
     >;
     order: Attribute.Integer;
+    users_permissions_users: Attribute.Relation<
+      'api::channel.channel',
+      'oneToMany',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -843,6 +849,7 @@ export interface ApiEnrollmentEnrollment extends Schema.CollectionType {
     singularName: 'enrollment';
     pluralName: 'enrollments';
     displayName: 'Enrollment';
+    description: '';
   };
   options: {
     draftAndPublish: false;

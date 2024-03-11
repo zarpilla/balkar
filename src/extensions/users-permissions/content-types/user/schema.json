@@ -95,6 +95,9 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::interest.interest"
+    },
+    "location": {
+      "type": "string"
     }
   }
 }

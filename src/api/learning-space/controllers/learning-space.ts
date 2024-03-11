@@ -16,6 +16,7 @@ export default factories.createCoreController(
           {
             filters: {
               uid: ctx.params.uid,
+              publishedAt: { $ne: null },
             },
             populate: [
               "modules",
@@ -143,7 +144,7 @@ export default factories.createCoreController(
           "api::learning-space.learning-space",
           {
             filters: {
-              public: true,
+              publishedAt: { $ne: null },
             },
             populate: [
               "modules",
@@ -181,7 +182,9 @@ export default factories.createCoreController(
           }
         );
 
-        for await (const space of spacesEnrolled) {
+        const spacesEnrolledOrPublic = spacesEnrolled.filter((s: any) => s.enrolled || s.public);
+
+        for await (const space of spacesEnrolledOrPublic){
           for await (const module of space.modules) {
             for await (const topic of module.topics) {
               const progress = progresses.find(
@@ -212,7 +215,7 @@ export default factories.createCoreController(
         );
 
         const sanitizedResults = await sanitize.contentAPI.output(
-          spacesEnrolled,
+          spacesEnrolledOrPublic,
           contentType,
           { auth: ctx.state.auth }
         );
