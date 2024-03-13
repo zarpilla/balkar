@@ -38,13 +38,17 @@ export default factories.createCoreController(
         messages.forEach((message: any) => {
           message.userId = message.users_permissions_user.id;
           message.username = `${message.users_permissions_user.name} ${message.users_permissions_user.lastname}`;
-          message.avatar = message.users_permissions_user.user_avatar ? message.users_permissions_user.user_avatar.avatar.url : null;
+          message.avatar = message.users_permissions_user.user_avatar
+            ? message.users_permissions_user.user_avatar.avatar.url
+            : null;
           message.users_permissions_user = undefined;
           message.channelId = parseInt(ctx.params.id);
           message.children.forEach((child: any) => {
             child.userId = child.users_permissions_user.id;
             child.username = `${child.users_permissions_user.name} ${child.users_permissions_user.lastname}`;
-            child.avatar = child.users_permissions_user.user_avatar ? child.users_permissions_user.user_avatar.avatar.url : null;
+            child.avatar = child.users_permissions_user.user_avatar
+              ? child.users_permissions_user.user_avatar.avatar.url
+              : null;
             child.users_permissions_user = undefined;
           });
 
@@ -58,6 +62,53 @@ export default factories.createCoreController(
       } catch (err) {
         ctx.body = err;
       }
+    },
+
+    findUserMessages: async (ctx, next) => {
+      const forumId = ctx.params.forumid;
+      const userId = ctx.params.userid;
+
+      const entries = await strapi.db.query("api::channel.channel").findMany({
+        where: {
+          title: {
+            $contains: "Hello",
+          },
+        },
+      });
+
+      const userChannels = await strapi.entityService.findMany(
+        "api::channel.channel",
+        {
+          filters: {
+            $and: [
+              {
+                forum: {
+                  learning_space: {
+                    uid: forumId,
+                  },
+                },
+              },
+              ,
+              {
+                users_permissions_users: {
+                  id: {
+                    $in: [userId],
+                  },
+                },
+              },
+              {
+                users_permissions_users: {
+                  id: {
+                    $in: [ctx.user.id],
+                  },
+                },
+              },
+            ],
+          },
+
+          populate: ["users_permissions_users"],
+        }
+      );
     },
   })
 );
