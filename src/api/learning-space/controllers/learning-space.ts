@@ -75,7 +75,9 @@ export default factories.createCoreController(
             for await (const module of space.modules) {
               for await (const topic of module.topics) {
                 const progress = progresses.find(
-                  (progress: any) => progress.topicId === topic.id
+                  (progress: any) =>
+                    progress.topicId === topic.id &&
+                    progress.moduleId === module.id
                 );
                 if (progress) {
                   topic.completed = true;
@@ -83,11 +85,25 @@ export default factories.createCoreController(
                   topic.completed = false;
                 }
               }
-              module.completedPct =
-                module.topics && module.topics.length
-                  ? module.topics.filter((topic: any) => topic.completed)
-                      .length / module.topics.length
-                  : 0;
+              if (module.topics && module.topics.length) {
+                module.completedPct =
+                  module.topics && module.topics.length
+                    ? module.topics.filter((topic: any) => topic.completed)
+                        .length / module.topics.length
+                    : 0;
+              } else {
+                const progress = progresses.find(
+                  (progress: any) =>
+                    progress.topicId === null && progress.moduleId === module.id
+                );
+                if (progress) {
+                  module.completed = true;
+                  module.completedPct = 1;
+                } else {
+                  module.completed = false;
+                  module.completedPct = 0;
+                }
+              }
             }
 
             space.completedPct =
@@ -182,9 +198,11 @@ export default factories.createCoreController(
           }
         );
 
-        const spacesEnrolledOrPublic = spacesEnrolled.filter((s: any) => s.enrolled || s.public);
+        const spacesEnrolledOrPublic = spacesEnrolled.filter(
+          (s: any) => s.enrolled || s.public
+        );
 
-        for await (const space of spacesEnrolledOrPublic){
+        for await (const space of spacesEnrolledOrPublic) {
           for await (const module of space.modules) {
             for await (const topic of module.topics) {
               const progress = progresses.find(

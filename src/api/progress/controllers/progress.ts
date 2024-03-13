@@ -66,7 +66,7 @@ export default factories.createCoreController(
           filters: {
             users_permissions_user: userId,
             learning_space: space.id,
-            topicId: parseInt(topicId),
+            topicId: topicId ? parseInt(topicId) : null,
             moduleId: parseInt(moduleId),
           },
         }
