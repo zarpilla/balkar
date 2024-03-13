@@ -57,7 +57,7 @@ export default factories.createCoreController(
           );
         })
 
-        space.forum.channels = channels;
+        space.forum.channels = _.sortBy(channels, 'order');
 
         const enrollments = await strapi.entityService.findMany(
           "api::enrollment.enrollment",
@@ -85,16 +85,19 @@ export default factories.createCoreController(
             }
           );
 
-          const users = forumEnrollments
-            .filter((e) => e.users_permissions_user)
-            .map((enrollment) => {
-              return {
-                id: enrollment.users_permissions_user.id,
-                username: enrollment.users_permissions_user.username,
-                name: enrollment.users_permissions_user.name,
-                lastname: enrollment.users_permissions_user.lastname,
-              };
-            });
+          const users = _.uniqBy(
+            forumEnrollments
+              .filter((e) => e.users_permissions_user)
+              .map((enrollment) => {
+                return {
+                  id: enrollment.users_permissions_user.id,
+                  username: enrollment.users_permissions_user.username,
+                  name: enrollment.users_permissions_user.name,
+                  lastname: enrollment.users_permissions_user.lastname,
+                };
+              }),
+            'id'
+          );
 
           space.forum.users = users;
           ctx.body = space.forum;
