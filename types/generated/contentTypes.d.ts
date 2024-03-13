@@ -784,6 +784,8 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::interest.interest'
     >;
     location: Attribute.String;
+    country: Attribute.String;
+    organization: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
