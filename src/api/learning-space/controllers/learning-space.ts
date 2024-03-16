@@ -85,13 +85,13 @@ export default factories.createCoreController(
                   topic.completed = false;
                 }
               }
-              if (module.topics && module.topics.length) {
+              if (module.topics && module.topics.length && module.moduleType !== 'Monitoring') {
                 module.completedPct =
                   module.topics && module.topics.length
                     ? module.topics.filter((topic: any) => topic.completed)
                         .length / module.topics.length
                     : 0;
-              } else {
+              } else if (module.moduleType !== 'Monitoring') {
                 const progress = progresses.find(
                   (progress: any) =>
                     progress.topicId === null && progress.moduleId === module.id
@@ -108,7 +108,7 @@ export default factories.createCoreController(
 
             space.completedPct =
               space.modules.filter((m) => m.completedPct === 1).length /
-              space.modules.length;
+              space.modules.filter(m => m.moduleType !== 'Monitoring') .length;
 
             const submissions = await strapi.entityService.findMany(
               "api::submission.submission",
