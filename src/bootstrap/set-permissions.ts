@@ -53,7 +53,7 @@ async function start() {
         "api::submission.submission": ["create", "delete"],
         "api::forum.forum": ["find", "findOne", "findUid"],
         "api::channel.channel": ["findMessages"],
-        "api::message.message": ["create", "find", "findOne", "findChildren"],
+        "api::message.message": ["create", "find", "findOne", "findChildren", "update", "delete"],
         "api::interest.interest": ["find", "findOne"],
         "plugin::users-permissions.user": ["update"],
         "api::user-avatar.user-avatar": ["find", "findOne", "create", "update", "delete", "findMine"],
