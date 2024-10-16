@@ -6,8 +6,7 @@ import { factories } from "@strapi/strapi";
 const unparsed = require("koa-body/unparsed.js");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-const endpointSecret =
-  "whsec_728fb1e9e420458b3831e037e34fc1c3314d1f77367d190208569c6fa6d0524f";
+const endpointSecret = process.env.STRIPE_WEBHOOK_PI_SECRET;
 
 export default factories.createCoreController(
   "api::payment-intent.payment-intent",
@@ -16,6 +15,7 @@ export default factories.createCoreController(
       try {
         const sig = ctx.request.header["stripe-signature"];
         const unparsedBody = ctx.request.body[unparsed];
+        console.log("unparsedBody", unparsedBody, sig, endpointSecret);
         const event = stripe.webhooks.constructEvent(
           unparsedBody,
           sig,
