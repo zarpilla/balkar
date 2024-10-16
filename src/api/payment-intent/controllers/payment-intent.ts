@@ -3,8 +3,9 @@
  */
 
 import { factories } from "@strapi/strapi";
-const unparsed = require("koa-body/unparsed.js");
+// const unparsed = require("koa-body/unparsed.js");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const unparsed = Symbol.for('unparsedBody');
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_PI_SECRET;
 
