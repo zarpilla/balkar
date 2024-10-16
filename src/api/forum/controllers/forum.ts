@@ -85,6 +85,8 @@ export default factories.createCoreController(
             }
           );
 
+          
+
           const users = _.uniqBy(
             forumEnrollments
               .filter((e) => e.users_permissions_user)
@@ -98,6 +100,29 @@ export default factories.createCoreController(
               }),
             'id'
           );
+
+          // find the avatars of the users
+          const avatars = await strapi.entityService.findMany(
+            "api::user-avatar.user-avatar",
+            {
+              filters: {
+                users_permissions_user: {
+                  id: {
+                    $in: users.map((user) => user.id),
+                  }
+                }
+              },
+              populate: ["avatar", "users_permissions_user"],
+            }
+          );
+
+          users.forEach((user:any) => {
+            const avatar = avatars.find((avatar) => avatar.users_permissions_user.id === user.id);
+            if (avatar && avatar.avatar && avatar.avatar.url) {
+              user.avatar = avatar.avatar.url;
+            }
+          })
+          
 
           space.forum.users = users;
           ctx.body = space.forum;

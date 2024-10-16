@@ -1058,6 +1058,49 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
   };
 }
 
+export interface ApiMentionMention extends Schema.CollectionType {
+  collectionName: 'mentions';
+  info: {
+    singularName: 'mention';
+    pluralName: 'mentions';
+    displayName: 'Mention';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    from: Attribute.Relation<
+      'api::mention.mention',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    to: Attribute.Relation<
+      'api::mention.mention',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    message: Attribute.Relation<
+      'api::mention.mention',
+      'oneToOne',
+      'api::message.message'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::mention.mention',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::mention.mention',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiMessageMessage extends Schema.CollectionType {
   collectionName: 'messages';
   info: {
@@ -1102,6 +1145,37 @@ export interface ApiMessageMessage extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPaymentIntentPaymentIntent extends Schema.CollectionType {
+  collectionName: 'payment_intents';
+  info: {
+    singularName: 'payment-intent';
+    pluralName: 'payment-intents';
+    displayName: 'PaymentIntent';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String;
+    data: Attribute.Text;
+    state: Attribute.Enumeration<['received', 'handled']>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::payment-intent.payment-intent',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::payment-intent.payment-intent',
       'oneToOne',
       'admin::user'
     > &
@@ -1312,7 +1386,9 @@ declare module '@strapi/types' {
       'api::forum.forum': ApiForumForum;
       'api::interest.interest': ApiInterestInterest;
       'api::learning-space.learning-space': ApiLearningSpaceLearningSpace;
+      'api::mention.mention': ApiMentionMention;
       'api::message.message': ApiMessageMessage;
+      'api::payment-intent.payment-intent': ApiPaymentIntentPaymentIntent;
       'api::pre-enrollement.pre-enrollement': ApiPreEnrollementPreEnrollement;
       'api::progress.progress': ApiProgressProgress;
       'api::submission.submission': ApiSubmissionSubmission;

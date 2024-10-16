@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mentions",
+  "info": {
+    "singularName": "mention",
+    "pluralName": "mentions",
+    "displayName": "Mention"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "from": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "to": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "message": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::message.message"
+    }
+  }
+}

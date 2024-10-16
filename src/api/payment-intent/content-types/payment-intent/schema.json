@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "payment_intents",
+  "info": {
+    "singularName": "payment-intent",
+    "pluralName": "payment-intents",
+    "displayName": "PaymentIntent"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "text"
+    },
+    "state": {
+      "type": "enumeration",
+      "enum": [
+        "received",
+        "handled"
+      ]
+    }
+  }
+}
