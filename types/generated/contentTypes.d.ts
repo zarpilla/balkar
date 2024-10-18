@@ -1034,6 +1034,17 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         };
       }> &
       Attribute.DefaultTo<false>;
+    product: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'api::product.product'
+    >;
+    enrollmentEmails: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1158,6 +1169,7 @@ export interface ApiPaymentIntentPaymentIntent extends Schema.CollectionType {
     singularName: 'payment-intent';
     pluralName: 'payment-intents';
     displayName: 'PaymentIntent';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1165,7 +1177,7 @@ export interface ApiPaymentIntentPaymentIntent extends Schema.CollectionType {
   attributes: {
     name: Attribute.String;
     data: Attribute.Text;
-    state: Attribute.Enumeration<['received', 'handled']>;
+    state: Attribute.Enumeration<['received', 'handled', 'intent']>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1206,6 +1218,42 @@ export interface ApiPreEnrollementPreEnrollement extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::pre-enrollement.pre-enrollement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProductProduct extends Schema.CollectionType {
+  collectionName: 'products';
+  info: {
+    singularName: 'product';
+    pluralName: 'products';
+    displayName: 'Product';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    description: Attribute.Text;
+    price: Attribute.Decimal;
+    image: Attribute.Media;
+    stripeProductId: Attribute.String;
+    stripePriceId: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product.product',
       'oneToOne',
       'admin::user'
     > &
@@ -1390,6 +1438,7 @@ declare module '@strapi/types' {
       'api::message.message': ApiMessageMessage;
       'api::payment-intent.payment-intent': ApiPaymentIntentPaymentIntent;
       'api::pre-enrollement.pre-enrollement': ApiPreEnrollementPreEnrollement;
+      'api::product.product': ApiProductProduct;
       'api::progress.progress': ApiProgressProgress;
       'api::submission.submission': ApiSubmissionSubmission;
       'api::translation.translation': ApiTranslationTranslation;

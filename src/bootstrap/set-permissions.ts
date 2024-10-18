@@ -57,16 +57,18 @@ async function start() {
         "api::interest.interest": ["find", "findOne"],
         "plugin::users-permissions.user": ["update"],
         "api::user-avatar.user-avatar": ["find", "findOne", "create", "update", "delete", "findMine"],
-        
+        "api::product.product": ["find", "findOne"],
+        "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent"],
       }
     );
 
     await setPermissions("public",
       {
         "api::translation.translation": ["find"],
+        "api::product.product": ["find", "findOne"],
         "api::learning-space.learning-space": ["findUid"],
         "api::pre-enrollement.pre-enrollement": ["create"],
-        "api::payment-intent.payment-intent": ["create"],
+        "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent"],
       }
 
     );

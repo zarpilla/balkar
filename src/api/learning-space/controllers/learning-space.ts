@@ -27,6 +27,7 @@ export default factories.createCoreController(
               "modules.topics.contents",
               "modules.topics.contents.media",
               "forum",
+              "product"
             ],
           }
         );
@@ -36,6 +37,8 @@ export default factories.createCoreController(
           ctx.body = { ok: false };
         } else {
           const space: any = spaces[0];
+
+          space.product = space.product ? { id: space.product.id } : null;
 
           const contentType = strapi.contentType(
             "api::learning-space.learning-space"

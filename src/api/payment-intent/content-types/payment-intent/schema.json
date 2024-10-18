@@ -4,7 +4,8 @@
   "info": {
     "singularName": "payment-intent",
     "pluralName": "payment-intents",
-    "displayName": "PaymentIntent"
+    "displayName": "PaymentIntent",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -21,7 +22,8 @@
       "type": "enumeration",
       "enum": [
         "received",
-        "handled"
+        "handled",
+        "intent"
       ]
     }
   }

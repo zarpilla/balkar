@@ -18,6 +18,7 @@ export default factories.createCoreController(
           filters: {
             uid: uid,
           },
+          populate: ["product"],
         }
       );
 
@@ -26,6 +27,24 @@ export default factories.createCoreController(
         ctx.body = { ok: false };
       } else {
         const space: any = spaces[0];
+        if (space.product) {
+          // we need to look for a pre-enrollement
+          const preEnrollement = await strapi.entityService.findMany(
+            "api::pre-enrollement.pre-enrollement",
+            {
+              filters: {
+                email: ctx.state.user.email,
+                uid: uid,
+              },
+            }
+          );
+
+          if (preEnrollement.length === 0) {
+            ctx.status = 400;
+            ctx.body = { ok: false };
+            return;
+          }
+        }
         const enrollment = await strapi.entityService.create(
           "api::enrollment.enrollment",
           {
@@ -40,7 +59,6 @@ export default factories.createCoreController(
       }
     },
     autoenroll: async (ctx, next) => {
-      
       const preEnrollements = await strapi.entityService.findMany(
         "api::pre-enrollement.pre-enrollement",
         {
@@ -71,12 +89,17 @@ export default factories.createCoreController(
           );
         }
       });
-      const preEnrollementsId = preEnrollements.map((preEnrollement) => preEnrollement.id);
+      const preEnrollementsId = preEnrollements.map(
+        (preEnrollement) => preEnrollement.id
+      );
       for await (const preEnrollementId of preEnrollementsId) {
-        await strapi.entityService.delete("api::pre-enrollement.pre-enrollement", preEnrollementId);
+        await strapi.entityService.delete(
+          "api::pre-enrollement.pre-enrollement",
+          preEnrollementId
+        );
       }
 
-      ctx.body = { ok: true };
-    }
+      ctx.body = { ok: true, enrollements: preEnrollements.length };
+    },
   })
 );
