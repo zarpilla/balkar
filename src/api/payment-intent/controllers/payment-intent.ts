@@ -17,8 +17,7 @@ export default factories.createCoreController(
     create: async (ctx, next) => {
       try {
         const sig = ctx.request.header["stripe-signature"];
-        const unparsedBody = ctx.request.body[unparsed];
-        console.log("unparsedBody", unparsedBody, sig, endpointSecret);
+        const unparsedBody = ctx.request.body[unparsed];        
         const event = stripe.webhooks.constructEvent(
           unparsedBody,
           sig,
@@ -53,8 +52,7 @@ export default factories.createCoreController(
     createCheckoutSession: async (ctx, next) => {
       try {
         const spaceUid = ctx.params.id;
-        const { email, name, lastname, locale } = ctx.request.body;
-        console.log('ctx', ctx.state.user);
+        const { email, name, lastname, locale } = ctx.request.body;        
         const texts = {
           en: {
             name: "Name",
@@ -148,8 +146,7 @@ export default factories.createCoreController(
       
       const session = await stripe.checkout.sessions.retrieve(id);
 
-      if (session && session.status === "complete") {
-        console.log("session", session);
+      if (session && session.status === "complete") {        
         // find "api::payment-intent.payment-intent"
         // if it exists, return the email
         // if not, return false
@@ -199,8 +196,6 @@ export default factories.createCoreController(
             };
             await strapi.plugins["email"].services.email.send(emailData);
           }
-
-          console.log("session", session);
 
           ctx.body = { ok: true, email: session.customer_email, name: data.name, lastname: data.lastname };
         }
