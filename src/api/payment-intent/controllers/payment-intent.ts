@@ -4,6 +4,7 @@
 
 import { factories } from "@strapi/strapi";
 import { v4 as uuidv4 } from "uuid";
+import product from "../../product/controllers/product";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const unparsed = Symbol.for("unparsedBody");
@@ -50,9 +51,20 @@ export default factories.createCoreController(
       }
     },
     createCheckoutSession: async (ctx, next) => {
-      try {        
+      try {
         const spaceUid = ctx.params.id;
-        const { email } = ctx.request.body;
+        const { email, name, lastname, locale } = ctx.request.body;
+        console.log('ctx', ctx.state.user);
+        const texts = {
+          en: {
+            name: "Name",
+            lastname: "Last Name"
+          },
+          ca: {
+            name: "Nom",
+            lastname: "Cognom"
+          }
+        }
         const spaces = await strapi.entityService.findMany(
           "api::learning-space.learning-space",
           {
@@ -63,14 +75,6 @@ export default factories.createCoreController(
           }
         );
 
-        // const spaces = await strapi.entityService.findMany(
-        //   "api::learning-space.learning-space",
-        //   {
-        //     filters: {
-        //       uid: preEnrollement.uid,
-        //     },
-        //   }
-        // );
         if (spaces.length > 0) {
           const space: any = spaces[0];
           const productId = space.product.id;
@@ -79,7 +83,8 @@ export default factories.createCoreController(
             productId
           );
           if (product) {
-            const session = await stripe.checkout.sessions.create({
+
+            const sessionData = {
               payment_method_types: ["card"],
               customer_email: email,
               line_items: [
@@ -90,8 +95,34 @@ export default factories.createCoreController(
               ],
               mode: "payment",
               success_url: `${process.env.FRONTEND_URL}/enroll/${spaceUid}?success={CHECKOUT_SESSION_ID}`,
-              cancel_url: `${process.env.FRONTEND_URL}/enroll/${spaceUid}?success=false`,
-            });
+              cancel_url: `${process.env.FRONTEND_URL}/enroll/${spaceUid}?success=false`,              
+              custom_fields: [
+                {
+                  key: "name",
+                  label: {
+                    type: "custom",
+                    custom: texts[locale] ? texts[locale].name : texts.en.name,
+                  },
+                  type: "text",
+                  text: {
+                    default_value: name || ctx.state.user.name
+                  }
+                },
+                {
+                  key: "lastname",
+                  label: {
+                    type: "custom",
+                    custom: texts[locale] ? texts[locale].lastname : texts.en.lastname,
+                  },
+                  type: "text",
+                  text: {
+                    default_value: lastname || ctx.state.user.lastname
+                  }
+                }
+              ]
+            };
+
+            const session = await stripe.checkout.sessions.create(sessionData);
 
             await strapi.entityService.create(
               "api::payment-intent.payment-intent",
@@ -99,7 +130,7 @@ export default factories.createCoreController(
                 data: {
                   name: session.id,
                   state: "intent",
-                  data: JSON.stringify({ spaceUid, product, email: email }),
+                  data: JSON.stringify({ spaceUid, product, email: email, name, lastname, locale }),
                 },
               }
             );
@@ -114,18 +145,11 @@ export default factories.createCoreController(
     checkPaymentIntent: async (ctx, next) => {
       // check if the body param id exists in "api::payment-intent.payment-intent" (column name)
       const { id, spaceUid } = ctx.request.body;
-      // const paymentIntent = await strapi.entityService.findMany(
-      //   "api::payment-intent.payment-intent",
-      //   {
-      //     filters: {
-      //       name: id,
-      //     },
-      //   }
-      // );
-
-      const session = await stripe.checkout.sessions.retrieve(id);
       
-      if (session) {
+      const session = await stripe.checkout.sessions.retrieve(id);
+
+      if (session && session.status === "complete") {
+        console.log("session", session);
         // find "api::payment-intent.payment-intent"
         // if it exists, return the email
         // if not, return false
@@ -135,22 +159,25 @@ export default factories.createCoreController(
             filters: {
               name: id,
             },
-          } 
+          }
         );
 
         if (intents && intents.length === 1) {
           const intent = intents[0];
           const data = JSON.parse(intent.data);
-          
+
           // create api::enrollment.enrollment
           const enrollment = await strapi.entityService.create(
             "api::pre-enrollement.pre-enrollement",
             {
               data: {
                 email: data.email,
-                uid: data.spaceUid,                
+                uid: data.spaceUid,
+                name: data.name,
+                lastname: data.lastname
               },
-          });
+            }
+          );
 
           // update intent
           await strapi.entityService.update(
@@ -160,16 +187,26 @@ export default factories.createCoreController(
               data: {
                 state: "received",
               },
-          })
+            }
+          );
 
-          ctx.body = { ok: true, email: session.customer_email };
+          const product = await strapi.entityService.findOne("api::product.product", data.product.id);
+          if (product && product.paymentEmails) {
+            const emailData = {
+              to: product.paymentEmails.split(","),
+              subject: `New payment for ${product.name}`,
+              text: `A new payment has been received for "${product.name}" with name "${data.name} ${data.lastname}" and email "${data.email}"`,
+            };
+            await strapi.plugins["email"].services.email.send(emailData);
+          }
+
+          console.log("session", session);
+
+          ctx.body = { ok: true, email: session.customer_email, name: data.name, lastname: data.lastname };
         }
-
-        
-      }
-      else {
+      } else {
         ctx.body = { ok: false };
       }
-    }
+    },
   })
 );

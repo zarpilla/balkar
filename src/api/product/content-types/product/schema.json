@@ -34,6 +34,9 @@
     },
     "stripePriceId": {
       "type": "string"
+    },
+    "paymentEmails": {
+      "type": "string"
     }
   }
 }

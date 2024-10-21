@@ -4,7 +4,8 @@
   "info": {
     "singularName": "pre-enrollement",
     "pluralName": "pre-enrollements",
-    "displayName": "PreEnrollement"
+    "displayName": "PreEnrollement",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -15,6 +16,12 @@
       "type": "string"
     },
     "uid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "lastname": {
       "type": "string"
     }
   }

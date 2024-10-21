@@ -1201,6 +1201,7 @@ export interface ApiPreEnrollementPreEnrollement extends Schema.CollectionType {
     singularName: 'pre-enrollement';
     pluralName: 'pre-enrollements';
     displayName: 'PreEnrollement';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1208,6 +1209,8 @@ export interface ApiPreEnrollementPreEnrollement extends Schema.CollectionType {
   attributes: {
     email: Attribute.String;
     uid: Attribute.String;
+    name: Attribute.String;
+    lastname: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1243,6 +1246,7 @@ export interface ApiProductProduct extends Schema.CollectionType {
     image: Attribute.Media;
     stripeProductId: Attribute.String;
     stripePriceId: Attribute.String;
+    paymentEmails: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
