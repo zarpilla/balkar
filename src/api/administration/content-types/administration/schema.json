@@ -1,0 +1,18 @@
+{
+  "kind": "singleType",
+  "collectionName": "administrations",
+  "info": {
+    "singularName": "administration",
+    "pluralName": "administrations",
+    "displayName": "administration"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "paymentEmails": {
+      "type": "string"
+    }
+  }
+}

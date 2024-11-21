@@ -68,7 +68,7 @@ async function start() {
         "api::product.product": ["find", "findOne"],
         "api::learning-space.learning-space": ["findUid"],
         "api::pre-enrollement.pre-enrollement": ["create"],
-        "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent"],
+        "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent", "sendPaymentEmails"],
       }
 
     );

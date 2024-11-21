@@ -23,7 +23,8 @@
       "enum": [
         "received",
         "handled",
-        "intent"
+        "intent",
+        "error"
       ]
     }
   }

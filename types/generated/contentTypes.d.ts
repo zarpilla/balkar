@@ -803,6 +803,35 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiAdministrationAdministration extends Schema.SingleType {
+  collectionName: 'administrations';
+  info: {
+    singularName: 'administration';
+    pluralName: 'administrations';
+    displayName: 'administration';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    paymentEmails: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::administration.administration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::administration.administration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiChannelChannel extends Schema.CollectionType {
   collectionName: 'channels';
   info: {
@@ -1177,7 +1206,7 @@ export interface ApiPaymentIntentPaymentIntent extends Schema.CollectionType {
   attributes: {
     name: Attribute.String;
     data: Attribute.Text;
-    state: Attribute.Enumeration<['received', 'handled', 'intent']>;
+    state: Attribute.Enumeration<['received', 'handled', 'intent', 'error']>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1433,6 +1462,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::administration.administration': ApiAdministrationAdministration;
       'api::channel.channel': ApiChannelChannel;
       'api::enrollment.enrollment': ApiEnrollmentEnrollment;
       'api::forum.forum': ApiForumForum;

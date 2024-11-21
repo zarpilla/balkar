@@ -4,12 +4,21 @@
 
 import { factories } from "@strapi/strapi";
 import { v4 as uuidv4 } from "uuid";
-import product from "../../product/controllers/product";
+import { sendPaymentEmails } from "../services/payment-intent";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const unparsed = Symbol.for("unparsedBody");
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_PI_SECRET;
+
+const sendEmailToAdmin = async (strapi, product, data) => {
+  const emailData = {
+    to: product.paymentEmails.split(","),
+    subject: `New payment for ${product.name}`,
+    text: `A new payment has been received for "${product.name}" with name "${data.name} ${data.lastname}" and email "${data.email}"`,
+  };
+  await strapi.plugins["email"].services.email.send(emailData);
+};
 
 export default factories.createCoreController(
   "api::payment-intent.payment-intent",
@@ -17,7 +26,7 @@ export default factories.createCoreController(
     create: async (ctx, next) => {
       try {
         const sig = ctx.request.header["stripe-signature"];
-        const unparsedBody = ctx.request.body[unparsed];        
+        const unparsedBody = ctx.request.body[unparsed];
         const event = stripe.webhooks.constructEvent(
           unparsedBody,
           sig,
@@ -39,6 +48,20 @@ export default factories.createCoreController(
               }
             );
             ctx.send(paymentIntent);
+
+            // const stripePaymentIntentId = event.data.object.id;
+            // const stripePaymentIntent = await stripe.paymentIntents.retrieve(stripePaymentIntentId);
+
+            // const amount = stripePaymentIntent.amount_received;
+            // const customer = stripePaymentIntent.charges.data[0].billing_details.name;
+
+            // const emailData = {
+            //   to: product.paymentEmails.split(","),
+            //   subject: `New payment for ${product.name}`,
+            //   text: `A new payment has been received for "${product.name}" with name "${data.name} ${data.lastname}" and email "${data.email}"`,
+            // };
+            // await strapi.plugins["email"].services.email.send(emailData);
+
             break;
           // ... handle other event types
           default:
@@ -52,17 +75,17 @@ export default factories.createCoreController(
     createCheckoutSession: async (ctx, next) => {
       try {
         const spaceUid = ctx.params.id;
-        const { email, name, lastname, locale } = ctx.request.body;        
+        const { email, name, lastname, locale } = ctx.request.body;
         const texts = {
           en: {
             name: "Name",
-            lastname: "Last Name"
+            lastname: "Last Name",
           },
           ca: {
             name: "Nom",
-            lastname: "Cognom"
-          }
-        }
+            lastname: "Cognom",
+          },
+        };
         const spaces = await strapi.entityService.findMany(
           "api::learning-space.learning-space",
           {
@@ -81,7 +104,6 @@ export default factories.createCoreController(
             productId
           );
           if (product) {
-
             const sessionData = {
               payment_method_types: ["card"],
               customer_email: email,
@@ -93,7 +115,7 @@ export default factories.createCoreController(
               ],
               mode: "payment",
               success_url: `${process.env.FRONTEND_URL}/enroll/${spaceUid}?success={CHECKOUT_SESSION_ID}`,
-              cancel_url: `${process.env.FRONTEND_URL}/enroll/${spaceUid}?success=false`,              
+              cancel_url: `${process.env.FRONTEND_URL}/enroll/${spaceUid}?success=false`,
               custom_fields: [
                 {
                   key: "name",
@@ -103,21 +125,23 @@ export default factories.createCoreController(
                   },
                   type: "text",
                   text: {
-                    default_value: name || ctx.state.user.name
-                  }
+                    default_value: name || ctx.state.user.name,
+                  },
                 },
                 {
                   key: "lastname",
                   label: {
                     type: "custom",
-                    custom: texts[locale] ? texts[locale].lastname : texts.en.lastname,
+                    custom: texts[locale]
+                      ? texts[locale].lastname
+                      : texts.en.lastname,
                   },
                   type: "text",
                   text: {
-                    default_value: lastname || ctx.state.user.lastname
-                  }
-                }
-              ]
+                    default_value: lastname || ctx.state.user.lastname,
+                  },
+                },
+              ],
             };
 
             const session = await stripe.checkout.sessions.create(sessionData);
@@ -128,7 +152,14 @@ export default factories.createCoreController(
                 data: {
                   name: session.id,
                   state: "intent",
-                  data: JSON.stringify({ spaceUid, product, email: email, name, lastname, locale }),
+                  data: JSON.stringify({
+                    spaceUid,
+                    product,
+                    email: email,
+                    name,
+                    lastname,
+                    locale,
+                  }),
                 },
               }
             );
@@ -143,10 +174,10 @@ export default factories.createCoreController(
     checkPaymentIntent: async (ctx, next) => {
       // check if the body param id exists in "api::payment-intent.payment-intent" (column name)
       const { id, spaceUid } = ctx.request.body;
-      
+
       const session = await stripe.checkout.sessions.retrieve(id);
 
-      if (session && session.status === "complete") {        
+      if (session && session.status === "complete") {
         // find "api::payment-intent.payment-intent"
         // if it exists, return the email
         // if not, return false
@@ -171,7 +202,7 @@ export default factories.createCoreController(
                 email: data.email,
                 uid: data.spaceUid,
                 name: data.name,
-                lastname: data.lastname
+                lastname: data.lastname,
               },
             }
           );
@@ -187,7 +218,10 @@ export default factories.createCoreController(
             }
           );
 
-          const product = await strapi.entityService.findOne("api::product.product", data.product.id);
+          const product = await strapi.entityService.findOne(
+            "api::product.product",
+            data.product.id
+          );
           if (product && product.paymentEmails) {
             const emailData = {
               to: product.paymentEmails.split(","),
@@ -197,11 +231,21 @@ export default factories.createCoreController(
             await strapi.plugins["email"].services.email.send(emailData);
           }
 
-          ctx.body = { ok: true, email: session.customer_email, name: data.name, lastname: data.lastname };
+          ctx.body = {
+            ok: true,
+            email: session.customer_email,
+            name: data.name,
+            lastname: data.lastname,
+          };
         }
       } else {
         ctx.body = { ok: false };
       }
+    },
+    sendPaymentEmails: async (ctx, next) => {
+      const body = await sendPaymentEmails();
+      ctx.body = body;
+      return;
     },
   })
 );
