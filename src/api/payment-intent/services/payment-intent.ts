@@ -87,7 +87,7 @@ async function sendPaymentEmails() {
     return { ok: true, paymentIntents: 0 };
   }
 
-  const emailContent = `
+  let emailContent = `
     <h1>Nous Pagaments Rebuts a Stripe</h1>
     <table border="1" cellpadding="5" cellspacing="0">
       <thead>
@@ -117,12 +117,18 @@ async function sendPaymentEmails() {
           .join("")}
       </tbody>
     </table>
-    <br>
+    
+  `;
+
+  if (errors.length > 0) {
+    emailContent += `
+      <br>
     <br>
     <p>
-    Hi ha hagut ${errors} errors recuperant les dades.
+    Hi ha hagut ${errors.length} errors recuperant les dades.
     </p>
-  `;
+    `;
+  }
 
   // get from administration single type the field paymentEmails, and split by comma
   const administration = await strapi.entityService.findMany(
@@ -130,13 +136,13 @@ async function sendPaymentEmails() {
     {}
   );
 
-  const response = await strapi.plugins["email"].services.email.send({
+  await strapi.plugins["email"].services.email.send({
     to: administration.paymentEmails.split(","),
     subject: "Nous Pagaments Rebuts a Stripe",
     html: emailContent,
   });
 
-  for (const intent of paymentIntents) {
+  for (const intent of stripePaymentIntents) {
     await strapi.entityService.update(
       "api::payment-intent.payment-intent",
       intent.id,
