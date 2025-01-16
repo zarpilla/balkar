@@ -66,7 +66,7 @@ async function start() {
       {
         "api::translation.translation": ["find"],
         "api::product.product": ["find", "findOne"],
-        "api::learning-space.learning-space": ["findUid", "fixSubmissions"],        
+        "api::learning-space.learning-space": ["findUid"],        
         "api::pre-enrollement.pre-enrollement": ["create"],
         "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent", "sendPaymentEmails"],
       }

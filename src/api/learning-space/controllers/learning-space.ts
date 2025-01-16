@@ -205,23 +205,27 @@ export default factories.createCoreController(
               "banner",
               "modules.topics.contents",
               "modules.topics.contents.media",
+              "localizations",
             ],
             locale: ctx.query.locale,
           }
         );
 
+        const spacesUid = spaces.map((space: any) => space.uid);        
+
         const spacesEnrolled = spaces.map((space: any) => {
           const enrollment = enrollments.find(
-            (enrollment) => enrollment.learning_space.id === space.id
+            (enrollment) => spacesUid.includes(enrollment.learning_space.uid)
           );
           if (enrollment) {
             space.enrolled = true;
+            // return true;
           } else {
             space.enrolled = false;
+            // return false;
           }
-
-          return space;
-        });
+          return space
+        })
 
         const progresses = await strapi.entityService.findMany(
           "api::progress.progress",
