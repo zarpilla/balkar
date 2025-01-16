@@ -32,7 +32,7 @@
       "target": "plugin::users-permissions.user"
     },
     "moduleId": {
-      "type": "integer"
-    }
+      "type": "string"
+    }    
   }
 }

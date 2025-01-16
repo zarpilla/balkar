@@ -25,14 +25,15 @@ export default factories.createCoreController(
               "modules.contents.media",
               "banner",
               "modules.topics.contents",
-              "modules.topics.contents.media",
-              "forum",
+              "modules.topics.contents.media",              
               "product",
               "localizations",
             ],
             locale: ctx.query.locale || "ca",            
           }
         );
+
+        const spaceForums = []
 
 
         if (spaces.length === 0) {
@@ -88,8 +89,8 @@ export default factories.createCoreController(
               for await (const topic of module.topics) {
                 const progress = progresses.find(
                   (progress: any) =>
-                    progress.topicId === topic.id &&
-                    progress.moduleId === module.id
+                    progress.topicId === topic.topicId &&
+                    progress.moduleId === module.moduleId
                 );
                 if (progress) {
                   topic.completed = true;
@@ -110,7 +111,7 @@ export default factories.createCoreController(
               } else if (module.moduleType !== "Monitoring") {
                 const progress = progresses.find(
                   (progress: any) =>
-                    progress.topicId === null && progress.moduleId === module.id
+                    progress.topicId === null && progress.moduleId === module.moduleId
                 );
                 if (progress) {
                   module.completed = true;
@@ -139,12 +140,28 @@ export default factories.createCoreController(
 
             for await (const module of space.modules) {
               const moduleSubmissions = submissions.filter(
-                (submission: any) => submission.moduleId === module.id
+                (submission: any) => submission.moduleId === module.moduleId
               );
               if (moduleSubmissions) {
                 module.submissions = moduleSubmissions;
               }
             }
+
+            const forums = await strapi.entityService.findMany(
+              "api::forum.forum",
+              {
+                filters: {
+                  learning_space: {
+                    id: {
+                      $in: spacesLocalized,
+                    }
+                  },
+                },
+              }
+            );
+
+            spaceForums.push(...forums);
+
           }
           const sanitizedResults: any = await sanitize.contentAPI.output(
             space,
@@ -152,7 +169,9 @@ export default factories.createCoreController(
             { auth: ctx.state.auth }
           );
 
-          sanitizedResults.forum = space.forum;
+          if (spaceForums.length) {
+            sanitizedResults.forum = spaceForums[0];
+          }
 
           ctx.body = sanitizedResults;
         }
@@ -224,7 +243,7 @@ export default factories.createCoreController(
             for await (const topic of module.topics) {
               const progress = progresses.find(
                 (progress: any) =>
-                  progress.topicId === topic.id &&
+                  progress.topicId === topic.topicId &&
                   progress.learning_space.id === space.id
               );
               if (progress) {
@@ -263,5 +282,63 @@ export default factories.createCoreController(
         ctx.body = err;
       }
     },
+    fixSubmissions: async (ctx, next) => {
+      const spaces = await strapi.entityService.findMany(
+        "api::learning-space.learning-space",
+        {          
+          populate: ["modules", "modules.topics"],
+        }
+      )
+      
+      const progresses = await strapi.entityService.findMany(
+        "api::progress.progress",
+        {
+          limit: -1,
+          populate: ["learning_space"],
+        }
+      );
+
+      const response = []
+      for await (const progress of progresses) {        
+        const space = spaces.find((s: any) => s.id === progress.learning_space.id);
+        for await (const module of (space as any).modules) {
+          if (progress.topicId) {
+            for await (const topic of (module  as any).topics) {
+              if (progress.topicId === topic.id.toString() && progress.moduleId === module.id.toString()) {
+                const resp = await strapi.entityService.update("api::progress.progress", progress.id, { data: { topic_id: topic.topicId, moduleId: module.moduleId } });
+                response.push(resp);
+              }
+            }
+          } else {
+            if (progress.moduleId === module.id.toString()) {
+              const resp = await strapi.entityService.update("api::progress.progress", progress.id, { data: { moduleId: module.moduleId } });
+              response.push(resp);
+            }
+          }
+        }
+      }
+
+      const submissions = await strapi.entityService.findMany(
+        "api::submission.submission",
+        {
+          limit: -1,
+          populate: ["learning_space"],
+        }
+      );
+
+      for await (const submission of submissions) {
+        const space = spaces.find((s: any) => s.id === submission.learning_space.id);
+        for await (const module of (space as any).modules) {
+          if (submission.moduleId === module.id.toString()) {
+            const resp = await strapi.entityService.update("api::submission.submission", submission.id, { data: { moduleId: module.moduleId } });
+            response.push(resp);
+          }
+        }
+      }
+
+
+      ctx.body = { ok: true };
+
+    }
   })
 );

@@ -14,5 +14,10 @@ export default {
       path: "/learning-spaces/mine",
       handler: "learning-space.findMine",
     },
+    {
+      method: "GET",
+      path: "/learning-spaces/submissions",
+      handler: "learning-space.fixSubmissions",
+    },
   ],
 };

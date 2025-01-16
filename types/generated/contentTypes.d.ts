@@ -877,8 +877,8 @@ export interface ApiProgressProgress extends Schema.CollectionType {
       'oneToOne',
       'api::learning-space.learning-space'
     >;
-    moduleId: Attribute.Integer;
-    topicId: Attribute.Integer;
+    moduleId: Attribute.String;
+    topicId: Attribute.String;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::progress.progress',
@@ -918,7 +918,7 @@ export interface ApiSubmissionSubmission extends Schema.CollectionType {
       'oneToOne',
       'api::learning-space.learning-space'
     >;
-    moduleId: Attribute.Integer;
+    moduleId: Attribute.String;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::submission.submission',

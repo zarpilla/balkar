@@ -23,10 +23,10 @@
       "target": "plugin::users-permissions.user"
     },
     "topicId": {
-      "type": "integer"
+      "type": "string"
     },
     "moduleId": {
-      "type": "integer"
+      "type": "string"
     }
   }
 }

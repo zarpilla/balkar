@@ -34,8 +34,8 @@ export default factories.createCoreController(
             data: {
               users_permissions_user: userId,
               learning_space: space.id,
-              topicId,
-              moduleId,
+              topicId: topicId,
+              moduleId: moduleId,
             },
           }
         );
@@ -60,15 +60,27 @@ export default factories.createCoreController(
 
       const space: any = spaces[0];
 
+      console.log("space", {
+        users_permissions_user: userId,
+        learning_space: space.id,
+        topicId: topicId,
+        moduleId: moduleId,
+      });
+
+      const filters = {
+        users_permissions_user: userId,
+        learning_space: space.id,        
+        moduleId: moduleId,
+      }
+
+      if (topicId) {
+        filters['topicId'] = topicId;
+      }
+
       const progresses = await strapi.entityService.findMany(
         "api::progress.progress",
         {
-          filters: {
-            users_permissions_user: userId,
-            learning_space: space.id,
-            topicId: topicId ? parseInt(topicId) : null,
-            moduleId: parseInt(moduleId),
-          },
+          filters: filters
         }
       );
 
