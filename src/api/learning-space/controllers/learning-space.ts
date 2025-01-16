@@ -305,7 +305,7 @@ export default factories.createCoreController(
           if (progress.topicId) {
             for await (const topic of (module  as any).topics) {
               if (progress.topicId === topic.id.toString() && progress.moduleId === module.id.toString()) {
-                const resp = await strapi.entityService.update("api::progress.progress", progress.id, { data: { topic_id: topic.topicId, moduleId: module.moduleId } });
+                const resp = await strapi.entityService.update("api::progress.progress", progress.id, { data: { topicId: topic.topicId, moduleId: module.moduleId } });
                 response.push(resp);
               }
             }
