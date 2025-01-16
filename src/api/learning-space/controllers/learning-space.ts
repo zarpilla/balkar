@@ -27,16 +27,21 @@ export default factories.createCoreController(
               "modules.topics.contents",
               "modules.topics.contents.media",
               "forum",
-              "product"
+              "product",
+              "localizations",
             ],
+            locale: ctx.query.locale || "ca",            
           }
         );
+
 
         if (spaces.length === 0) {
           ctx.status = 504;
           ctx.body = { ok: false };
         } else {
           const space: any = spaces[0];
+
+          const spacesLocalized = [space.id, ...space.localizations.map((l: any) => l.id)];
 
           space.product = space.product ? { id: space.product.id } : null;
 
@@ -51,12 +56,12 @@ export default factories.createCoreController(
                 filters: {
                   users_permissions_user: ctx.state.user.id,
                 },
-                populate: ["learning_space"],
+                populate: ["learning_space"],                
               }
             );
 
             const enrollment = enrollments.find(
-              (enrollment) => enrollment.learning_space.id === space.id
+              (enrollment) => spacesLocalized.includes(enrollment.learning_space.id)
             );
 
             if (enrollment) {
@@ -70,7 +75,11 @@ export default factories.createCoreController(
               {
                 filters: {
                   users_permissions_user: ctx.state.user.id,
-                  learning_space: space.id,
+                  learning_space: {
+                    id: {
+                      $in: spacesLocalized,
+                    }
+                  },
                 },
               }
             );
@@ -88,13 +97,17 @@ export default factories.createCoreController(
                   topic.completed = false;
                 }
               }
-              if (module.topics && module.topics.length && module.moduleType !== 'Monitoring') {
+              if (
+                module.topics &&
+                module.topics.length &&
+                module.moduleType !== "Monitoring"
+              ) {
                 module.completedPct =
                   module.topics && module.topics.length
                     ? module.topics.filter((topic: any) => topic.completed)
                         .length / module.topics.length
                     : 0;
-              } else if (module.moduleType !== 'Monitoring') {
+              } else if (module.moduleType !== "Monitoring") {
                 const progress = progresses.find(
                   (progress: any) =>
                     progress.topicId === null && progress.moduleId === module.id
@@ -111,7 +124,7 @@ export default factories.createCoreController(
 
             space.completedPct =
               space.modules.filter((m) => m.completedPct === 1).length /
-              space.modules.filter(m => m.moduleType !== 'Monitoring') .length;
+              space.modules.filter((m) => m.moduleType !== "Monitoring").length;
 
             const submissions = await strapi.entityService.findMany(
               "api::submission.submission",
@@ -174,6 +187,7 @@ export default factories.createCoreController(
               "modules.topics.contents",
               "modules.topics.contents.media",
             ],
+            locale: ctx.query.locale,
           }
         );
 

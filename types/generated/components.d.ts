@@ -1,4 +1,4 @@
-import type { Schema, Attribute } from '@strapi/strapi';
+import type { Attribute, Schema } from '@strapi/strapi';
 
 export interface SpacesContent extends Schema.Component {
   collectionName: 'components_spaces_contents';
@@ -6,38 +6,40 @@ export interface SpacesContent extends Schema.Component {
     displayName: 'Content';
   };
   attributes: {
+    media: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     text: Attribute.RichText;
-    media: Attribute.Media;
   };
 }
 
 export interface SpacesModule extends Schema.Component {
   collectionName: 'components_spaces_modules';
   info: {
+    description: '';
     displayName: 'Module';
     icon: 'arrowDown';
-    description: '';
   };
   attributes: {
-    name: Attribute.String;
-    topics: Attribute.Component<'spaces.topic', true>;
+    contents: Attribute.Component<'spaces.content', true>;
+    moduleId: Attribute.String;
     moduleType: Attribute.Enumeration<['Content', 'Monitoring']> &
       Attribute.DefaultTo<'Content'>;
+    name: Attribute.String;
+    topics: Attribute.Component<'spaces.topic', true>;
     uploadFiles: Attribute.Boolean;
-    contents: Attribute.Component<'spaces.content', true>;
   };
 }
 
 export interface SpacesTopic extends Schema.Component {
   collectionName: 'components_spaces_topics';
   info: {
+    description: '';
     displayName: 'Topic';
     icon: 'arrowRight';
-    description: '';
   };
   attributes: {
-    name: Attribute.String;
     contents: Attribute.Component<'spaces.content', true>;
+    name: Attribute.String;
+    topicId: Attribute.String;
   };
 }
 

@@ -1,4 +1,7 @@
 import permisssionSetter from './bootstrap/set-permissions'
+import { setMetaComponents } from './bootstrap/meta-components'
+
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   /**
@@ -16,9 +19,10 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/*{ strapi }*/) {
+  bootstrap({ strapi }) {
     permisssionSetter().then(() => {
       console.log('permissions set')
     })
+    setMetaComponents(strapi);
   },
 };

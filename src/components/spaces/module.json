@@ -30,6 +30,9 @@
       "type": "component",
       "repeatable": true,
       "component": "spaces.content"
+    },
+    "moduleId": {
+      "type": "string"
     }
   }
 }
