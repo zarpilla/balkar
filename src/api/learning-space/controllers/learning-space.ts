@@ -24,10 +24,17 @@ export default factories.createCoreController(
               "modules.contents",
               "modules.contents.media",
               "banner",
+              "bannerIntro",
+              "bannerOther",
               "modules.topics.contents",
               "modules.topics.contents.media",              
               "product",
               "localizations",
+              "content_modules",
+              "content_modules.units",
+              "content_modules.units.lessons",
+              "content_modules.units.lessons.quiz",
+              "content_modules.units.lessons.content",
             ],
             locale: ctx.query.locale || "ca",            
           }
@@ -85,6 +92,9 @@ export default factories.createCoreController(
               }
             );
 
+            console.log('space.modules', space.modules.length)
+            console.log('space.content_modules', space.content_modules.length) 
+
             for await (const module of space.modules) {
               for await (const topic of module.topics) {
                 const progress = progresses.find(
@@ -126,6 +136,50 @@ export default factories.createCoreController(
             space.completedPct =
               space.modules.filter((m) => m.completedPct === 1).length /
               space.modules.filter((m) => m.moduleType !== "Monitoring").length;
+
+            for await (const module of space.content_modules) {
+              for await (const unit of module.units) {
+                for await (const lesson of unit.lessons) {
+                  const progress = progresses.find(
+                    (progress: any) =>
+                      progress.topicId === lesson.topicId &&
+                      progress.moduleId === module.moduleId
+                  );
+                  if (progress) {
+                    lesson.completed = true;
+                  } else {
+                    lesson.completed = false;
+                  }
+                }
+                if (
+                  unit.lessons &&
+                  unit.lessons.length
+                ) {
+                  unit.completedPct =
+                    unit.lessons && unit.lessons.length
+                      ? unit.lessons.filter((lesson: any) => lesson.completed)
+                          .length / unit.lessons.length
+                      : 0;
+                } else {
+                  const progress = progresses.find(
+                    (progress: any) =>
+                      progress.topicId === null && progress.moduleId === module.moduleId
+                  );
+                  if (progress) {
+                    unit.completed = true;
+                    unit.completedPct = 1;
+                  } else {
+                    unit.completed = false;
+                    unit.completedPct = 0;
+                  }
+                }
+              }
+            }
+            if (space.content_modules && space.content_modules.length) {
+              space.contentCompletedPct =
+                space.content_modules.filter((m) => m.completedPct === 1).length /
+                space.content_modules.length;
+            }
 
             const submissions = await strapi.entityService.findMany(
               "api::submission.submission",
@@ -203,6 +257,8 @@ export default factories.createCoreController(
               "modules.contents",
               "modules.contents.media",
               "banner",
+              "bannerIntro",
+              "bannerOther",
               "modules.topics.contents",
               "modules.topics.contents.media",
               "localizations",

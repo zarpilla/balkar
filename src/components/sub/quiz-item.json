@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_sub_quiz_items",
+  "info": {
+    "displayName": "QuizItem",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "answer": {
+      "type": "text"
+    },
+    "options": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sub.quiz-question-item"
+    }
+  }
+}

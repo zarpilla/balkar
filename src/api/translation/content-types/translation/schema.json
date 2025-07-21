@@ -14,7 +14,7 @@
   "attributes": {
     "key": {
       "type": "uid",
-      "targetField": "ca"
+      "targetField": "en"
     },
     "en": {
       "type": "text"

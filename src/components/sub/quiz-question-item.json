@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_sub_quiz_question_items",
+  "info": {
+    "displayName": "QuizQuestionItem"
+  },
+  "options": {},
+  "attributes": {
+    "option": {
+      "type": "string"
+    },
+    "correct": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

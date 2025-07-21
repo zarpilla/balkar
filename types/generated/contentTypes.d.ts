@@ -569,6 +569,23 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    bannerIntro: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    bannerOther: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    content_modules: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToMany',
+      'api::module.module'
+    >;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::learning-space.learning-space',
@@ -587,6 +604,12 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'oneToOne',
       'api::forum.forum'
     >;
+    free: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     global: Attribute.Boolean &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -607,6 +630,12 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         };
       }>;
     name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    nameMore: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -654,6 +683,77 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'manyToMany',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiLessonLesson extends Schema.CollectionType {
+  collectionName: 'lessons';
+  info: {
+    description: '';
+    displayName: 'Lesson';
+    pluralName: 'lessons';
+    singularName: 'lesson';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Attribute.DynamicZone<
+      ['content.text', 'content.image', 'content.video', 'content.accordion']
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::lesson.lesson',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::lesson.lesson',
+      'oneToMany',
+      'api::lesson.lesson'
+    >;
+    publishedAt: Attribute.DateTime;
+    quiz: Attribute.Relation<
+      'api::lesson.lesson',
+      'oneToOne',
+      'api::quiz.quiz'
+    >;
+    shortTitle: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    unit: Attribute.Relation<
+      'api::lesson.lesson',
+      'manyToOne',
+      'api::unit.unit'
+    >;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::lesson.lesson',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
   };
 }
 
@@ -748,6 +848,83 @@ export interface ApiMessageMessage extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiModuleModule extends Schema.CollectionType {
+  collectionName: 'modules';
+  info: {
+    description: '';
+    displayName: 'Module';
+    pluralName: 'modules';
+    singularName: 'module';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Attribute.DynamicZone<
+      ['content.text', 'content.image', 'content.video']
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::module.module',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    learning_space: Attribute.Relation<
+      'api::module.module',
+      'manyToOne',
+      'api::learning-space.learning-space'
+    >;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::module.module',
+      'oneToMany',
+      'api::module.module'
+    >;
+    menuTitle: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    publishedAt: Attribute.DateTime;
+    shortTitle: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    units: Attribute.Relation<
+      'api::module.module',
+      'oneToMany',
+      'api::unit.unit'
+    >;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::module.module',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
   };
 }
 
@@ -877,8 +1054,23 @@ export interface ApiProgressProgress extends Schema.CollectionType {
       'oneToOne',
       'api::learning-space.learning-space'
     >;
+    lesson: Attribute.Relation<
+      'api::progress.progress',
+      'oneToOne',
+      'api::lesson.lesson'
+    >;
+    module: Attribute.Relation<
+      'api::progress.progress',
+      'oneToOne',
+      'api::module.module'
+    >;
     moduleId: Attribute.String;
     topicId: Attribute.String;
+    unit: Attribute.Relation<
+      'api::progress.progress',
+      'oneToOne',
+      'api::unit.unit'
+    >;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::progress.progress',
@@ -891,6 +1083,56 @@ export interface ApiProgressProgress extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiQuizQuiz extends Schema.CollectionType {
+  collectionName: 'quizzes';
+  info: {
+    displayName: 'Quiz';
+    pluralName: 'quizzes';
+    singularName: 'quiz';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::quiz.quiz', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    introduction: Attribute.Blocks &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::quiz.quiz',
+      'oneToMany',
+      'api::quiz.quiz'
+    >;
+    publishedAt: Attribute.DateTime;
+    questions: Attribute.Component<'sub.quiz-item', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<'api::quiz.quiz', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
   };
 }
 
@@ -957,13 +1199,80 @@ export interface ApiTranslationTranslation extends Schema.CollectionType {
       Attribute.Private;
     en: Attribute.Text;
     enHtml: Attribute.RichText;
-    key: Attribute.UID<'api::translation.translation', 'ca'>;
+    key: Attribute.UID<'api::translation.translation', 'en'>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::translation.translation',
       'oneToOne',
       'admin::user'
     > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUnitUnit extends Schema.CollectionType {
+  collectionName: 'units';
+  info: {
+    description: '';
+    displayName: 'Unit';
+    pluralName: 'units';
+    singularName: 'unit';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Attribute.Blocks &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::unit.unit', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    lessons: Attribute.Relation<
+      'api::unit.unit',
+      'oneToMany',
+      'api::lesson.lesson'
+    >;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::unit.unit',
+      'oneToMany',
+      'api::unit.unit'
+    >;
+    menuTitle: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    module: Attribute.Relation<
+      'api::unit.unit',
+      'manyToOne',
+      'api::module.module'
+    >;
+    publishedAt: Attribute.DateTime;
+    shortTitle: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<'api::unit.unit', 'oneToOne', 'admin::user'> &
       Attribute.Private;
   };
 }
@@ -1465,14 +1774,18 @@ declare module '@strapi/types' {
       'api::forum.forum': ApiForumForum;
       'api::interest.interest': ApiInterestInterest;
       'api::learning-space.learning-space': ApiLearningSpaceLearningSpace;
+      'api::lesson.lesson': ApiLessonLesson;
       'api::mention.mention': ApiMentionMention;
       'api::message.message': ApiMessageMessage;
+      'api::module.module': ApiModuleModule;
       'api::payment-intent.payment-intent': ApiPaymentIntentPaymentIntent;
       'api::pre-enrollement.pre-enrollement': ApiPreEnrollementPreEnrollement;
       'api::product.product': ApiProductProduct;
       'api::progress.progress': ApiProgressProgress;
+      'api::quiz.quiz': ApiQuizQuiz;
       'api::submission.submission': ApiSubmissionSubmission;
       'api::translation.translation': ApiTranslationTranslation;
+      'api::unit.unit': ApiUnitUnit;
       'api::user-avatar.user-avatar': ApiUserAvatarUserAvatar;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

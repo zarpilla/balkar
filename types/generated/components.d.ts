@@ -1,5 +1,46 @@
 import type { Attribute, Schema } from '@strapi/strapi';
 
+export interface ContentAccordion extends Schema.Component {
+  collectionName: 'components_content_accordions';
+  info: {
+    description: '';
+    displayName: 'Accordion';
+  };
+  attributes: {
+    items: Attribute.Component<'sub.accordion-item', true>;
+  };
+}
+
+export interface ContentImage extends Schema.Component {
+  collectionName: 'components_content_images';
+  info: {
+    displayName: 'Image';
+  };
+  attributes: {};
+}
+
+export interface ContentText extends Schema.Component {
+  collectionName: 'components_content_texts';
+  info: {
+    displayName: 'Text';
+  };
+  attributes: {
+    text: Attribute.Blocks;
+    title: Attribute.String;
+  };
+}
+
+export interface ContentVideo extends Schema.Component {
+  collectionName: 'components_content_videos';
+  info: {
+    displayName: 'Video';
+  };
+  attributes: {
+    url: Attribute.String;
+    video: Attribute.Media<'videos'>;
+  };
+}
+
 export interface SpacesContent extends Schema.Component {
   collectionName: 'components_spaces_contents';
   info: {
@@ -43,12 +84,55 @@ export interface SpacesTopic extends Schema.Component {
   };
 }
 
+export interface SubAccordionItem extends Schema.Component {
+  collectionName: 'components_sub_accordion_items';
+  info: {
+    displayName: 'AccordionItem';
+  };
+  attributes: {
+    text: Attribute.Blocks;
+    title: Attribute.String;
+  };
+}
+
+export interface SubQuizItem extends Schema.Component {
+  collectionName: 'components_sub_quiz_items';
+  info: {
+    description: '';
+    displayName: 'QuizItem';
+  };
+  attributes: {
+    answer: Attribute.Text;
+    options: Attribute.Component<'sub.quiz-question-item', true>;
+    question: Attribute.String;
+    title: Attribute.String;
+  };
+}
+
+export interface SubQuizQuestionItem extends Schema.Component {
+  collectionName: 'components_sub_quiz_question_items';
+  info: {
+    displayName: 'QuizQuestionItem';
+  };
+  attributes: {
+    correct: Attribute.Boolean & Attribute.DefaultTo<false>;
+    option: Attribute.String;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
+      'content.accordion': ContentAccordion;
+      'content.image': ContentImage;
+      'content.text': ContentText;
+      'content.video': ContentVideo;
       'spaces.content': SpacesContent;
       'spaces.module': SpacesModule;
       'spaces.topic': SpacesTopic;
+      'sub.accordion-item': SubAccordionItem;
+      'sub.quiz-item': SubQuizItem;
+      'sub.quiz-question-item': SubQuizQuestionItem;
     }
   }
 }
