@@ -1,0 +1,13 @@
+.tmp/
+.cache/
+.git/
+node_modules/
+build/
+.strapi-updater.json
+*.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+database-data/
