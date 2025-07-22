@@ -50,6 +50,7 @@ async function start() {
         "api::translation.translation": ["find"],
         "api::enrollment.enrollment": ["enroll", "autoenroll"],
         "api::progress.progress": ["complete", "notcomplete"],
+        "api::bookmark.bookmark": ["create", "delete"],
         "api::submission.submission": ["create", "delete"],
         "api::forum.forum": ["find", "findOne", "findUid"],
         "api::channel.channel": ["findMessages"],

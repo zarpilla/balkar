@@ -391,6 +391,60 @@ export interface ApiAdministrationAdministration extends Schema.SingleType {
   };
 }
 
+export interface ApiBookmarkBookmark extends Schema.CollectionType {
+  collectionName: 'bookmarks';
+  info: {
+    description: '';
+    displayName: 'Bookmark';
+    pluralName: 'bookmarks';
+    singularName: 'bookmark';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::bookmark.bookmark',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    learning_space: Attribute.Relation<
+      'api::bookmark.bookmark',
+      'oneToOne',
+      'api::learning-space.learning-space'
+    >;
+    lesson: Attribute.Relation<
+      'api::bookmark.bookmark',
+      'oneToOne',
+      'api::lesson.lesson'
+    >;
+    module: Attribute.Relation<
+      'api::bookmark.bookmark',
+      'oneToOne',
+      'api::module.module'
+    >;
+    unit: Attribute.Relation<
+      'api::bookmark.bookmark',
+      'oneToOne',
+      'api::unit.unit'
+    >;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::bookmark.bookmark',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    users_permissions_user: Attribute.Relation<
+      'api::bookmark.bookmark',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiChannelChannel extends Schema.CollectionType {
   collectionName: 'channels';
   info: {
@@ -1227,7 +1281,9 @@ export interface ApiUnitUnit extends Schema.CollectionType {
     };
   };
   attributes: {
-    content: Attribute.Blocks &
+    content: Attribute.DynamicZone<
+      ['content.video', 'content.text', 'content.image', 'content.accordion']
+    > &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1769,6 +1825,7 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::administration.administration': ApiAdministrationAdministration;
+      'api::bookmark.bookmark': ApiBookmarkBookmark;
       'api::channel.channel': ApiChannelChannel;
       'api::enrollment.enrollment': ApiEnrollmentEnrollment;
       'api::forum.forum': ApiForumForum;

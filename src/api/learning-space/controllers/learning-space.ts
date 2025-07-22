@@ -27,21 +27,31 @@ export default factories.createCoreController(
               "bannerIntro",
               "bannerOther",
               "modules.topics.contents",
-              "modules.topics.contents.media",              
+              "modules.topics.contents.media",
               "product",
               "localizations",
               "content_modules",
               "content_modules.units",
               "content_modules.units.lessons",
+              "content_modules.units.content",
+              "content_modules.units.content.image",
+              "content_modules.units.content.video",
+              "content_modules.units.content.thumbnail",
+              "content_modules.units.content.transcript",
+              "content_modules.units.content.items",
               "content_modules.units.lessons.quiz",
               "content_modules.units.lessons.content",
+              "content_modules.units.lessons.content.image",
+              "content_modules.units.lessons.content.video",
+              "content_modules.units.lessons.content.thumbnail",
+              "content_modules.units.lessons.content.transcript",
+              "content_modules.units.lessons.content.items",
             ],
-            locale: ctx.query.locale || "ca",            
+            locale: ctx.query.locale || "ca",
           }
         );
 
-        const spaceForums = []
-
+        const spaceForums = [];
 
         if (spaces.length === 0) {
           ctx.status = 504;
@@ -49,7 +59,10 @@ export default factories.createCoreController(
         } else {
           const space: any = spaces[0];
 
-          const spacesLocalized = [space.id, ...space.localizations.map((l: any) => l.id)];
+          const spacesLocalized = [
+            space.id,
+            ...space.localizations.map((l: any) => l.id),
+          ];
 
           space.product = space.product ? { id: space.product.id } : null;
 
@@ -64,12 +77,12 @@ export default factories.createCoreController(
                 filters: {
                   users_permissions_user: ctx.state.user.id,
                 },
-                populate: ["learning_space"],                
+                populate: ["learning_space"],
               }
             );
 
-            const enrollment = enrollments.find(
-              (enrollment) => spacesLocalized.includes(enrollment.learning_space.id)
+            const enrollment = enrollments.find((enrollment) =>
+              spacesLocalized.includes(enrollment.learning_space.id)
             );
 
             if (enrollment) {
@@ -86,14 +99,12 @@ export default factories.createCoreController(
                   learning_space: {
                     id: {
                       $in: spacesLocalized,
-                    }
+                    },
                   },
                 },
+                populate: ["module", "unit", "lesson"],
               }
             );
-
-            console.log('space.modules', space.modules.length)
-            console.log('space.content_modules', space.content_modules.length) 
 
             for await (const module of space.modules) {
               for await (const topic of module.topics) {
@@ -121,7 +132,8 @@ export default factories.createCoreController(
               } else if (module.moduleType !== "Monitoring") {
                 const progress = progresses.find(
                   (progress: any) =>
-                    progress.topicId === null && progress.moduleId === module.moduleId
+                    progress.topicId === null &&
+                    progress.moduleId === module.moduleId
                 );
                 if (progress) {
                   module.completed = true;
@@ -137,48 +149,89 @@ export default factories.createCoreController(
               space.modules.filter((m) => m.completedPct === 1).length /
               space.modules.filter((m) => m.moduleType !== "Monitoring").length;
 
+            const completed = [];
+            const notCompleted = [];
+
+            const bookmarks = await strapi.entityService.findMany(
+              "api::bookmark.bookmark",
+              {
+                filters: {
+                  users_permissions_user: ctx.state.user.id,
+                  learning_space: space.id,
+                },
+                populate: ["module", "unit", "lesson"],
+              }
+            );
+
             for await (const module of space.content_modules) {
               for await (const unit of module.units) {
                 for await (const lesson of unit.lessons) {
                   const progress = progresses.find(
                     (progress: any) =>
-                      progress.topicId === lesson.topicId &&
-                      progress.moduleId === module.moduleId
+                      progress.lesson && progress.lesson.id === lesson.id
                   );
                   if (progress) {
                     lesson.completed = true;
+                    completed.push(lesson);
                   } else {
                     lesson.completed = false;
+                    notCompleted.push(lesson);
+                  }
+
+                  const bookmark = bookmarks.find(
+                    (bookmark: any) =>
+                      bookmark.lesson && bookmark.lesson.id === lesson.id
+                  );
+                  if (bookmark) {
+                    lesson.bookmarked = true;
+                  } else {
+                    lesson.bookmarked = false;
                   }
                 }
-                if (
-                  unit.lessons &&
-                  unit.lessons.length
-                ) {
+                if (unit.lessons && unit.lessons.length) {
                   unit.completedPct =
                     unit.lessons && unit.lessons.length
                       ? unit.lessons.filter((lesson: any) => lesson.completed)
                           .length / unit.lessons.length
                       : 0;
+                  unit.completed = unit.completedPct === 1;
                 } else {
                   const progress = progresses.find(
                     (progress: any) =>
-                      progress.topicId === null && progress.moduleId === module.moduleId
+                      progress.unit && progress.unit.id === unit.id
                   );
                   if (progress) {
                     unit.completed = true;
                     unit.completedPct = 1;
+                    completed.push(unit);
                   } else {
                     unit.completed = false;
                     unit.completedPct = 0;
+                    notCompleted.push(unit);
                   }
                 }
+
+                const bookmark = bookmarks.find(
+                  (bookmark: any) =>
+                    bookmark.unit && bookmark.unit.id === unit.id
+                );
+                if (bookmark) {
+                  unit.bookmarked = true;
+                } else {
+                  unit.bookmarked = false;
+                }
               }
+              module.completedPct =
+                module.units.filter((u) => u.completedPct === 1).length /
+                module.units.length;
             }
             if (space.content_modules && space.content_modules.length) {
               space.contentCompletedPct =
-                space.content_modules.filter((m) => m.completedPct === 1).length /
-                space.content_modules.length;
+                space.content_modules.filter((m) => m.completedPct === 1)
+                  .length / space.content_modules.length;
+
+              space.contentCompleted = completed.length;
+              space.contentNotCompleted = notCompleted.length;
             }
 
             const submissions = await strapi.entityService.findMany(
@@ -208,14 +261,13 @@ export default factories.createCoreController(
                   learning_space: {
                     id: {
                       $in: spacesLocalized,
-                    }
+                    },
                   },
                 },
               }
             );
 
             spaceForums.push(...forums);
-
           }
           const sanitizedResults: any = await sanitize.contentAPI.output(
             space,
@@ -267,11 +319,11 @@ export default factories.createCoreController(
           }
         );
 
-        const spacesUid = spaces.map((space: any) => space.uid);        
+        const spacesUid = spaces.map((space: any) => space.uid);
 
         const spacesEnrolled = spaces.map((space: any) => {
-          const enrollment = enrollments.find(
-            (enrollment) => spacesUid.includes(enrollment.learning_space.uid)
+          const enrollment = enrollments.find((enrollment) =>
+            spacesUid.includes(enrollment.learning_space.uid)
           );
           if (enrollment) {
             space.enrolled = true;
@@ -280,8 +332,8 @@ export default factories.createCoreController(
             space.enrolled = false;
             // return false;
           }
-          return space
-        })
+          return space;
+        });
 
         const progresses = await strapi.entityService.findMany(
           "api::progress.progress",
@@ -345,11 +397,11 @@ export default factories.createCoreController(
     fixSubmissions: async (ctx, next) => {
       const spaces = await strapi.entityService.findMany(
         "api::learning-space.learning-space",
-        {          
+        {
           populate: ["modules", "modules.topics"],
         }
-      )
-      
+      );
+
       const progresses = await strapi.entityService.findMany(
         "api::progress.progress",
         {
@@ -358,20 +410,35 @@ export default factories.createCoreController(
         }
       );
 
-      const response = []
-      for await (const progress of progresses) {        
-        const space = spaces.find((s: any) => s.id === progress.learning_space.id);
+      const response = [];
+      for await (const progress of progresses) {
+        const space = spaces.find(
+          (s: any) => s.id === progress.learning_space.id
+        );
         for await (const module of (space as any).modules) {
           if (progress.topicId) {
-            for await (const topic of (module  as any).topics) {
-              if (progress.topicId === topic.id.toString() && progress.moduleId === module.id.toString()) {
-                const resp = await strapi.entityService.update("api::progress.progress", progress.id, { data: { topicId: topic.topicId, moduleId: module.moduleId } });
+            for await (const topic of (module as any).topics) {
+              if (
+                progress.topicId === topic.id.toString() &&
+                progress.moduleId === module.id.toString()
+              ) {
+                const resp = await strapi.entityService.update(
+                  "api::progress.progress",
+                  progress.id,
+                  {
+                    data: { topicId: topic.topicId, moduleId: module.moduleId },
+                  }
+                );
                 response.push(resp);
               }
             }
           } else {
             if (progress.moduleId === module.id.toString()) {
-              const resp = await strapi.entityService.update("api::progress.progress", progress.id, { data: { moduleId: module.moduleId } });
+              const resp = await strapi.entityService.update(
+                "api::progress.progress",
+                progress.id,
+                { data: { moduleId: module.moduleId } }
+              );
               response.push(resp);
             }
           }
@@ -387,18 +454,22 @@ export default factories.createCoreController(
       );
 
       for await (const submission of submissions) {
-        const space = spaces.find((s: any) => s.id === submission.learning_space.id);
+        const space = spaces.find(
+          (s: any) => s.id === submission.learning_space.id
+        );
         for await (const module of (space as any).modules) {
           if (submission.moduleId === module.id.toString()) {
-            const resp = await strapi.entityService.update("api::submission.submission", submission.id, { data: { moduleId: module.moduleId } });
+            const resp = await strapi.entityService.update(
+              "api::submission.submission",
+              submission.id,
+              { data: { moduleId: module.moduleId } }
+            );
             response.push(resp);
           }
         }
       }
 
-
       ctx.body = { ok: true };
-
-    }
+    },
   })
 );

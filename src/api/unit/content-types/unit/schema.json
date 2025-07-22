@@ -58,7 +58,13 @@
           "localized": true
         }
       },
-      "type": "blocks"
+      "type": "dynamiczone",
+      "components": [
+        "content.video",
+        "content.text",
+        "content.image",
+        "content.accordion"
+      ]
     }
   }
 }

@@ -7,6 +7,7 @@ export interface ContentAccordion extends Schema.Component {
     displayName: 'Accordion';
   };
   attributes: {
+    color: Attribute.Enumeration<['primary', 'secondary', 'tertiary', 'loop']>;
     items: Attribute.Component<'sub.accordion-item', true>;
   };
 }
@@ -14,9 +15,12 @@ export interface ContentAccordion extends Schema.Component {
 export interface ContentImage extends Schema.Component {
   collectionName: 'components_content_images';
   info: {
+    description: '';
     displayName: 'Image';
   };
-  attributes: {};
+  attributes: {
+    image: Attribute.Media<'images'>;
+  };
 }
 
 export interface ContentText extends Schema.Component {
@@ -33,9 +37,13 @@ export interface ContentText extends Schema.Component {
 export interface ContentVideo extends Schema.Component {
   collectionName: 'components_content_videos';
   info: {
+    description: '';
     displayName: 'Video';
   };
   attributes: {
+    thumbnail: Attribute.Media<'images'>;
+    title: Attribute.String;
+    transcript: Attribute.Media<'files'>;
     url: Attribute.String;
     video: Attribute.Media<'videos'>;
   };

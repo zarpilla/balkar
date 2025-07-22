@@ -46,12 +46,12 @@ export default factories.createCoreController(
         }
       } else if (
         ctx.request.body.data.module &&
-        ctx.request.body.data.unit &&
-        ctx.request.body.data.lesson
+        ctx.request.body.data.unit 
+        //&& ctx.request.body.data.lesson
       ) {
-        const moduleId = ctx.request.body.data.module.id;
-        const unitId = ctx.request.body.data.unit.id;
-        const lessonId = ctx.request.body.data.lesson.id;
+        const moduleId = ctx.request.body.data.module;
+        const unitId = ctx.request.body.data.unit;
+        const lessonId = ctx.request.body.data.lesson;
         const spaces = await strapi.entityService.findMany(
           "api::learning-space.learning-space",
           {
@@ -133,12 +133,12 @@ export default factories.createCoreController(
         ctx.body = { ok: true };
       } else if (
         ctx.request.body.data.module &&
-        ctx.request.body.data.unit &&
-        ctx.request.body.data.lesson
+        ctx.request.body.data.unit 
+        // && ctx.request.body.data.lesson
       ) {
-        const moduleId = ctx.request.body.data.module.id;
-        const unitId = ctx.request.body.data.unit.id;
-        const lessonId = ctx.request.body.data.lesson.id;
+        const moduleId = ctx.request.body.data.module;
+        const unitId = ctx.request.body.data.unit;
+        const lessonId = ctx.request.body.data.lesson;
         const spaces = await strapi.entityService.findMany(
           "api::learning-space.learning-space",
           {
@@ -152,9 +152,11 @@ export default factories.createCoreController(
           users_permissions_user: userId,
           learning_space: space.id,
           module: moduleId,
-          unit: unitId,
-          lesson: lessonId,
+          unit: unitId
         };
+        if (lessonId) {
+          filters["lesson"] = lessonId;
+        }
         const progresses = await strapi.entityService.findMany(
           "api::progress.progress",
           {
