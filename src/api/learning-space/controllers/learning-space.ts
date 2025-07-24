@@ -38,14 +38,20 @@ export default factories.createCoreController(
               "content_modules.units.content.video",
               "content_modules.units.content.thumbnail",
               "content_modules.units.content.transcript",
+              "content_modules.units.content.quiz",
+              "content_modules.units.content.quiz.questions",
+              "content_modules.units.content.quiz.questions.options",
               "content_modules.units.content.items",
-              "content_modules.units.lessons.quiz",
+              "content_modules.units.content.questions",
               "content_modules.units.lessons.content",
               "content_modules.units.lessons.content.image",
               "content_modules.units.lessons.content.video",
               "content_modules.units.lessons.content.thumbnail",
               "content_modules.units.lessons.content.transcript",
               "content_modules.units.lessons.content.items",
+              "content_modules.units.lessons.content.quiz",
+              "content_modules.units.lessons.content.quiz.questions",
+              "content_modules.units.lessons.content.quiz.questions.options",
             ],
             locale: ctx.query.locale || "ca",
           }
@@ -269,17 +275,19 @@ export default factories.createCoreController(
 
             spaceForums.push(...forums);
           }
-          const sanitizedResults: any = await sanitize.contentAPI.output(
-            space,
-            contentType,
-            { auth: ctx.state.auth }
-          );
+          // const sanitizedResults: any = await sanitize.contentAPI.output(
+          //   space,
+          //   contentType,
+          //   { auth: ctx.state.auth }
+          // );
 
-          if (spaceForums.length) {
-            sanitizedResults.forum = spaceForums[0];
-          }
+          // if (spaceForums.length) {
+          //   sanitizedResults.forum = spaceForums[0];
+          // }
 
-          ctx.body = sanitizedResults;
+          space.forum = spaceForums[0];
+
+          ctx.body = space;
         }
       } catch (err) {
         ctx.body = err;

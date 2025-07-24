@@ -63,7 +63,8 @@
         "content.video",
         "content.text",
         "content.image",
-        "content.accordion"
+        "content.accordion",
+        "content.quiz"
       ]
     }
   }

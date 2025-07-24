@@ -758,7 +758,13 @@ export interface ApiLessonLesson extends Schema.CollectionType {
   };
   attributes: {
     content: Attribute.DynamicZone<
-      ['content.text', 'content.image', 'content.video', 'content.accordion']
+      [
+        'content.text',
+        'content.image',
+        'content.video',
+        'content.accordion',
+        'content.quiz'
+      ]
     > &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -779,11 +785,6 @@ export interface ApiLessonLesson extends Schema.CollectionType {
       'api::lesson.lesson'
     >;
     publishedAt: Attribute.DateTime;
-    quiz: Attribute.Relation<
-      'api::lesson.lesson',
-      'oneToOne',
-      'api::quiz.quiz'
-    >;
     shortTitle: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -1282,7 +1283,13 @@ export interface ApiUnitUnit extends Schema.CollectionType {
   };
   attributes: {
     content: Attribute.DynamicZone<
-      ['content.video', 'content.text', 'content.image', 'content.accordion']
+      [
+        'content.video',
+        'content.text',
+        'content.image',
+        'content.accordion',
+        'content.quiz'
+      ]
     > &
       Attribute.SetPluginOptions<{
         i18n: {

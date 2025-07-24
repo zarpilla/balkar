@@ -35,13 +35,9 @@
         "content.text",
         "content.image",
         "content.video",
-        "content.accordion"
+        "content.accordion",
+        "content.quiz"
       ]
-    },
-    "quiz": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::quiz.quiz"
     },
     "shortTitle": {
       "pluginOptions": {

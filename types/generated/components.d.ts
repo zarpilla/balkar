@@ -23,6 +23,16 @@ export interface ContentImage extends Schema.Component {
   };
 }
 
+export interface ContentQuiz extends Schema.Component {
+  collectionName: 'components_content_quizzes';
+  info: {
+    displayName: 'Quiz';
+  };
+  attributes: {
+    quiz: Attribute.Relation<'content.quiz', 'oneToOne', 'api::quiz.quiz'>;
+  };
+}
+
 export interface ContentText extends Schema.Component {
   collectionName: 'components_content_texts';
   info: {
@@ -133,6 +143,7 @@ declare module '@strapi/types' {
     export interface Components {
       'content.accordion': ContentAccordion;
       'content.image': ContentImage;
+      'content.quiz': ContentQuiz;
       'content.text': ContentText;
       'content.video': ContentVideo;
       'spaces.content': SpacesContent;
