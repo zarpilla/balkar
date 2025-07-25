@@ -52,14 +52,15 @@ async function start() {
         "api::progress.progress": ["complete", "notcomplete"],
         "api::bookmark.bookmark": ["create", "delete"],
         "api::submission.submission": ["create", "delete"],
-        "api::forum.forum": ["find", "findOne", "findUid"],
-        "api::channel.channel": ["findMessages"],
+        "api::forum.forum": ["find", "findOne", "findUid", "getUnreadCounts", "markChannelAsRead", "markChannelAsReadAll"],
+        "api::channel.channel": ["findMessages", "createPrivateChannel"],
         "api::message.message": ["create", "find", "findOne", "findChildren", "update", "delete"],
         "api::interest.interest": ["find", "findOne"],
         "plugin::users-permissions.user": ["update"],
         "api::user-avatar.user-avatar": ["find", "findOne", "create", "update", "delete", "findMine"],
         "api::product.product": ["find", "findOne"],
         "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent"],
+        "api::user-channel-read.user-channel-read": ["getChannelReadStatus", "getUserReadStatuses"],
       }
     );
 

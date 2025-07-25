@@ -885,6 +885,7 @@ export interface ApiMessageMessage extends Schema.CollectionType {
     > &
       Attribute.Private;
     file: Attribute.Media<'images' | 'videos' | 'audios' | 'files'>;
+    message_order: Attribute.BigInteger;
     parent: Attribute.Relation<
       'api::message.message',
       'manyToOne',
@@ -1191,6 +1192,44 @@ export interface ApiQuizQuiz extends Schema.CollectionType {
   };
 }
 
+export interface ApiSpaceManagerSpaceManager extends Schema.CollectionType {
+  collectionName: 'space_managers';
+  info: {
+    displayName: 'SpaceManager';
+    pluralName: 'space-managers';
+    singularName: 'space-manager';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::space-manager.space-manager',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    learning_space: Attribute.Relation<
+      'api::space-manager.space-manager',
+      'oneToOne',
+      'api::learning-space.learning-space'
+    >;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::space-manager.space-manager',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    user: Attribute.Relation<
+      'api::space-manager.space-manager',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiSubmissionSubmission extends Schema.CollectionType {
   collectionName: 'submissions';
   info: {
@@ -1372,6 +1411,54 @@ export interface ApiUserAvatarUserAvatar extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiUserChannelReadUserChannelRead
+  extends Schema.CollectionType {
+  collectionName: 'user_channel_reads';
+  info: {
+    description: 'Tracks the last message read by each user in each channel';
+    displayName: 'User Channel Read';
+    pluralName: 'user-channel-reads';
+    singularName: 'user-channel-read';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    channel: Attribute.Relation<
+      'api::user-channel-read.user-channel-read',
+      'manyToOne',
+      'api::channel.channel'
+    > &
+      Attribute.Required;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-channel-read.user-channel-read',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    last_read_at: Attribute.DateTime & Attribute.Required;
+    last_read_message: Attribute.Relation<
+      'api::user-channel-read.user-channel-read',
+      'manyToOne',
+      'api::message.message'
+    >;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::user-channel-read.user-channel-read',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    user: Attribute.Relation<
+      'api::user-channel-read.user-channel-read',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Attribute.Required;
   };
 }
 
@@ -1757,6 +1844,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
+    allowPrivateMessages: Attribute.Boolean;
     avatar: Attribute.Media<'images'>;
     blocked: Attribute.Boolean & Attribute.DefaultTo<false>;
     confirmationToken: Attribute.String & Attribute.Private;
@@ -1786,6 +1874,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::learning-space.learning-space'
     >;
     location: Attribute.String;
+    manager: Attribute.Boolean;
     name: Attribute.String;
     organization: Attribute.String;
     password: Attribute.Password &
@@ -1847,10 +1936,12 @@ declare module '@strapi/types' {
       'api::product.product': ApiProductProduct;
       'api::progress.progress': ApiProgressProgress;
       'api::quiz.quiz': ApiQuizQuiz;
+      'api::space-manager.space-manager': ApiSpaceManagerSpaceManager;
       'api::submission.submission': ApiSubmissionSubmission;
       'api::translation.translation': ApiTranslationTranslation;
       'api::unit.unit': ApiUnitUnit;
       'api::user-avatar.user-avatar': ApiUserAvatarUserAvatar;
+      'api::user-channel-read.user-channel-read': ApiUserChannelReadUserChannelRead;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

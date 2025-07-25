@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "space_managers",
+  "info": {
+    "singularName": "space-manager",
+    "pluralName": "space-managers",
+    "displayName": "SpaceManager"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "learning_space": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-space.learning-space"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

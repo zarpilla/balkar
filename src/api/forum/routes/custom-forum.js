@@ -1,14 +1,5 @@
-/**
- * account router
- */
-
-export default {
+module.exports = {
   routes: [
-    {
-      method: "GET",
-      path: "/forums/uid/:uid",
-      handler: "forum.findUid",
-    },
     {
       method: 'GET',
       path: '/forums/unread-counts',
@@ -39,5 +30,5 @@ export default {
         }
       }
     }
-  ],
+  ]
 };

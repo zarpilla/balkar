@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_channel_reads",
+  "info": {
+    "singularName": "user-channel-read",
+    "pluralName": "user-channel-reads",
+    "displayName": "User Channel Read",
+    "description": "Tracks the last message read by each user in each channel"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "channel": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::channel.channel",
+      "required": true
+    },
+    "last_read_message": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::message.message"
+    },
+    "last_read_at": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}

@@ -47,6 +47,10 @@
         "audios",
         "files"
       ]
+    },
+    "message_order": {
+      "type": "biginteger",
+      "required": false
     }
   }
 }

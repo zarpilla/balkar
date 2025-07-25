@@ -104,6 +104,12 @@
     },
     "organization": {
       "type": "string"
+    },
+    "allowPrivateMessages": {
+      "type": "boolean"
+    },
+    "manager": {
+      "type": "boolean"
     }
   }
 }

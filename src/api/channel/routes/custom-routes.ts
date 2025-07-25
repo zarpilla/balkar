@@ -13,6 +13,11 @@ export default {
       method: "GET",
       path: "/channels/user/:forumid/:userid",
       handler: "channel.findUserMessages",
+    },
+    {
+      method: "POST",
+      path: "/channels/private",
+      handler: "channel.createPrivateChannel",
     }
   ],
 };
