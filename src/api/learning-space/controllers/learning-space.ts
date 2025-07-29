@@ -53,7 +53,7 @@ export default factories.createCoreController(
               "content_modules.units.lessons.content.quiz.questions",
               "content_modules.units.lessons.content.quiz.questions.options",
             ],
-            locale: ctx.query.locale || "ca",
+            locale: ctx.query.locale || "en",
           }
         );
 
@@ -163,19 +163,61 @@ export default factories.createCoreController(
               {
                 filters: {
                   users_permissions_user: ctx.state.user.id,
-                  learning_space: space.id,
+                  learning_space: {
+                    id: {
+                      $in: spacesLocalized,
+                    },
+                  },
                 },
                 populate: ["module", "unit", "lesson"],
               }
             );
 
+            // Helper functions to match content by UID across all localizations
+            const findProgressByUid = (lesson: any) => {
+              return progresses.find((progress: any) => {
+                if (!progress.lesson) return false;
+                // If the lesson UID matches directly
+                if (progress.lesson.uid === lesson.uid) return true;
+                // If no UID on progress lesson, fall back to ID matching (backward compatibility)
+                return progress.lesson.id === lesson.id;
+              });
+            };
+
+            const findBookmarkByUid = (lesson: any) => {
+              return bookmarks.find((bookmark: any) => {
+                if (!bookmark.lesson) return false;
+                // If the lesson UID matches directly
+                if (bookmark.lesson.uid === lesson.uid) return true;
+                // If no UID on bookmark lesson, fall back to ID matching (backward compatibility)
+                return bookmark.lesson.id === lesson.id;
+              });
+            };
+
+            const findUnitProgressByUid = (unit: any) => {
+              return progresses.find((progress: any) => {
+                if (!progress.unit) return false;
+                // If the unit UID matches directly
+                if (progress.unit.uid === unit.uid) return true;
+                // If no UID on progress unit, fall back to ID matching (backward compatibility)
+                return progress.unit.id === unit.id;
+              });
+            };
+
+            const findUnitBookmarkByUid = (unit: any) => {
+              return bookmarks.find((bookmark: any) => {
+                if (!bookmark.unit) return false;
+                // If the unit UID matches directly
+                if (bookmark.unit.uid === unit.uid) return true;
+                // If no UID on bookmark unit, fall back to ID matching (backward compatibility)
+                return bookmark.unit.id === unit.id;
+              });
+            };
+
             for await (const module of space.content_modules) {
               for await (const unit of module.units) {
                 for await (const lesson of unit.lessons) {
-                  const progress = progresses.find(
-                    (progress: any) =>
-                      progress.lesson && progress.lesson.id === lesson.id
-                  );
+                  const progress = findProgressByUid(lesson);
                   if (progress) {
                     lesson.completed = true;
                     completed.push(lesson);
@@ -184,10 +226,7 @@ export default factories.createCoreController(
                     notCompleted.push(lesson);
                   }
 
-                  const bookmark = bookmarks.find(
-                    (bookmark: any) =>
-                      bookmark.lesson && bookmark.lesson.id === lesson.id
-                  );
+                  const bookmark = findBookmarkByUid(lesson);
                   if (bookmark) {
                     lesson.bookmarked = true;
                   } else {
@@ -202,10 +241,7 @@ export default factories.createCoreController(
                       : 0;
                   unit.completed = unit.completedPct === 1;
                 } else {
-                  const progress = progresses.find(
-                    (progress: any) =>
-                      progress.unit && progress.unit.id === unit.id
-                  );
+                  const progress = findUnitProgressByUid(unit);
                   if (progress) {
                     unit.completed = true;
                     unit.completedPct = 1;
@@ -217,10 +253,7 @@ export default factories.createCoreController(
                   }
                 }
 
-                const bookmark = bookmarks.find(
-                  (bookmark: any) =>
-                    bookmark.unit && bookmark.unit.id === unit.id
-                );
+                const bookmark = findUnitBookmarkByUid(unit);
                 if (bookmark) {
                   unit.bookmarked = true;
                 } else {
@@ -245,7 +278,11 @@ export default factories.createCoreController(
               {
                 filters: {
                   users_permissions_user: ctx.state.user.id,
-                  learning_space: space.id,
+                  learning_space: {
+                    id: {
+                      $in: spacesLocalized,
+                    },
+                  },
                 },
                 populate: ["file"],
               }

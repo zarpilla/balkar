@@ -19,7 +19,9 @@ export default factories.createCoreController(
             sort: { createdAt: "desc" },
             filters: {
               parent: null,
-              channel: ctx.params.id,
+              channel: {
+                uid: ctx.params.uid,
+              }
             },
             populate: [
               "users_permissions_user",

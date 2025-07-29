@@ -6,7 +6,7 @@ export default {
   routes: [
     {
       method: "GET",
-      path: "/channels/messages/:id",
+      path: "/channels/messages/:uid",
       handler: "channel.findMessages",
     },
     {

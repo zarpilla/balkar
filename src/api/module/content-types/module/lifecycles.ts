@@ -1,3 +1,4 @@
+import { before } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 
 export default {
@@ -5,5 +6,5 @@ export default {
     if (!event.params.data.uid) {
       event.params.data.uid = uuidv4();
     }    
-  },
+  }
 };

@@ -8,27 +8,65 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
-  "pluginOptions": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        },
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
     "description": {
-      "type": "richtext"
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        },
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
     "learning_space": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::learning-space.learning-space",
-      "inversedBy": "forum"
+      "inversedBy": "forum",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
     "channels": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::channel.channel",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      },
       "mappedBy": "forum"
+    },
+    "uid": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "string"
     }
   }
 }

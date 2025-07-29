@@ -10,23 +10,36 @@
   "options": {
     "draftAndPublish": false
   },
-  "pluginOptions": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
     "key": {
-      "type": "uid",
-      "targetField": "en"
+      "type": "uid"
     },
-    "en": {
-      "type": "text"
+    "text": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        },
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
-    "ca": {
-      "type": "text"
-    },
-    "enHtml": {
-      "type": "richtext"
-    },
-    "caHtml": {
-      "type": "richtext"
+    "textHtml": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        },
+        "translate": {
+          "translate": "translate"
+        }
+      }
     }
   }
 }

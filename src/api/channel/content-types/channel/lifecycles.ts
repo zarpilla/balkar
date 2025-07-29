@@ -5,5 +5,5 @@ export default {
     if (!event.params.data.uid) {
       event.params.data.uid = uuidv4();
     }    
-  },
+  }
 };

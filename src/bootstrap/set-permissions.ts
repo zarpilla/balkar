@@ -61,6 +61,7 @@ async function start() {
         "api::product.product": ["find", "findOne"],
         "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent"],
         "api::user-channel-read.user-channel-read": ["getChannelReadStatus", "getUserReadStatuses"],
+        "plugin::i18n.locales": ["listLocales"],
       }
     );
 
@@ -71,6 +72,8 @@ async function start() {
         "api::learning-space.learning-space": ["findUid"],        
         "api::pre-enrollement.pre-enrollement": ["create"],
         "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent", "sendPaymentEmails"],
+        // i18n listLocales
+        "plugin::i18n.locales": ["listLocales"],
       }
 
     );

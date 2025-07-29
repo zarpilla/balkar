@@ -454,7 +454,12 @@ export interface ApiChannelChannel extends Schema.CollectionType {
     singularName: 'channel';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     createdAt: Attribute.DateTime;
@@ -468,10 +473,39 @@ export interface ApiChannelChannel extends Schema.CollectionType {
       'api::channel.channel',
       'manyToOne',
       'api::forum.forum'
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::channel.channel',
+      'oneToMany',
+      'api::channel.channel'
     >;
-    name: Attribute.String;
-    order: Attribute.Integer;
-    publishedAt: Attribute.DateTime;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    order: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    uid: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::channel.channel',
@@ -483,7 +517,12 @@ export interface ApiChannelChannel extends Schema.CollectionType {
       'api::channel.channel',
       'oneToMany',
       'plugin::users-permissions.user'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
   };
 }
 
@@ -536,14 +575,24 @@ export interface ApiForumForum extends Schema.CollectionType {
     singularName: 'forum';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     channels: Attribute.Relation<
       'api::forum.forum',
       'oneToMany',
       'api::channel.channel'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::forum.forum',
@@ -551,14 +600,46 @@ export interface ApiForumForum extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
-    description: Attribute.RichText;
+    description: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     learning_space: Attribute.Relation<
       'api::forum.forum',
       'oneToOne',
       'api::learning-space.learning-space'
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::forum.forum',
+      'oneToMany',
+      'api::forum.forum'
     >;
-    name: Attribute.String;
-    publishedAt: Attribute.DateTime;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    uid: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::forum.forum',
@@ -770,6 +851,9 @@ export interface ApiLessonLesson extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -790,18 +874,35 @@ export interface ApiLessonLesson extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     title: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    uid: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
       }>;
     unit: Attribute.Relation<
       'api::lesson.lesson',
       'manyToOne',
       'api::unit.unit'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::lesson.lesson',
@@ -931,6 +1032,9 @@ export interface ApiModuleModule extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -943,7 +1047,12 @@ export interface ApiModuleModule extends Schema.CollectionType {
       'api::module.module',
       'manyToOne',
       'api::learning-space.learning-space'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::module.module',
@@ -955,6 +1064,9 @@ export interface ApiModuleModule extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     publishedAt: Attribute.DateTime;
     shortTitle: Attribute.String &
@@ -962,18 +1074,38 @@ export interface ApiModuleModule extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     title: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    uid: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+        translate: {
+          translate: 'copy';
+        };
       }>;
     units: Attribute.Relation<
       'api::module.module',
       'oneToMany',
       'api::unit.unit'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::module.module',
@@ -1145,6 +1277,7 @@ export interface ApiProgressProgress extends Schema.CollectionType {
 export interface ApiQuizQuiz extends Schema.CollectionType {
   collectionName: 'quizzes';
   info: {
+    description: '';
     displayName: 'Quiz';
     pluralName: 'quizzes';
     singularName: 'quiz';
@@ -1166,6 +1299,9 @@ export interface ApiQuizQuiz extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
@@ -1179,11 +1315,23 @@ export interface ApiQuizQuiz extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     title: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    uid: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
         };
       }>;
     updatedAt: Attribute.DateTime;
@@ -1281,9 +1429,12 @@ export interface ApiTranslationTranslation extends Schema.CollectionType {
   options: {
     draftAndPublish: false;
   };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
   attributes: {
-    ca: Attribute.Text;
-    caHtml: Attribute.RichText;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::translation.translation',
@@ -1291,9 +1442,31 @@ export interface ApiTranslationTranslation extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
-    en: Attribute.Text;
-    enHtml: Attribute.RichText;
-    key: Attribute.UID<'api::translation.translation', 'en'>;
+    key: Attribute.UID;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::translation.translation',
+      'oneToMany',
+      'api::translation.translation'
+    >;
+    text: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    textHtml: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::translation.translation',
@@ -1334,6 +1507,9 @@ export interface ApiUnitUnit extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::unit.unit', 'oneToOne', 'admin::user'> &
@@ -1342,7 +1518,12 @@ export interface ApiUnitUnit extends Schema.CollectionType {
       'api::unit.unit',
       'oneToMany',
       'api::lesson.lesson'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::unit.unit',
@@ -1354,23 +1535,43 @@ export interface ApiUnitUnit extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     module: Attribute.Relation<
       'api::unit.unit',
       'manyToOne',
       'api::module.module'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     publishedAt: Attribute.DateTime;
     shortTitle: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     title: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    uid: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
         };
       }>;
     updatedAt: Attribute.DateTime;
@@ -1601,6 +1802,103 @@ export interface PluginI18NLocale extends Schema.CollectionType {
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface PluginTranslateBatchTranslateJob
+  extends Schema.CollectionType {
+  collectionName: 'translate_batch_translate_jobs';
+  info: {
+    displayName: 'Translate Batch Translate Job';
+    pluralName: 'batch-translate-jobs';
+    singularName: 'batch-translate-job';
+  };
+  options: {
+    comment: '';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    autoPublish: Attribute.Boolean & Attribute.DefaultTo<false>;
+    contentType: Attribute.String;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::translate.batch-translate-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    entityIds: Attribute.JSON;
+    failureReason: Attribute.JSON;
+    progress: Attribute.Float & Attribute.DefaultTo<0>;
+    sourceLocale: Attribute.String;
+    status: Attribute.Enumeration<
+      [
+        'created',
+        'setup',
+        'running',
+        'paused',
+        'finished',
+        'cancelled',
+        'failed'
+      ]
+    > &
+      Attribute.DefaultTo<'created'>;
+    targetLocale: Attribute.String;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'plugin::translate.batch-translate-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface PluginTranslateUpdatedEntry extends Schema.CollectionType {
+  collectionName: 'translate_updated_entries';
+  info: {
+    displayName: 'Translate updated Entry';
+    pluralName: 'updated-entries';
+    singularName: 'updated-entry';
+  };
+  options: {
+    comment: '';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    contentType: Attribute.String;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::translate.updated-entry',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    groupID: Attribute.String;
+    localesWithUpdates: Attribute.JSON;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'plugin::translate.updated-entry',
       'oneToOne',
       'admin::user'
     > &
@@ -1945,6 +2243,8 @@ declare module '@strapi/types' {
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
+      'plugin::translate.batch-translate-job': PluginTranslateBatchTranslateJob;
+      'plugin::translate.updated-entry': PluginTranslateUpdatedEntry;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
