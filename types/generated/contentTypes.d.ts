@@ -365,6 +365,7 @@ export interface AdminUser extends Schema.CollectionType {
 export interface ApiAdministrationAdministration extends Schema.SingleType {
   collectionName: 'administrations';
   info: {
+    description: '';
     displayName: 'administration';
     pluralName: 'administrations';
     singularName: 'administration';
@@ -380,7 +381,9 @@ export interface ApiAdministrationAdministration extends Schema.SingleType {
       'admin::user'
     > &
       Attribute.Private;
+    logo: Attribute.Media<'images'>;
     paymentEmails: Attribute.String;
+    resetPasswordFrontUrl: Attribute.String;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::administration.administration',
@@ -523,6 +526,69 @@ export interface ApiChannelChannel extends Schema.CollectionType {
           translate: 'translate';
         };
       }>;
+  };
+}
+
+export interface ApiEmailTemplateEmailTemplate extends Schema.CollectionType {
+  collectionName: 'email_templates';
+  info: {
+    displayName: 'Email Template';
+    pluralName: 'email-templates';
+    singularName: 'email-template';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    content: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::email-template.email-template',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::email-template.email-template',
+      'oneToMany',
+      'api::email-template.email-template'
+    >;
+    subject: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    type: Attribute.Enumeration<['email_confirmation', 'reset_password']> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::email-template.email-template',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
   };
 }
 
@@ -2171,6 +2237,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToMany',
       'api::learning-space.learning-space'
     >;
+    locale: Attribute.String & Attribute.DefaultTo<'en'>;
     location: Attribute.String;
     manager: Attribute.Boolean;
     name: Attribute.String;
@@ -2221,6 +2288,7 @@ declare module '@strapi/types' {
       'api::administration.administration': ApiAdministrationAdministration;
       'api::bookmark.bookmark': ApiBookmarkBookmark;
       'api::channel.channel': ApiChannelChannel;
+      'api::email-template.email-template': ApiEmailTemplateEmailTemplate;
       'api::enrollment.enrollment': ApiEnrollmentEnrollment;
       'api::forum.forum': ApiForumForum;
       'api::interest.interest': ApiInterestInterest;

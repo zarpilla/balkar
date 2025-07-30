@@ -19,6 +19,8 @@ export interface ContentImage extends Schema.Component {
     displayName: 'Image';
   };
   attributes: {
+    alternativeText: Attribute.String;
+    caption: Attribute.String;
     image: Attribute.Media<'images'>;
   };
 }

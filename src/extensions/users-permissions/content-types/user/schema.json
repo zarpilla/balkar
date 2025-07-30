@@ -110,6 +110,10 @@
     },
     "manager": {
       "type": "boolean"
+    },
+    "locale": {
+      "type": "string",
+      "default": "en"
     }
   }
 }

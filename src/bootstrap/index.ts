@@ -1,4 +1,7 @@
+
 const fs = require("fs");
+// const { createEmailTemplates: importCreateEmailTemplates } = require("./email-templates");
+
 
 async function isFirstRun() {
     const pluginStore = strapi.store({
@@ -15,10 +18,15 @@ async function start() {
 
     try {
 
+      console.log('Starting import process...');
+
         const shouldImportSeedData = await isFirstRun();
         if (!shouldImportSeedData) {
             return
         }
+        
+        // Create default email templates
+        // await importCreateEmailTemplates();
         
         return {
             success: true,
@@ -39,6 +47,8 @@ async function start() {
 module.exports = async () => {
     try {
       await start();
+      // Always ensure email templates exist
+      // await createEmailTemplates();
     } catch (error) {
       console.log("Could not import seed data");
       console.error(error);

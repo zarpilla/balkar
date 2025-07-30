@@ -33,12 +33,15 @@ export default factories.createCoreController(
         message.username = `${message.users_permissions_user.name} ${message.users_permissions_user.lastname}`;        
         message.channelId = parseInt(ctx.params.id);
         message.avatar = message.users_permissions_user.user_avatar ? message.users_permissions_user.user_avatar.avatar.url : null;
+        message.manager = message.users_permissions_user.manager;
         message.users_permissions_user = undefined;
         message.children.forEach((child: any) => {
           child.userId = child.users_permissions_user.id;
           child.username = `${child.users_permissions_user.name} ${child.users_permissions_user.lastname}`;
           child.avatar = child.users_permissions_user.user_avatar ? child.users_permissions_user.user_avatar.avatar.url : null;
-          child.users_permissions_user = undefined;          
+          child.manager = child.users_permissions_user.manager;
+          child.users_permissions_user = undefined;
+
         });
 
         message.children = _.orderBy(message.children, ["id"], ["asc"]);

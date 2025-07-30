@@ -21,7 +21,7 @@ export default factories.createCoreController(
               parent: null,
               channel: {
                 uid: ctx.params.uid,
-              }
+              },
             },
             populate: [
               "users_permissions_user",
@@ -43,6 +43,7 @@ export default factories.createCoreController(
           message.avatar = message.users_permissions_user.user_avatar
             ? message.users_permissions_user.user_avatar.avatar.url
             : null;
+          message.manager = message.users_permissions_user.manager;
           message.users_permissions_user = undefined;
           message.channelId = parseInt(ctx.params.id);
           message.children.forEach((child: any) => {
@@ -51,6 +52,7 @@ export default factories.createCoreController(
             child.avatar = child.users_permissions_user.user_avatar
               ? child.users_permissions_user.user_avatar.avatar.url
               : null;
+            child.manager = child.users_permissions_user.manager;
             child.users_permissions_user = undefined;
           });
 
@@ -128,12 +130,12 @@ export default factories.createCoreController(
             populate: ["forum"],
           }
         );
-        
+
         if (spaces.length === 0 || !spaces[0].forum) {
           ctx.status = 404;
-          ctx.body = { 
-            ok: false, 
-            error: "Forum not found" 
+          ctx.body = {
+            ok: false,
+            error: "Forum not found",
           };
           return;
         }
@@ -142,18 +144,18 @@ export default factories.createCoreController(
 
         if (!forum.id || !userId) {
           ctx.status = 400;
-          ctx.body = { 
-            ok: false, 
-            error: "forumId and userId are required" 
+          ctx.body = {
+            ok: false,
+            error: "forumId and userId are required",
           };
           return;
         }
 
         if (userId === currentUserId) {
           ctx.status = 400;
-          ctx.body = { 
-            ok: false, 
-            error: "Cannot create private channel with yourself" 
+          ctx.body = {
+            ok: false,
+            error: "Cannot create private channel with yourself",
           };
           return;
         }
@@ -169,7 +171,6 @@ export default factories.createCoreController(
         //     populate: ["forum"],
         //   }
         // );
-
 
         // Check if both users are enrolled in the learning space
         const enrollments = await strapi.entityService.findMany(
@@ -191,9 +192,9 @@ export default factories.createCoreController(
 
         if (enrollments.length !== 2) {
           ctx.status = 403;
-          ctx.body = { 
-            ok: false, 
-            error: "Both users must be enrolled in the learning space" 
+          ctx.body = {
+            ok: false,
+            error: "Both users must be enrolled in the learning space",
           };
           return;
         }
@@ -218,7 +219,9 @@ export default factories.createCoreController(
 
         // Filter to find channels that contain exactly these two users
         const privateChannel = existingChannels.find((channel: any) => {
-          const userIds = channel.users_permissions_users.map((user: any) => user.id);
+          const userIds = channel.users_permissions_users.map(
+            (user: any) => user.id
+          );
           return (
             userIds.length === 2 &&
             userIds.includes(currentUserId) &&
@@ -275,9 +278,9 @@ export default factories.createCoreController(
       } catch (err) {
         console.error("Error creating private channel:", err);
         ctx.status = 500;
-        ctx.body = { 
-          ok: false, 
-          error: "Internal server error" 
+        ctx.body = {
+          ok: false,
+          error: "Internal server error",
         };
       }
     },

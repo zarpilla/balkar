@@ -72,6 +72,7 @@ async function start() {
         "api::learning-space.learning-space": ["findUid"],        
         "api::pre-enrollement.pre-enrollement": ["create"],
         "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent", "sendPaymentEmails"],
+        "api::user-avatar.user-avatar": ["forgotPassword"],
         // i18n listLocales
         "plugin::i18n.locales": ["listLocales"],
       }
@@ -81,6 +82,7 @@ async function start() {
 
 export default async () => {
   try {
+    console.log("Setting permissions...");
     await start();
   } catch (error) {
     console.log("Could not set permissions");

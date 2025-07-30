@@ -8,6 +8,11 @@ export default {
       method: "GET",
       path: "/user-avatars/mine",
       handler: "user-avatar.findMine",
+    },
+    {
+      method: "POST",
+      path: "/user-avatars/forgot-password",
+      handler: "user-avatar.forgotPassword",
     }
   ],
 };

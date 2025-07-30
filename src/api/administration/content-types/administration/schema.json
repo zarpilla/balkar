@@ -4,7 +4,8 @@
   "info": {
     "singularName": "administration",
     "pluralName": "administrations",
-    "displayName": "administration"
+    "displayName": "administration",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -13,6 +14,16 @@
   "attributes": {
     "paymentEmails": {
       "type": "string"
+    },
+    "resetPasswordFrontUrl": {
+      "type": "string"
+    },
+    "logo": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
