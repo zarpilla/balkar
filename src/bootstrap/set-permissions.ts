@@ -46,7 +46,7 @@ async function setPermissions(roleType, newPermissions) {
 async function start() {
     await setPermissions("authenticated",
       {
-        "api::learning-space.learning-space": ["find", "findOne", "findUid", "findMine"],
+        "api::learning-space.learning-space": ["find", "findOne", "findUid", "findMine", "adminUsersProgress", "adminContentProgress"],
         "api::translation.translation": ["find"],
         "api::enrollment.enrollment": ["enroll", "autoenroll"],
         "api::progress.progress": ["complete", "notcomplete"],

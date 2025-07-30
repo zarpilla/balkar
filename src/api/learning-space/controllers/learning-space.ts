@@ -97,6 +97,31 @@ export default factories.createCoreController(
               space.enrolled = false;
             }
 
+            if (ctx.state.user.manager) {
+              // check if is manager of this space
+              const spaceManager = await strapi.entityService.findMany(
+                "api::space-manager.space-manager",
+                {
+                  filters: {
+                    user: ctx.state.user.id,
+                    learning_space: {
+                      id: {
+                        $in: spacesLocalized,
+                      },
+                    },
+                  },
+                  limit: -1,
+                }
+              );
+              if (spaceManager.length > 0) {
+                space.manager = true;
+              } else {
+                space.manager = false;
+              }
+            } else {
+              space.manager = ctx.state.user.manager;
+            } 
+
             const progresses = await strapi.entityService.findMany(
               "api::progress.progress",
               {
@@ -109,6 +134,7 @@ export default factories.createCoreController(
                   },
                 },
                 populate: ["module", "unit", "lesson"],
+                limit: -1,
               }
             );
 
@@ -170,6 +196,7 @@ export default factories.createCoreController(
                   },
                 },
                 populate: ["module", "unit", "lesson"],
+                limit: -1,
               }
             );
 
@@ -388,6 +415,7 @@ export default factories.createCoreController(
               // learning_space: space.id,
             },
             populate: ["learning_space"],
+            limit: -1,
           }
         );
 
@@ -515,6 +543,505 @@ export default factories.createCoreController(
       }
 
       ctx.body = { ok: true };
+    },
+    adminUsersProgress: async (ctx, next) => {
+      try {
+        // Check if user is manager
+        if (!ctx.state.user?.manager) {
+          ctx.status = 403;
+          ctx.body = {
+            ok: false,
+            error: "Only managers can access this endpoint",
+          };
+          return;
+        }
+
+        const uid = ctx.params.uid;
+
+        // Find the learning space
+        const spaces = await strapi.entityService.findMany(
+          "api::learning-space.learning-space",
+          {
+            filters: {
+              uid: uid,
+              publishedAt: { $ne: null },
+            },
+            populate: [
+              "modules",
+              "modules.topics",
+              "content_modules",
+              "content_modules.units",
+              "content_modules.units.lessons",
+              "localizations",
+            ],
+            locale: ctx.query.locale || "en",
+          }
+        );
+
+        if (spaces.length === 0) {
+          ctx.status = 404;
+          ctx.body = { ok: false, error: "Learning space not found" };
+          return;
+        }
+
+        const space: any = spaces[0];
+        const spacesLocalized = [
+          space.id,
+          ...space.localizations.map((l: any) => l.id),
+        ];
+
+        // Check if user is manager of this space
+        const spaceManager = await strapi.entityService.findMany(
+          "api::space-manager.space-manager",
+          {
+            filters: {
+              user: ctx.state.user.id,
+              learning_space: {
+                id: {
+                  $in: spacesLocalized,
+                },
+              },
+            },
+            limit: -1,
+          }
+        );
+
+        if (spaceManager.length === 0) {
+          ctx.status = 403;
+          ctx.body = {
+            ok: false,
+            error: "You are not a manager of this learning space",
+          };
+          return;
+        }
+
+        // Get all enrollments for this space
+        const allEnrollments = await strapi.entityService.findMany(
+          "api::enrollment.enrollment",
+          {
+            filters: {
+              learning_space: {
+                id: {
+                  $in: spacesLocalized,
+                },
+              },
+            },
+            populate: ["users_permissions_user"],
+            limit: -1,
+          }
+        );
+
+        // Filter out enrollments with null users
+        const validEnrollments = allEnrollments.filter(
+          (enrollment: any) => enrollment.users_permissions_user
+        );
+
+        // Get unique users (deduplicate by user ID)
+        const uniqueUsersMap = new Map();
+        validEnrollments.forEach((enrollment: any) => {
+          const user = enrollment.users_permissions_user;
+          uniqueUsersMap.set(user.id, user);
+        });
+        const uniqueUsers = Array.from(uniqueUsersMap.values());
+
+        // Get all progress for this space
+        const progresses = await strapi.entityService.findMany(
+          "api::progress.progress",
+          {
+            filters: {
+              learning_space: {
+                id: {
+                  $in: spacesLocalized,
+                },
+              },
+            },
+            populate: ["users_permissions_user", "module", "unit", "lesson"],
+            limit: -1,
+          }
+        );
+
+        // Organize data by users
+        const usersProgress = uniqueUsers.map((user: any) => {
+          const userProgresses = progresses.filter(
+            (progress: any) =>
+              progress.users_permissions_user &&
+              progress.users_permissions_user.id === user.id
+          );
+
+          // Process old modules structure
+          const modulesProgress =
+            space.modules?.map((module: any) => {
+              const topicsProgress =
+                module.topics?.map((topic: any) => {
+                  const progress = userProgresses.find(
+                    (p: any) =>
+                      p.topicId === topic.topicId &&
+                      p.moduleId === module.moduleId
+                  );
+                  return {
+                    topicId: topic.topicId,
+                    name: topic.name,
+                    completed: !!progress,
+                    completedAt: progress?.createdAt || null,
+                  };
+                }) || [];
+
+              const moduleProgress = userProgresses.find(
+                (p: any) => p.topicId === null && p.moduleId === module.moduleId
+              );
+
+              return {
+                moduleId: module.moduleId,
+                name: module.name,
+                moduleType: module.moduleType,
+                completed: !!moduleProgress,
+                completedAt: moduleProgress?.createdAt || null,
+                topics: topicsProgress,
+                completedPct: topicsProgress.length
+                  ? topicsProgress.filter((t) => t.completed).length /
+                    topicsProgress.length
+                  : moduleProgress
+                  ? 1
+                  : 0,
+              };
+            }) || [];
+
+          // Process new content modules structure
+          const contentModulesProgress =
+            space.content_modules?.map((module: any) => {
+              const unitsProgress =
+                module.units?.map((unit: any) => {
+                  const lessonsProgress =
+                    unit.lessons?.map((lesson: any) => {
+                      const progress = userProgresses.find(
+                        (p: any) =>
+                          p.lesson?.uid === lesson.uid ||
+                          p.lesson?.id === lesson.id
+                      );
+                      return {
+                        uid: lesson.uid,
+                        title: lesson.title,
+                        completed: !!progress,
+                        completedAt: progress?.createdAt || null,
+                      };
+                    }) || [];
+
+                  const unitProgress = userProgresses.find(
+                    (p: any) =>
+                      p.unit?.uid === unit.uid || p.unit?.id === unit.id
+                  );
+
+                  return {
+                    uid: unit.uid,
+                    title: unit.title,
+                    completed: !!unitProgress,
+                    completedAt: unitProgress?.createdAt || null,
+                    lessons: lessonsProgress,
+                    completedPct: lessonsProgress.length
+                      ? lessonsProgress.filter((l) => l.completed).length /
+                        lessonsProgress.length
+                      : unitProgress
+                      ? 1
+                      : 0,
+                  };
+                }) || [];
+
+              return {
+                uid: module.uid,
+                title: module.title,
+                units: unitsProgress,
+                completedPct: unitsProgress.length
+                  ? unitsProgress.filter((u) => u.completedPct === 1).length /
+                    unitsProgress.length
+                  : 0,
+              };
+            }) || [];
+
+          return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            name: user.name,
+            lastname: user.lastname,
+            modules: modulesProgress,
+            contentModules: contentModulesProgress,
+            overallProgress: {
+              modules: modulesProgress.length
+                ? modulesProgress.filter((m) => m.completedPct === 1).length /
+                  modulesProgress.length
+                : 0,
+              contentModules: contentModulesProgress.length
+                ? contentModulesProgress.filter((m) => m.completedPct === 1)
+                    .length / contentModulesProgress.length
+                : 0,
+            },
+          };
+        });
+
+        ctx.body = {
+          space: {
+            id: space.id,
+            uid: space.uid,
+            name: space.name,
+          },
+          users: usersProgress,
+          meta: {
+            totalUsers: usersProgress.length,
+            totalModules: space.modules?.length || 0,
+            totalContentModules: space.content_modules?.length || 0,
+          },
+        };
+      } catch (err) {
+        console.error("Error in adminUsersProgress:", err);
+        ctx.status = 500;
+        ctx.body = { ok: false, error: "Internal server error" };
+      }
+    },
+    adminContentProgress: async (ctx, next) => {
+      try {
+        // Check if user is manager
+        if (!ctx.state.user?.manager) {
+          ctx.status = 403;
+          ctx.body = {
+            ok: false,
+            error: "Only managers can access this endpoint",
+          };
+          return;
+        }
+
+        const uid = ctx.params.uid;
+
+        // Find the learning space
+        const spaces = await strapi.entityService.findMany(
+          "api::learning-space.learning-space",
+          {
+            filters: {
+              uid: uid,
+              publishedAt: { $ne: null },
+            },
+            populate: [
+              "modules",
+              "modules.topics",
+              "content_modules",
+              "content_modules.units",
+              "content_modules.units.lessons",
+              "localizations",
+            ],
+            locale: ctx.query.locale || "en",
+          }
+        );
+
+        if (spaces.length === 0) {
+          ctx.status = 404;
+          ctx.body = { ok: false, error: "Learning space not found" };
+          return;
+        }
+
+        const space: any = spaces[0];
+        const spacesLocalized = [
+          space.id,
+          ...space.localizations.map((l: any) => l.id),
+        ];
+
+        // Check if user is manager of this space
+        const spaceManager = await strapi.entityService.findMany(
+          "api::space-manager.space-manager",
+          {
+            filters: {
+              user: ctx.state.user.id,
+              learning_space: {
+                id: {
+                  $in: spacesLocalized,
+                },
+              },
+            },
+            limit: -1,
+          }
+        );
+
+        if (spaceManager.length === 0) {
+          ctx.status = 403;
+          ctx.body = {
+            ok: false,
+            error: "You are not a manager of this learning space",
+          };
+          return;
+        }
+
+        // Get all enrollments for this space
+        const allEnrollments = await strapi.entityService.findMany(
+          "api::enrollment.enrollment",
+          {
+            filters: {
+              learning_space: {
+                id: {
+                  $in: spacesLocalized,
+                },
+              },
+            },
+            populate: ["users_permissions_user"],
+            limit: -1,
+          }
+        );
+
+        // Filter out enrollments with null users
+        const validEnrollments = allEnrollments.filter(
+          (enrollment: any) => enrollment.users_permissions_user
+        );
+
+        // Get unique users (deduplicate by user ID)
+        const uniqueUsersMap = new Map();
+        validEnrollments.forEach((enrollment: any) => {
+          const user = enrollment.users_permissions_user;
+          uniqueUsersMap.set(user.id, user);
+        });
+        const uniqueUsers = Array.from(uniqueUsersMap.values());
+
+        // Get all progress for this space
+        const progresses = await strapi.entityService.findMany(
+          "api::progress.progress",
+          {
+            filters: {
+              learning_space: {
+                id: {
+                  $in: spacesLocalized,
+                },
+              },
+            },
+            populate: ["users_permissions_user", "module", "unit", "lesson"],
+            limit: -1,
+          }
+        );
+
+        // Organize data by content structure
+        const contentProgress = {
+          // Old modules structure
+          modules:
+            space.modules?.map((module: any) => {
+              const topics =
+                module.topics?.map((topic: any) => {
+                  const topicProgresses = progresses.filter(
+                    (p: any) =>
+                      p.users_permissions_user &&
+                      p.topicId === topic.topicId &&
+                      p.moduleId === module.moduleId
+                  );
+
+                  return {
+                    topicId: topic.topicId,
+                    name: topic.name,
+                    completedBy: topicProgresses.map((p: any) => ({
+                      id: p.users_permissions_user.id,
+                      username: p.users_permissions_user.username,
+                      email: p.users_permissions_user.email,
+                      completedAt: p.createdAt,
+                    })),
+                    completionRate: uniqueUsers.length
+                      ? topicProgresses.length / uniqueUsers.length
+                      : 0,
+                  };
+                }) || [];
+
+              const moduleProgresses = progresses.filter(
+                (p: any) =>
+                  p.users_permissions_user &&
+                  p.topicId === null &&
+                  p.moduleId === module.moduleId
+              );
+
+              return {
+                moduleId: module.moduleId,
+                title: module.title,
+                moduleType: module.moduleType,
+                topics: topics,
+                completedBy: moduleProgresses.map((p: any) => ({
+                  id: p.users_permissions_user.id,
+                  username: p.users_permissions_user.username,
+                  email: p.users_permissions_user.email,
+                  completedAt: p.createdAt,
+                })),
+                completionRate: uniqueUsers.length
+                  ? moduleProgresses.length / uniqueUsers.length
+                  : 0,
+              };
+            }) || [],
+
+          // New content modules structure
+          contentModules:
+            space.content_modules?.map((module: any) => {
+              const units =
+                module.units?.map((unit: any) => {
+                  const lessons =
+                    unit.lessons?.map((lesson: any) => {
+                      const lessonProgresses = progresses.filter(
+                        (p: any) =>
+                          p.users_permissions_user &&
+                          (p.lesson?.uid === lesson.uid ||
+                            p.lesson?.id === lesson.id)
+                      );
+
+                      return {
+                        uid: lesson.uid,
+                        title: lesson.title,
+                        completedBy: lessonProgresses.map((p: any) => ({
+                          id: p.users_permissions_user.id,
+                          username: p.users_permissions_user.username,
+                          email: p.users_permissions_user.email,
+                          completedAt: p.createdAt,
+                        })),
+                        completionRate: uniqueUsers.length
+                          ? lessonProgresses.length / uniqueUsers.length
+                          : 0,
+                      };
+                    }) || [];
+
+                  const unitProgresses = progresses.filter(
+                    (p: any) =>
+                      p.users_permissions_user &&
+                      (p.unit?.uid === unit.uid || p.unit?.id === unit.id)
+                  );
+
+                  return {
+                    uid: unit.uid,
+                    title: unit.title,
+                    lessons: lessons,
+                    completedBy: unitProgresses.map((p: any) => ({
+                      id: p.users_permissions_user.id,
+                      username: p.users_permissions_user.username,
+                      email: p.users_permissions_user.email,
+                      completedAt: p.createdAt,
+                    })),
+                    completionRate: uniqueUsers.length
+                      ? unitProgresses.length / uniqueUsers.length
+                      : 0,
+                  };
+                }) || [];
+              return {
+                uid: module.uid,
+                title: module.title,
+                units: units,
+              };
+            }) || [],
+        };
+
+        ctx.body = {
+          space: {
+            id: space.id,
+            uid: space.uid,
+            name: space.name,
+          },
+          content: contentProgress,
+          meta: {
+            totalUsers: uniqueUsers.length,
+            totalModules: space.modules?.length || 0,
+            totalContentModules: space.content_modules?.length || 0,
+          },
+        };
+      } catch (err) {
+        console.error("Error in adminContentProgress:", err);
+        ctx.status = 500;
+        ctx.body = { ok: false, error: "Internal server error" };
+      }
     },
   })
 );
