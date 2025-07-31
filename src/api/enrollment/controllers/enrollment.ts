@@ -45,15 +45,29 @@ export default factories.createCoreController(
             return;
           }
         }
-        const enrollment = await strapi.entityService.create(
+
+        // check if the user is already enrolled in the space
+        const existingEnrollment = await strapi.entityService.findMany(
           "api::enrollment.enrollment",
           {
+            filters: {
+              users_permissions_user: {
+                id: userId,
+              },
+              learning_space: {
+                uid: uid,
+              },
+            },
+          }
+        );
+        if (existingEnrollment.length === 0) {
+          await strapi.entityService.create("api::enrollment.enrollment", {
             data: {
               users_permissions_user: userId,
               learning_space: space.id,
             },
-          }
-        );
+          });
+        }
         ctx.status = 200;
         ctx.body = { ok: true };
       }
@@ -78,15 +92,32 @@ export default factories.createCoreController(
         );
         if (spaces.length > 0) {
           const space: any = spaces[0];
-          const enrollment = await strapi.entityService.create(
+
+          // check if the user is already enrolled in the space
+          const existingEnrollment = await strapi.entityService.findMany(
             "api::enrollment.enrollment",
             {
-              data: {
-                users_permissions_user: ctx.state.user.id,
-                learning_space: space.id,
+              filters: {
+                users_permissions_user: {
+                  id: ctx.state.user.id,
+                },
+                learning_space: {
+                  id: space.id,
+                },
               },
             }
           );
+          if (existingEnrollment.length === 0) {
+            await strapi.entityService.create(
+              "api::enrollment.enrollment",
+              {
+                data: {
+                  users_permissions_user: ctx.state.user.id,
+                  learning_space: space.id,
+                },
+              }
+            );
+          }
         }
       });
       const preEnrollementsId = preEnrollements.map(

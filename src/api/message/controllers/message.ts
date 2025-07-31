@@ -25,6 +25,7 @@ export default factories.createCoreController(
               "users_permissions_user.user_avatar.avatar",
               "children.users_permissions_user.user_avatar",
               "children.users_permissions_user.user_avatar.avatar",
+              "channel"
             ],
           }
         );
@@ -32,6 +33,7 @@ export default factories.createCoreController(
         message.userId = message.users_permissions_user.id;
         message.username = `${message.users_permissions_user.name} ${message.users_permissions_user.lastname}`;        
         message.channelId = parseInt(ctx.params.id);
+        message.channelUid = message.channel.uid;
         message.avatar = message.users_permissions_user.user_avatar ? message.users_permissions_user.user_avatar.avatar.url : null;
         message.manager = message.users_permissions_user.manager;
         message.users_permissions_user = undefined;

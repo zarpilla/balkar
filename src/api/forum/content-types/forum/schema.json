@@ -42,12 +42,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::learning-space.learning-space",
-      "inversedBy": "forum",
       "pluginOptions": {
         "translate": {
           "translate": "translate"
         }
-      }
+      },
+      "inversedBy": "forum"
     },
     "channels": {
       "type": "relation",

@@ -769,11 +769,17 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     bannerIntro: Attribute.Media<'images'> &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+        translate: {
+          translate: 'translate';
         };
       }>;
     bannerOther: Attribute.Media<'images'> &
@@ -781,12 +787,20 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     content_modules: Attribute.Relation<
       'api::learning-space.learning-space',
       'oneToMany',
       'api::module.module'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::learning-space.learning-space',
@@ -799,12 +813,20 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     forum: Attribute.Relation<
       'api::learning-space.learning-space',
       'oneToOne',
       'api::forum.forum'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     free: Attribute.Boolean &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -829,11 +851,17 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     name: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+        translate: {
+          translate: 'translate';
         };
       }>;
     nameMore: Attribute.String &
@@ -841,18 +869,29 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     privateDescription: Attribute.RichText &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
       }>;
     product: Attribute.Relation<
       'api::learning-space.learning-space',
       'oneToOne',
       'api::product.product'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     public: Attribute.Boolean &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -863,6 +902,19 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    publicLesson: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'api::lesson.lesson'
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
         };
       }>;
     publishedAt: Attribute.DateTime;
@@ -883,7 +935,12 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'api::learning-space.learning-space',
       'manyToMany',
       'plugin::users-permissions.user'
-    >;
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
   };
 }
 

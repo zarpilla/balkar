@@ -20,6 +20,9 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       },
       "type": "string"
@@ -37,6 +40,9 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       }
     },
@@ -44,6 +50,9 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       },
       "type": "richtext"
@@ -52,6 +61,9 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       },
       "type": "richtext"
@@ -62,6 +74,9 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       },
       "component": "spaces.module"
@@ -70,13 +85,23 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::forum.forum",
-      "mappedBy": "learning_space"
+      "mappedBy": "learning_space",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
     "users": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
-      "mappedBy": "learning_spaces"
+      "mappedBy": "learning_spaces",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
     "public": {
       "pluginOptions": {
@@ -98,12 +123,20 @@
     "product": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::product.product"
+      "target": "api::product.product",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
     "enrollmentEmails": {
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       },
       "type": "string"
@@ -120,7 +153,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::module.module",
-      "mappedBy": "learning_space"
+      "mappedBy": "learning_space",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     },
     "free": {
       "pluginOptions": {
@@ -140,6 +178,9 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       }
     },
@@ -153,6 +194,9 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       }
     },
@@ -160,9 +204,22 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        },
+        "translate": {
+          "translate": "translate"
         }
       },
       "type": "string"
+    },
+    "publicLesson": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::lesson.lesson",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     }
   }
 }

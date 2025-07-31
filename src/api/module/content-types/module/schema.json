@@ -80,12 +80,12 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::learning-space.learning-space",
-      "inversedBy": "content_modules",
       "pluginOptions": {
         "translate": {
           "translate": "translate"
         }
-      }
+      },
+      "inversedBy": "content_modules"
     },
     "uid": {
       "pluginOptions": {
