@@ -53,6 +53,11 @@ export interface ContentVideo extends Schema.Component {
     displayName: 'Video';
   };
   attributes: {
+    subtitle: Attribute.Relation<
+      'content.video',
+      'oneToOne',
+      'api::subtitle.subtitle'
+    >;
     thumbnail: Attribute.Media<'images'>;
     title: Attribute.String;
     transcript: Attribute.Media<'files'>;

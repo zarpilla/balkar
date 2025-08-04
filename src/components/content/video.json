@@ -29,11 +29,17 @@
       ]
     },
     "transcript": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "files"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
+    },
+    "subtitle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::subtitle.subtitle"
     }
   }
 }

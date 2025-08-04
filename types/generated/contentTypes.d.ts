@@ -1541,6 +1541,64 @@ export interface ApiSubmissionSubmission extends Schema.CollectionType {
   };
 }
 
+export interface ApiSubtitleSubtitle extends Schema.CollectionType {
+  collectionName: 'subtitles';
+  info: {
+    description: '';
+    displayName: 'Subtitle';
+    pluralName: 'subtitles';
+    singularName: 'subtitle';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::subtitle.subtitle',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::subtitle.subtitle',
+      'oneToMany',
+      'api::subtitle.subtitle'
+    >;
+    name: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    text: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::subtitle.subtitle',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiTranslationTranslation extends Schema.CollectionType {
   collectionName: 'translations';
   info: {
@@ -2361,6 +2419,7 @@ declare module '@strapi/types' {
       'api::quiz.quiz': ApiQuizQuiz;
       'api::space-manager.space-manager': ApiSpaceManagerSpaceManager;
       'api::submission.submission': ApiSubmissionSubmission;
+      'api::subtitle.subtitle': ApiSubtitleSubtitle;
       'api::translation.translation': ApiTranslationTranslation;
       'api::unit.unit': ApiUnitUnit;
       'api::user-avatar.user-avatar': ApiUserAvatarUserAvatar;
