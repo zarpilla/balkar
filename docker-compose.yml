@@ -2,8 +2,7 @@ version: "3"
 services:
   strapi:
     container_name: lms-strapi
-    build: .
-    image: strapi:latest
+    image: ${DOCKERHUB_USERNAME}/balkar-back:mooc
     restart: unless-stopped
     env_file: .env
     environment:
@@ -18,13 +17,13 @@ services:
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
       API_TOKEN_SALT: ${API_TOKEN_SALT}
       APP_KEYS: ${APP_KEYS}
-      NODE_ENV: ${NODE_ENV}      
+      NODE_ENV: ${NODE_ENV}
+      URL: ${URL}
+      DEEPL_API_KEY: ${DEEPL_API_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_PI_SECRET: ${STRIPE_WEBHOOK_PI_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL}
     volumes:
-      - ./config:/opt/app/config
-      - ./src:/opt/app/src
-      - ./package.json:/opt/app/package.json
-      - ./yarn.lock:/opt/app/yarn.lock
-      - ./.env:/opt/app/.env
       - ./public/uploads:/opt/app/public/uploads
     ports:
       - "1337:1337"
@@ -32,6 +31,16 @@ services:
       - strapi
     depends_on:
       - strapiDB
+
+  frontend:
+    container_name: lms-frontend
+    image: ${DOCKERHUB_USERNAME}/balkar-front:mooc
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3000:80"
+    networks:
+      - strapi
 
   strapiDB:
     container_name: lms-strapi-db
@@ -43,10 +52,9 @@ services:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_PORT: ${DATABASE_PORT}
     volumes:
-      #- strapi-data:/var/lib/postgresql/data/ #using a volume
-      - ./database-data:/var/lib/postgresql/data/ # if you want to use a bind folder
-
+      - ./database-data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
     networks:
@@ -54,9 +62,6 @@ services:
     command: -p 5432
     expose:
       - "5432"
-
-#volumes:
-#  strapi-data:
 
 networks:
   strapi:
