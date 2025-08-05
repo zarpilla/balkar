@@ -28,3 +28,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:mooc
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

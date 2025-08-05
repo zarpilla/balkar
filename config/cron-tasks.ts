@@ -1,10 +1,10 @@
-import { sendPaymentEmails } from "../src/api/payment-intent/services/payment-intent";
+// import { sendPaymentEmails } from "../src/api/payment-intent/services/payment-intent";
 
 export default {
   cronJob: {
     task: async ({ strapi }) => {
       try {
-        await sendPaymentEmails();
+        // await sendPaymentEmails(strapi);
       } catch (error) {
         console.error('Cron job error:', error);
       }
