@@ -86,7 +86,8 @@
         "content.text",
         "content.image",
         "content.accordion",
-        "content.quiz"
+        "content.quiz",
+        "content.slider"
       ]
     },
     "uid": {

@@ -35,6 +35,19 @@ export interface ContentQuiz extends Schema.Component {
   };
 }
 
+export interface ContentSlider extends Schema.Component {
+  collectionName: 'components_content_sliders';
+  info: {
+    description: '';
+    displayName: 'Slider';
+  };
+  attributes: {
+    color: Attribute.Enumeration<['primary', 'secondary', 'tertiary', 'loop']>;
+    items: Attribute.Component<'sub.slider-item', true>;
+    title: Attribute.String;
+  };
+}
+
 export interface ContentText extends Schema.Component {
   collectionName: 'components_content_texts';
   info: {
@@ -145,12 +158,28 @@ export interface SubQuizQuestionItem extends Schema.Component {
   };
 }
 
+export interface SubSliderItem extends Schema.Component {
+  collectionName: 'components_sub_slider_items';
+  info: {
+    description: '';
+    displayName: 'SliderItem';
+  };
+  attributes: {
+    image: Attribute.Media<'images'>;
+    logo: Attribute.Media<'images'>;
+    preTitle: Attribute.String;
+    text: Attribute.Blocks;
+    title: Attribute.String;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
       'content.accordion': ContentAccordion;
       'content.image': ContentImage;
       'content.quiz': ContentQuiz;
+      'content.slider': ContentSlider;
       'content.text': ContentText;
       'content.video': ContentVideo;
       'spaces.content': SpacesContent;
@@ -159,6 +188,7 @@ declare module '@strapi/types' {
       'sub.accordion-item': SubAccordionItem;
       'sub.quiz-item': SubQuizItem;
       'sub.quiz-question-item': SubQuizQuestionItem;
+      'sub.slider-item': SubSliderItem;
     }
   }
 }

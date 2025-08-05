@@ -967,7 +967,8 @@ export interface ApiLessonLesson extends Schema.CollectionType {
         'content.image',
         'content.video',
         'content.accordion',
-        'content.quiz'
+        'content.quiz',
+        'content.slider'
       ]
     > &
       Attribute.SetPluginOptions<{
@@ -1589,6 +1590,15 @@ export interface ApiSubtitleSubtitle extends Schema.CollectionType {
           translate: 'translate';
         };
       }>;
+    transcript: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::subtitle.subtitle',
@@ -1681,7 +1691,8 @@ export interface ApiUnitUnit extends Schema.CollectionType {
         'content.text',
         'content.image',
         'content.accordion',
-        'content.quiz'
+        'content.quiz',
+        'content.slider'
       ]
     > &
       Attribute.SetPluginOptions<{
@@ -2323,6 +2334,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
+    age: Attribute.String;
     allowPrivateMessages: Attribute.Boolean;
     avatar: Attribute.Media<'images'>;
     blocked: Attribute.Boolean & Attribute.DefaultTo<false>;
@@ -2355,7 +2367,10 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
     locale: Attribute.String & Attribute.DefaultTo<'en'>;
     location: Attribute.String;
     manager: Attribute.Boolean;
+    motivation: Attribute.String;
     name: Attribute.String;
+    nationality: Attribute.String;
+    occupation: Attribute.String;
     organization: Attribute.String;
     password: Attribute.Password &
       Attribute.Private &

@@ -42,7 +42,8 @@
         "content.image",
         "content.video",
         "content.accordion",
-        "content.quiz"
+        "content.quiz",
+        "content.slider"
       ]
     },
     "shortTitle": {
@@ -60,12 +61,12 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::unit.unit",
-      "inversedBy": "lessons",
       "pluginOptions": {
         "translate": {
           "translate": "translate"
         }
-      }
+      },
+      "inversedBy": "lessons"
     },
     "uid": {
       "pluginOptions": {

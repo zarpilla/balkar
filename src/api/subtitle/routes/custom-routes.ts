@@ -8,6 +8,10 @@ export default {
       method: "GET",
       path: "/subtitles/file/:id",
       handler: "subtitle.findFileById",
+    },{
+      method: "GET",
+      path: "/subtitles/transcript/:id",
+      handler: "subtitle.findTranscriptById",
     },
   ],
 };

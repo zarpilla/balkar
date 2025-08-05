@@ -114,6 +114,18 @@
     "locale": {
       "type": "string",
       "default": "en"
+    },
+    "nationality": {
+      "type": "string"
+    },
+    "age": {
+      "type": "string"
+    },
+    "motivation": {
+      "type": "string"
+    },
+    "occupation": {
+      "type": "string"
     }
   }
 }

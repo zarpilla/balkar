@@ -96,12 +96,12 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
-      "mappedBy": "learning_spaces",
       "pluginOptions": {
         "translate": {
           "translate": "translate"
         }
-      }
+      },
+      "mappedBy": "learning_spaces"
     },
     "public": {
       "pluginOptions": {
