@@ -37,8 +37,11 @@ services:
     image: ${DOCKERHUB_USERNAME}/balkar-front:mooc
     restart: unless-stopped
     env_file: .env
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_API_BASE: ${VITE_API_BASE}
     ports:
-      - "3000:80"
+      - "3005:80"
     networks:
       - strapi
 
@@ -56,12 +59,12 @@ services:
     volumes:
       - ./database-data:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - "5433:5433"
     networks:
       - strapi
-    command: -p 5432
+    command: -p 5433
     expose:
-      - "5432"
+      - "5433"
 
 networks:
   strapi:

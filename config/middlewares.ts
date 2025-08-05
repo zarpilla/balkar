@@ -6,7 +6,7 @@ export default [
     name: "strapi::cors",
     config: {
       enabled: true,
-      origin: [process.env.FRONTEND_URL || "http://localhost:5173"],
+      origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
       headers: ["Content-Type", "Authorization", "Origin", "Accept", "Range"],
       keepHeaderOnError: true,
