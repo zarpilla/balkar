@@ -18,6 +18,7 @@ export default ({ env }) => ({
               pass: env("SMTP_PASS"),
             },
             secure: env("SMTP_SECURE") === 'true', // true for 465, false for other ports
+            tls: {rejectUnauthorized: false}
           },
           settings: {
             defaultFrom: env("EMAIL_FROM"),
