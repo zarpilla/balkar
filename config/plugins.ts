@@ -27,14 +27,14 @@ export default ({ env }) => ({
   },
   // ...
   translate: {
-    enabled: true,
+    enabled: !!env('DEEPL_API_KEY'),
     config: {
       // Choose one of the available providers
       provider: 'deepl',
       // Pass credentials and other options to the provider
       providerOptions: {
         // your API key - required and wil cause errors if not provided
-        apiKey: env('DEEPL_API_KEY'),
+        apiKey: env('DEEPL_API_KEY') || 'dummy-key',
         // use custom api url - optional
         apiUrl: 'https://api-free.deepl.com',
         // use custom locale mapping (for example 'en' locale is deprecated so need to choose between 'EN-GB' and 'EN-US')
