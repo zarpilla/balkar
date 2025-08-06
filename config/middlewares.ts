@@ -14,8 +14,23 @@ export default [
   },
   "strapi::poweredBy",
   "strapi::query",
-  // 'strapi::body',
-  { name: "strapi::body", config: { includeUnparsed: true } },
+  {
+    name: "strapi::body",
+    config: {
+      enabled: true,
+      multipart: true,
+      textLimit: 1 * 1024 * 1024 * 1024,
+      formLimit: 1 * 1024 * 1024 * 1024,
+      jsonLimit: 1 * 1024 * 1024 * 1024,
+      includeUnparsed: true,
+      formidable: {
+        maxFileSize: 1 * 1024 * 1024 * 1024, // 1 GB
+      },
+      providerOptions: {
+        sizeLimit: 1 * 1024 * 1024 * 1024, // 1 GB
+      },
+    },
+  },
   "strapi::session",
   "strapi::favicon",
   "strapi::public",
