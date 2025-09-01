@@ -66,6 +66,8 @@ export interface ContentVideo extends Schema.Component {
     displayName: 'Video';
   };
   attributes: {
+    overlay: Attribute.Enumeration<['green', 'yellow', 'blue']> &
+      Attribute.DefaultTo<'green'>;
     subtitle: Attribute.Relation<
       'content.video',
       'oneToOne',

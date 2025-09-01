@@ -40,6 +40,15 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::subtitle.subtitle"
+    },
+    "overlay": {
+      "type": "enumeration",
+      "enum": [
+        "green",
+        "yellow",
+        "blue"
+      ],
+      "default": "green"
     }
   }
 }
