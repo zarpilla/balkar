@@ -448,6 +448,40 @@ export interface ApiBookmarkBookmark extends Schema.CollectionType {
   };
 }
 
+export interface ApiCertificatePaymentCertificatePayment
+  extends Schema.CollectionType {
+  collectionName: 'certificate_payments';
+  info: {
+    displayName: 'CertificatePayment';
+    pluralName: 'certificate-payments';
+    singularName: 'certificate-payment';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::certificate-payment.certificate-payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    email: Attribute.String;
+    lastname: Attribute.String;
+    name: Attribute.String;
+    payment: Attribute.Boolean;
+    uid: Attribute.String;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::certificate-payment.certificate-payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiCertificateCertificate extends Schema.CollectionType {
   collectionName: 'certificates';
   info: {
@@ -838,6 +872,16 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'api::learning-space.learning-space',
       'oneToOne',
       'api::certificate.certificate'
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    certificateProduct: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'api::product.product'
     > &
       Attribute.SetPluginOptions<{
         translate: {
@@ -1347,6 +1391,7 @@ export interface ApiPreEnrollementPreEnrollement extends Schema.CollectionType {
     email: Attribute.String;
     lastname: Attribute.String;
     name: Attribute.String;
+    payment: Attribute.Boolean;
     uid: Attribute.String;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
@@ -2513,6 +2558,7 @@ declare module '@strapi/types' {
       'admin::user': AdminUser;
       'api::administration.administration': ApiAdministrationAdministration;
       'api::bookmark.bookmark': ApiBookmarkBookmark;
+      'api::certificate-payment.certificate-payment': ApiCertificatePaymentCertificatePayment;
       'api::certificate.certificate': ApiCertificateCertificate;
       'api::channel.channel': ApiChannelChannel;
       'api::email-template.email-template': ApiEmailTemplateEmailTemplate;

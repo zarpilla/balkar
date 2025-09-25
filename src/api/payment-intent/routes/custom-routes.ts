@@ -18,7 +18,16 @@ export default {
       method: "POST",
       path: "/payment-intents/check",
       handler: "payment-intent.checkPaymentIntent",
-    }
+    },
+    {
+      method: "POST",
+      path: "/payment-intents/create-checkout-session-certificate/:id",
+      handler: "payment-intent.createCheckoutSessionForCertificate",
+    },
+    {
+      method: "POST",
+      path: "/payment-intents/check-certificate",
+      handler: "payment-intent.checkPaymentIntentForCertificate",
+    },
   ],
-  
 };

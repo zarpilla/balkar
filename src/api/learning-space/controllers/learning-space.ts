@@ -76,7 +76,8 @@ export default factories.createCoreController(
               "publicLesson.content.quiz",
               "publicLesson.content.quiz.questions",
               "publicLesson.content.quiz.questions.options",
-              "certificate"
+              "certificate",
+              "certificateProduct",
             ],
             locale: ctx.query.locale || "en",
           }
@@ -145,7 +146,7 @@ export default factories.createCoreController(
               }
             } else {
               space.manager = ctx.state.user.manager;
-            } 
+            }
 
             const progresses = await strapi.entityService.findMany(
               "api::progress.progress",
@@ -376,7 +377,39 @@ export default factories.createCoreController(
 
           space.forum = spaceForums[0];
 
-          space.certificate = space.certificate ? { id: space.certificate.id } : null;
+          space.certificate = space.certificate
+            ? { id: space.certificate.id }
+            : null;
+
+          space.certificateProduct = space.certificateProduct
+            ? { id: space.certificateProduct.id }
+            : null;
+
+          if (ctx.state.user && space.certificateProduct) {
+            console.log(
+              "Checking certificate payment for user:",
+              ctx.state.user.email,
+              "and space:",
+              space.uid
+            );
+            const certificatePayments = await strapi.entityService.findMany(
+              "api::certificate-payment.certificate-payment",
+              {
+                filters: {
+                  email: ctx.state.user.email,
+                  uid: space.uid,
+                },
+              }
+            );
+
+            if (certificatePayments && certificatePayments.length > 0) {
+              space.certificatePayment = { paid: true };
+            } else {
+              space.certificatePayment = { paid: false };
+            }
+          } else if (ctx.state.user) {
+            space.certificatePayment = { paid: true };
+          }
 
           ctx.body = space;
         }

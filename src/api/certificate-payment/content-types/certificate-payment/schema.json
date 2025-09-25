@@ -1,11 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "pre_enrollements",
+  "collectionName": "certificate_payments",
   "info": {
-    "singularName": "pre-enrollement",
-    "pluralName": "pre-enrollements",
-    "displayName": "PreEnrollement",
-    "description": ""
+    "singularName": "certificate-payment",
+    "pluralName": "certificate-payments",
+    "displayName": "CertificatePayment"
   },
   "options": {
     "draftAndPublish": false

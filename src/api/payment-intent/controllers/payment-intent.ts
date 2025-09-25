@@ -83,7 +83,7 @@ export default factories.createCoreController(
           },
           ca: {
             name: "Nom",
-            lastname: "Cognom",
+            lastname: "Cognoms",
           },
         };
         const spaces = await strapi.entityService.findMany(
@@ -171,6 +171,105 @@ export default factories.createCoreController(
         ctx.badRequest(`createCheckoutSession Error: ${err.message}`);
       }
     },
+    createCheckoutSessionForCertificate: async (ctx, next) => {
+      try {
+        const spaceUid = ctx.params.id;
+        const { email, name, lastname, locale } = ctx.request.body;
+        const texts = {
+          en: {
+            name: "Name",
+            lastname: "Last Name",
+          },
+          ca: {
+            name: "Nom",
+            lastname: "Cognoms",
+          },
+        };
+        const spaces = await strapi.entityService.findMany(
+          "api::learning-space.learning-space",
+          {
+            filters: {
+              uid: spaceUid,
+            },
+            populate: ["certificateProduct"],
+          }
+        );
+
+        if (spaces.length > 0) {
+          const space: any = spaces[0];
+          const productId = space.certificateProduct.id;
+          const product = await strapi.entityService.findOne(
+            "api::product.product",
+            productId
+          );
+          if (product) {
+            const sessionData = {
+              payment_method_types: ["card"],
+              customer_email: email,
+              line_items: [
+                {
+                  price: product.stripePriceId,
+                  quantity: 1,
+                },
+              ],
+              mode: "payment",
+              success_url: `${process.env.FRONTEND_URL}/certificate-paid/${spaceUid}?success={CHECKOUT_SESSION_ID}`,
+              cancel_url: `${process.env.FRONTEND_URL}/certificate-paid/${spaceUid}?success=false`,
+              custom_fields: [
+                {
+                  key: "name",
+                  label: {
+                    type: "custom",
+                    custom: texts[locale] ? texts[locale].name : texts.en.name,
+                  },
+                  type: "text",
+                  text: {
+                    default_value: name || ctx.state.user.name,
+                  },
+                },
+                {
+                  key: "lastname",
+                  label: {
+                    type: "custom",
+                    custom: texts[locale]
+                      ? texts[locale].lastname
+                      : texts.en.lastname,
+                  },
+                  type: "text",
+                  text: {
+                    default_value: lastname || ctx.state.user.lastname,
+                  },
+                },
+              ],
+            };
+
+            const session = await stripe.checkout.sessions.create(sessionData);
+
+            await strapi.entityService.create(
+              "api::payment-intent.payment-intent",
+              {
+                data: {
+                  name: session.id,
+                  state: "intent",
+                  data: JSON.stringify({
+                    spaceUid,
+                    product,
+                    email: email,
+                    name,
+                    lastname,
+                    locale,
+                  }),
+                },
+              }
+            );
+            ctx.body = { url: session.url };
+          }
+        }
+      } catch (err) {
+        console.error("createCheckoutSessionForCertificate error", err);
+        ctx.badRequest(`createCheckoutSessionForCertificate Error: ${err.message}`);
+      }
+    },
     checkPaymentIntent: async (ctx, next) => {
       // check if the body param id exists in "api::payment-intent.payment-intent" (column name)
       const { id, spaceUid } = ctx.request.body;
@@ -203,6 +302,79 @@ export default factories.createCoreController(
                 uid: data.spaceUid,
                 name: data.name,
                 lastname: data.lastname,
+                payment: true
+              },
+            }
+          );
+
+          // update intent
+          await strapi.entityService.update(
+            "api::payment-intent.payment-intent",
+            intent.id,
+            {
+              data: {
+                state: "received",
+              },
+            }
+          );
+
+          const product = await strapi.entityService.findOne(
+            "api::product.product",
+            data.product.id
+          );
+          if (product && product.paymentEmails) {
+            const emailData = {
+              to: product.paymentEmails.split(","),
+              subject: `New payment for ${product.name}`,
+              text: `A new payment has been received for "${product.name}" with name "${data.name} ${data.lastname}" and email "${data.email}"`,
+            };
+            await strapi.plugins["email"].services.email.send(emailData);
+          }
+
+          ctx.body = {
+            ok: true,
+            email: session.customer_email,
+            name: data.name,
+            lastname: data.lastname,
+          };
+        }
+      } else {
+        ctx.body = { ok: false };
+      }
+    },
+    checkPaymentIntentForCertificate: async (ctx, next) => {
+      // check if the body param id exists in "api::payment-intent.payment-intent" (column name)
+      const { id, spaceUid } = ctx.request.body;
+
+      const session = await stripe.checkout.sessions.retrieve(id);
+
+      if (session && session.status === "complete") {
+        // find "api::payment-intent.payment-intent"
+        // if it exists, return the email
+        // if not, return false
+        const intents = await strapi.entityService.findMany(
+          "api::payment-intent.payment-intent",
+          {
+            filters: {
+              name: id,
+            },
+          }
+        );
+
+        if (intents && intents.length === 1) {
+          const intent = intents[0];
+          const data = JSON.parse(intent.data);
+
+          // create api::enrollment.enrollment
+          const payment = await strapi.entityService.create(
+            "api::certificate-payment.certificate-payment",
+            {
+              data: {
+                email: data.email,
+                uid: data.spaceUid,
+                name: data.name,
+                lastname: data.lastname,
+                payment: true
               },
             }
           );
