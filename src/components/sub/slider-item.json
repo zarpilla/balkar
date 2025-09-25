@@ -16,18 +16,29 @@
       "type": "blocks"
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
+      ]
+    },
+    "imageSize": {
+      "type": "enumeration",
+      "enum": [
+        "contain",
+        "cover",
+        "initial"
       ],
-      "type": "media",
-      "multiple": false
+      "default": "contain"
     }
   }
 }

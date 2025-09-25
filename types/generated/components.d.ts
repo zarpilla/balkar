@@ -168,6 +168,8 @@ export interface SubSliderItem extends Schema.Component {
   };
   attributes: {
     image: Attribute.Media<'images'>;
+    imageSize: Attribute.Enumeration<['contain', 'cover', 'initial']> &
+      Attribute.DefaultTo<'contain'>;
     logo: Attribute.Media<'images'>;
     preTitle: Attribute.String;
     text: Attribute.Blocks;
