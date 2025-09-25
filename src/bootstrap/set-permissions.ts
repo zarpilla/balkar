@@ -62,6 +62,7 @@ async function start() {
         "api::payment-intent.payment-intent": ["create", "createCheckoutSession", "checkPaymentIntent"],
         "api::user-channel-read.user-channel-read": ["getChannelReadStatus", "getUserReadStatuses"],
         "api::subtitle.subtitle": ["findFileById", "findTranscriptById"],
+        "api::certificate.certificate": ["issue"],
         "plugin::i18n.locales": ["listLocales"],
       }
     );

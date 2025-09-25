@@ -76,6 +76,7 @@ export default factories.createCoreController(
               "publicLesson.content.quiz",
               "publicLesson.content.quiz.questions",
               "publicLesson.content.quiz.questions.options",
+              "certificate"
             ],
             locale: ctx.query.locale || "en",
           }
@@ -374,6 +375,8 @@ export default factories.createCoreController(
           // }
 
           space.forum = spaceForums[0];
+
+          space.certificate = space.certificate ? { id: space.certificate.id } : null;
 
           ctx.body = space;
         }

@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_certificates",
+  "info": {
+    "singularName": "user-certificate",
+    "pluralName": "user-certificates",
+    "displayName": "UserCertificate",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "learning_space": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::learning-space.learning-space"
+    },
+    "issuedAt": {
+      "type": "date"
+    },
+    "issuedTo": {
+      "type": "string"
+    },
+    "filename": {
+      "type": "string"
+    }
+  }
+}

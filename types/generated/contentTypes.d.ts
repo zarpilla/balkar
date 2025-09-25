@@ -448,6 +448,49 @@ export interface ApiBookmarkBookmark extends Schema.CollectionType {
   };
 }
 
+export interface ApiCertificateCertificate extends Schema.CollectionType {
+  collectionName: 'certificates';
+  info: {
+    description: '';
+    displayName: 'Certificate';
+    pluralName: 'certificates';
+    singularName: 'certificate';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    background: Attribute.Media<'images'>;
+    course_align: Attribute.Enumeration<['left', 'center', 'right']>;
+    course_fontsize: Attribute.Integer;
+    course_x: Attribute.Integer;
+    course_y: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::certificate.certificate',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    date_align: Attribute.Enumeration<['left', 'center', 'right']>;
+    date_fontsize: Attribute.Integer;
+    date_x: Attribute.Integer;
+    date_y: Attribute.Integer;
+    name: Attribute.String;
+    to_align: Attribute.Enumeration<['left', 'center', 'right']>;
+    to_fontsize: Attribute.Integer;
+    to_x: Attribute.Integer;
+    to_y: Attribute.Integer;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::certificate.certificate',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiChannelChannel extends Schema.CollectionType {
   collectionName: 'channels';
   info: {
@@ -787,6 +830,16 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    certificate: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'api::certificate.certificate'
+    > &
+      Attribute.SetPluginOptions<{
         translate: {
           translate: 'translate';
         };
@@ -1807,6 +1860,49 @@ export interface ApiUserAvatarUserAvatar extends Schema.CollectionType {
   };
 }
 
+export interface ApiUserCertificateUserCertificate
+  extends Schema.CollectionType {
+  collectionName: 'user_certificates';
+  info: {
+    description: '';
+    displayName: 'UserCertificate';
+    pluralName: 'user-certificates';
+    singularName: 'user-certificate';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-certificate.user-certificate',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    filename: Attribute.String;
+    issuedAt: Attribute.Date;
+    issuedTo: Attribute.String;
+    learning_space: Attribute.Relation<
+      'api::user-certificate.user-certificate',
+      'oneToOne',
+      'api::learning-space.learning-space'
+    >;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::user-certificate.user-certificate',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    user: Attribute.Relation<
+      'api::user-certificate.user-certificate',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiUserChannelReadUserChannelRead
   extends Schema.CollectionType {
   collectionName: 'user_channel_reads';
@@ -2417,6 +2513,7 @@ declare module '@strapi/types' {
       'admin::user': AdminUser;
       'api::administration.administration': ApiAdministrationAdministration;
       'api::bookmark.bookmark': ApiBookmarkBookmark;
+      'api::certificate.certificate': ApiCertificateCertificate;
       'api::channel.channel': ApiChannelChannel;
       'api::email-template.email-template': ApiEmailTemplateEmailTemplate;
       'api::enrollment.enrollment': ApiEnrollmentEnrollment;
@@ -2438,6 +2535,7 @@ declare module '@strapi/types' {
       'api::translation.translation': ApiTranslationTranslation;
       'api::unit.unit': ApiUnitUnit;
       'api::user-avatar.user-avatar': ApiUserAvatarUserAvatar;
+      'api::user-certificate.user-certificate': ApiUserCertificateUserCertificate;
       'api::user-channel-read.user-channel-read': ApiUserChannelReadUserChannelRead;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

@@ -220,6 +220,16 @@
           "translate": "translate"
         }
       }
+    },
+    "certificate": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::certificate.certificate",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     }
   }
 }

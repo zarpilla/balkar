@@ -1,0 +1,78 @@
+{
+  "kind": "collectionType",
+  "collectionName": "certificates",
+  "info": {
+    "singularName": "certificate",
+    "pluralName": "certificates",
+    "displayName": "Certificate",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "background": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "to_x": {
+      "type": "integer"
+    },
+    "to_y": {
+      "type": "integer"
+    },
+    "course_x": {
+      "type": "integer"
+    },
+    "course_y": {
+      "type": "integer"
+    },
+    "date_x": {
+      "type": "integer"
+    },
+    "date_y": {
+      "type": "integer"
+    },
+    "to_fontsize": {
+      "type": "integer"
+    },
+    "course_fontsize": {
+      "type": "integer"
+    },
+    "date_fontsize": {
+      "type": "integer"
+    },
+    "to_align": {
+      "type": "enumeration",
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ]
+    },
+    "course_align": {
+      "type": "enumeration",
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ]
+    },
+    "date_align": {
+      "type": "enumeration",
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ]
+    }
+  }
+}
