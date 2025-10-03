@@ -495,7 +495,10 @@ export interface ApiCertificateCertificate extends Schema.CollectionType {
   };
   attributes: {
     background: Attribute.Media<'images'>;
+    color: Attribute.String;
+    course: Attribute.Boolean;
     course_align: Attribute.Enumeration<['left', 'center', 'right']>;
+    course_font: Attribute.Enumeration<['font1', 'font2']>;
     course_fontsize: Attribute.Integer;
     course_x: Attribute.Integer;
     course_y: Attribute.Integer;
@@ -507,11 +510,19 @@ export interface ApiCertificateCertificate extends Schema.CollectionType {
     > &
       Attribute.Private;
     date_align: Attribute.Enumeration<['left', 'center', 'right']>;
+    date_font: Attribute.Enumeration<['font1', 'font2']>;
     date_fontsize: Attribute.Integer;
     date_x: Attribute.Integer;
     date_y: Attribute.Integer;
+    hours: Attribute.String;
+    hours_align: Attribute.Enumeration<['left', 'center', 'right']>;
+    hours_font: Attribute.Enumeration<['font1', 'font2']>;
+    hours_fontsize: Attribute.Integer;
+    hours_x: Attribute.Integer;
+    hours_y: Attribute.Integer;
     name: Attribute.String;
     to_align: Attribute.Enumeration<['left', 'center', 'right']>;
+    to_font: Attribute.Enumeration<['font1', 'font2']>;
     to_fontsize: Attribute.Integer;
     to_x: Attribute.Integer;
     to_y: Attribute.Integer;
@@ -872,6 +883,16 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'api::learning-space.learning-space',
       'oneToOne',
       'api::certificate.certificate'
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    certificateLesson: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'api::lesson.lesson'
     > &
       Attribute.SetPluginOptions<{
         translate: {

@@ -240,6 +240,16 @@
           "translate": "translate"
         }
       }
+    },
+    "certificateLesson": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::lesson.lesson",
+      "pluginOptions": {
+        "translate": {
+          "translate": "translate"
+        }
+      }
     }
   }
 }

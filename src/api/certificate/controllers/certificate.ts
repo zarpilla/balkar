@@ -16,11 +16,46 @@ import { v4 as uuidv4 } from "uuid";
 // learningSpaceCertificate contains to_x, to_y, course_x, course_y, date_x, date_y that are the position in pixels for the dynamic fields on the certificate background
 // learningSpaceCertificate also contains the background image in learningSpaceCertificate.background.url, relative to the Strapi server base URL
 
+interface LearningSpaceCertificate {
+  color?: string; // e.g. "#000000"
+  to_x: number;
+  to_y: number;
+  to_align?: "left" | "center" | "right";
+  to_fontsize?: number;
+  to_font?: "font1" | "font2";
+  course?: boolean; // whether to include the course name
+  course_x: number;
+  course_y: number;
+  course_align?: "left" | "center" | "right";  
+  course_fontsize?: number;
+  course_font?: "font1" | "font2";
+  date_x: number;
+  date_y: number;
+  date_align?: "left" | "center" | "right";
+  date_fontsize?: number;
+  date_font?: "font1" | "font2";
+  hours?: string; // e.g. "5 hours"
+  hours_x?: number;
+  hours_y?: number;
+  hours_align?: "left" | "center" | "right";
+  hours_fontsize?: number;
+  hours_font?: "font1" | "font2";
+  background: {
+    url: string; // URL of the background image
+  };  
+}
+
+// Helper function to convert pixels to points
+const pxToPt = (px: number): number => {
+  return px * 0.75; // 1px = 0.75pt (at 96 DPI)
+};
+
+
 const generateCertificatePDF = (
   issuedTo: string,
   learningSpaceName: string,
   issuedAt: Date,
-  learningSpaceCertificate: any,
+  learningSpaceCertificate: LearningSpaceCertificate,
   filename: string
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -29,6 +64,11 @@ const generateCertificatePDF = (
       layout: "landscape",
       margins: { top: 50, bottom: 50, left: 50, right: 50 },
     });
+
+    // Register custom fonts
+    const fontsPath = "./src/api/certificate/fonts";
+    doc.registerFont("font1", `${fontsPath}/Inter-VariableFont_opsz,wght.ttf`);
+    doc.registerFont("font2", `${fontsPath}/Lora-Italic.ttf`);
 
     // Ensure the certificates directory exists
     if (!fs.existsSync("./public/certificates")) {
@@ -47,21 +87,47 @@ const generateCertificatePDF = (
       doc.image(backgroundPath, 0, 0, { width: doc.page.width, height: doc.page.height });
     }    
 
+    // Set text color if specified
+    const textColor = learningSpaceCertificate.color || "#000000";
+    doc.fillColor(textColor);
+
     // Add "Issued to" text
-    doc.fontSize(learningSpaceCertificate.to_fontsize || 30).text(issuedTo, learningSpaceCertificate.to_x, learningSpaceCertificate.to_y, { align: learningSpaceCertificate.to_align || "left" });
+    const toFont = learningSpaceCertificate.to_font || "font1";
+    doc
+      .font(toFont)
+      .fontSize(pxToPt(learningSpaceCertificate.to_fontsize || 30))
+      .text(issuedTo, learningSpaceCertificate.to_x, learningSpaceCertificate.to_y, { align: learningSpaceCertificate.to_align || "left" });
 
     // Add "For completing" text
-    doc
-      .fontSize(learningSpaceCertificate.course_fontsize || 20)
-      .text(`${learningSpaceName}`, learningSpaceCertificate.course_x, learningSpaceCertificate.course_y, {
-        align: learningSpaceCertificate.course_align || "left",
-      });
+    if (learningSpaceCertificate.course) {
+      const courseFont = learningSpaceCertificate.course_font || "font1";
+      doc
+        .font(courseFont)
+        .fontSize(pxToPt(learningSpaceCertificate.course_fontsize || 20))
+        .text(`${learningSpaceName}`, learningSpaceCertificate.course_x, learningSpaceCertificate.course_y, {
+          align: learningSpaceCertificate.course_align || "left",
+        });
+      }
 
     // Add "Date" text
-    const formattedDate = issuedAt.toLocaleDateString();
+    // DD/MM/YYYY
+    const formattedDate = issuedAt.toLocaleDateString('es-ES');
+    const dateFont = learningSpaceCertificate.date_font || "font1";
+
+    console.log('learningSpaceCertificate.date_align', learningSpaceCertificate.date_align);
     doc
-      .fontSize(learningSpaceCertificate.date_fontsize || 15)
+      .font(dateFont)
+      .fontSize(pxToPt(learningSpaceCertificate.date_fontsize || 15))
       .text(`${formattedDate}`, learningSpaceCertificate.date_x, learningSpaceCertificate.date_y, { align: learningSpaceCertificate.date_align || "left" });
+
+    // Add "Hours" text (optional)
+    if (learningSpaceCertificate.hours && learningSpaceCertificate.hours_x !== undefined && learningSpaceCertificate.hours_y !== undefined) {
+      const hoursFont = learningSpaceCertificate.hours_font || "font1";
+      doc
+        .font(hoursFont)
+        .fontSize(pxToPt(learningSpaceCertificate.hours_fontsize || 15))        
+        .text(learningSpaceCertificate.hours, learningSpaceCertificate.hours_x, learningSpaceCertificate.hours_y, { align: learningSpaceCertificate.hours_align || "left" });
+    }
 
     // Finalize the PDF and end the stream
     doc.end();

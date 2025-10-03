@@ -19,6 +19,9 @@
     },
     "alternativeText": {
       "type": "string"
+    },
+    "cssClass": {
+      "type": "string"
     }
   }
 }
