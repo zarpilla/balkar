@@ -168,6 +168,7 @@ export interface SubSliderItem extends Schema.Component {
     displayName: 'SliderItem';
   };
   attributes: {
+    color: Attribute.Enumeration<['loop', 'primary', 'secondary', 'tertiary']>;
     image: Attribute.Media<'images'>;
     imageSize: Attribute.Enumeration<['contain', 'cover', 'initial']> &
       Attribute.DefaultTo<'contain'>;

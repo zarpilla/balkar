@@ -39,6 +39,15 @@
         "initial"
       ],
       "default": "contain"
+    },
+    "color": {
+      "type": "enumeration",
+      "enum": [
+        "loop",
+        "primary",
+        "secondary",
+        "tertiary"
+      ]
     }
   }
 }

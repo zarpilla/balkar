@@ -110,8 +110,7 @@ const generateCertificatePDF = (
       }
 
     // Add "Date" text
-    // DD/MM/YYYY
-    const formattedDate = issuedAt.toLocaleDateString('es-ES');
+    const formattedDate = `${issuedAt.getDate().toString().padStart(2, '0')}/${(issuedAt.getMonth() + 1).toString().padStart(2, '0')}/${issuedAt.getFullYear()}`;    
     const dateFont = learningSpaceCertificate.date_font || "font1";
 
     console.log('learningSpaceCertificate.date_align', learningSpaceCertificate.date_align);
