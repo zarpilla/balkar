@@ -1,7 +1,7 @@
 export default ({ env }) => ({
   upload: {
     config: {
-      sizeLimit: 1 * 1024 * 1024 * 1024,
+      sizeLimit: 2 * 1024 * 1024 * 1024,
     },
   },
   email: {

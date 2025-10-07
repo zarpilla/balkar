@@ -19,15 +19,15 @@ export default [
     config: {
       enabled: true,
       multipart: true,
-      textLimit: 1 * 1024 * 1024 * 1024,
-      formLimit: 1 * 1024 * 1024 * 1024,
-      jsonLimit: 1 * 1024 * 1024 * 1024,
+      textLimit: 2 * 1024 * 1024 * 1024,
+      formLimit: 2 * 1024 * 1024 * 1024,
+      jsonLimit: 2 * 1024 * 1024 * 1024,
       includeUnparsed: true,
       formidable: {
-        maxFileSize: 1 * 1024 * 1024 * 1024, // 1 GB
+        maxFileSize: 2 * 1024 * 1024 * 1024, // 2 GB
       },
       providerOptions: {
-        sizeLimit: 1 * 1024 * 1024 * 1024, // 1 GB
+        sizeLimit: 2 * 1024 * 1024 * 1024, // 2 GB
       },
     },
   },
