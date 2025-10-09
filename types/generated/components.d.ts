@@ -145,7 +145,7 @@ export interface SubQuizItem extends Schema.Component {
   attributes: {
     answer: Attribute.Text;
     options: Attribute.Component<'sub.quiz-question-item', true>;
-    question: Attribute.String;
+    question: Attribute.Text;
     title: Attribute.String;
   };
 }
@@ -153,11 +153,12 @@ export interface SubQuizItem extends Schema.Component {
 export interface SubQuizQuestionItem extends Schema.Component {
   collectionName: 'components_sub_quiz_question_items';
   info: {
+    description: '';
     displayName: 'QuizQuestionItem';
   };
   attributes: {
     correct: Attribute.Boolean & Attribute.DefaultTo<false>;
-    option: Attribute.String;
+    option: Attribute.Text;
   };
 }
 

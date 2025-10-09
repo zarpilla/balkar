@@ -1,12 +1,13 @@
 {
   "collectionName": "components_sub_quiz_question_items",
   "info": {
-    "displayName": "QuizQuestionItem"
+    "displayName": "QuizQuestionItem",
+    "description": ""
   },
   "options": {},
   "attributes": {
     "option": {
-      "type": "string"
+      "type": "text"
     },
     "correct": {
       "type": "boolean",

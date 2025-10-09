@@ -10,7 +10,7 @@
       "type": "string"
     },
     "question": {
-      "type": "string"
+      "type": "text"
     },
     "answer": {
       "type": "text"
