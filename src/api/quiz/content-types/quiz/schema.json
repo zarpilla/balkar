@@ -58,6 +58,14 @@
         }
       },
       "type": "string"
+    },
+    "minToPass": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "integer"
     }
   }
 }

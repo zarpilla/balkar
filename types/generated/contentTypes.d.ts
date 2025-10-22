@@ -1552,6 +1552,12 @@ export interface ApiQuizQuiz extends Schema.CollectionType {
       'oneToMany',
       'api::quiz.quiz'
     >;
+    minToPass: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     publishedAt: Attribute.DateTime;
     questions: Attribute.Component<'sub.quiz-item', true> &
       Attribute.SetPluginOptions<{
