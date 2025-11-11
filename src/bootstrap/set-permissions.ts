@@ -105,7 +105,7 @@ async function start() {
   await setPermissions("public", {
     "api::translation.translation": ["find"],
     "api::product.product": ["find", "findOne"],
-    "api::learning-space.learning-space": ["findUid"],
+    "api::learning-space.learning-space": ["findUid", "findMine"],
     "api::pre-enrollement.pre-enrollement": ["create"],
     "api::payment-intent.payment-intent": [
       "create",

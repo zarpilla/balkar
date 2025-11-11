@@ -427,15 +427,14 @@ export default factories.createCoreController(
     },
     findMine: async (ctx, next) => {
       try {
-        const enrollments = await strapi.entityService.findMany(
-          "api::enrollment.enrollment",
-          {
-            filters: {
-              users_permissions_user: ctx.state.user.id,
-            },
-            populate: ["learning_space"],
-          }
-        );
+        const enrollments = !ctx.state.user
+          ? []
+          : await strapi.entityService.findMany("api::enrollment.enrollment", {
+              filters: {
+                users_permissions_user: ctx.state.user.id,
+              },
+              populate: ["learning_space"],
+            });
 
         const spaces = await strapi.entityService.findMany(
           "api::learning-space.learning-space",
@@ -475,7 +474,7 @@ export default factories.createCoreController(
           return space;
         });
 
-        const progresses = await strapi.entityService.findMany(
+        const progresses = !ctx.state.user ?  [] : await strapi.entityService.findMany(
           "api::progress.progress",
           {
             filters: {
