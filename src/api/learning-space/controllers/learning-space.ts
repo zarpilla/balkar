@@ -86,6 +86,7 @@ export default factories.createCoreController(
               "certificateLesson.content.subtitle.localizations",
               "certificate",
               "certificateProduct",
+              "theme"
             ],
             locale: ctx.query.locale || "en",
           }

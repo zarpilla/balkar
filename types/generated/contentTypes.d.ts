@@ -1036,6 +1036,16 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         };
       }>;
     publishedAt: Attribute.DateTime;
+    theme: Attribute.Relation<
+      'api::learning-space.learning-space',
+      'oneToOne',
+      'api::theme.theme'
+    > &
+      Attribute.SetPluginOptions<{
+        translate: {
+          translate: 'translate';
+        };
+      }>;
     uid: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -1727,6 +1737,37 @@ export interface ApiSubtitleSubtitle extends Schema.CollectionType {
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::subtitle.subtitle',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiThemeTheme extends Schema.CollectionType {
+  collectionName: 'themes';
+  info: {
+    description: '';
+    displayName: 'Theme';
+    pluralName: 'themes';
+    singularName: 'theme';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::theme.theme',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    name: Attribute.String;
+    styles: Attribute.Text;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::theme.theme',
       'oneToOne',
       'admin::user'
     > &
@@ -2605,6 +2646,7 @@ declare module '@strapi/types' {
       'api::space-manager.space-manager': ApiSpaceManagerSpaceManager;
       'api::submission.submission': ApiSubmissionSubmission;
       'api::subtitle.subtitle': ApiSubtitleSubtitle;
+      'api::theme.theme': ApiThemeTheme;
       'api::translation.translation': ApiTranslationTranslation;
       'api::unit.unit': ApiUnitUnit;
       'api::user-avatar.user-avatar': ApiUserAvatarUserAvatar;
