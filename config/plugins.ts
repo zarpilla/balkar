@@ -42,7 +42,7 @@ export default ({ env }) => ({
         // your API key - required and wil cause errors if not provided
         apiKey: env("DEEPL_API_KEY") || "dummy-key",
         // use custom api url - optional
-        apiUrl: "https://api-free.deepl.com",
+        apiUrl: env("DEEPL_API_URL") || "https://api-free.deepl.com",
         // use custom locale mapping (for example 'en' locale is deprecated so need to choose between 'EN-GB' and 'EN-US')
         localeMap: {
           // use uppercase here!
