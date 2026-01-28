@@ -9330,10 +9330,10 @@ statuses@2.0.1:
   resolved "https://registry.npmjs.org/statuses/-/statuses-2.0.1.tgz"
   integrity sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==
 
-strapi-plugin-translate@^1.4.2, strapi-plugin-translate@1.4.2:
-  version "1.4.2"
-  resolved "https://registry.npmjs.org/strapi-plugin-translate/-/strapi-plugin-translate-1.4.2.tgz"
-  integrity sha512-ssnDeumxL6m0kia30hrUe+a5nepGqWn4vnxTwqO8+pQXO6CDv+lFtulf2wqzkq4mRsg8f5Bkk5R1U72IyBfEAA==
+strapi-plugin-translate@^1.4.3, strapi-plugin-translate@1.4.3:
+  version "1.4.3"
+  resolved "https://registry.npmjs.org/strapi-plugin-translate/-/strapi-plugin-translate-1.4.3.tgz"
+  integrity sha512-YkBjgOaOobz/o6gKsCd1x9+S4a/BY5uOZ9arA75xFwYoi1BPH94peYp4wH4iJYrhFW92jRneep+11YGzucLPlA==
   dependencies:
     "@strapi/helper-plugin" "^4.15.0"
     axios "^1.7.4"
@@ -9343,10 +9343,10 @@ strapi-plugin-translate@^1.4.2, strapi-plugin-translate@1.4.2:
     jsdom "^25.0.0"
     showdown "^2.1.0"
 
-strapi-provider-translate-deepl@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.npmjs.org/strapi-provider-translate-deepl/-/strapi-provider-translate-deepl-1.2.6.tgz"
-  integrity sha512-YqUWbuGG2COaDnesaTDCRSDobp+SM3DH/GyvxPjNJ3d2mfo5zTvZGOdiTmvDnrtQ4a2XeYa1yO65N26VfAa13g==
+strapi-provider-translate-deepl@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.npmjs.org/strapi-provider-translate-deepl/-/strapi-provider-translate-deepl-1.2.8.tgz"
+  integrity sha512-iu2PgjaegIz4nhkBnmEpXLCAI53SHFs/fMaT9Ufu8G77XnAHGM+4iLbVZUD4FU7Xoc3Xh1QN1c7PGwFcyb7Ipg==
   dependencies:
     bottleneck "^2.19.5"
     deepl-node "^1.13.1"
