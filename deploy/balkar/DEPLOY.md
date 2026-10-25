@@ -58,7 +58,16 @@ docker compose restart strapi
 docker compose up -d frontend
 ```
 
-Then point area.balkar.earth to the frontend container (needs sudo):
+The new backend answers at api.balkar.earth right away (nginx already proxies
+port 1347). area.balkar.earth still serves the old static build, so put the new
+front there straight away (no sudo needed):
+```bash
+cd /var/www/balkar/balkar-front && mv dist dist-pre-mooc && mkdir dist
+docker cp balkar-frontend:/usr/share/nginx/html/. dist/
+```
+
+Later, point area.balkar.earth to the frontend container (needs sudo); until
+then `deploy.sh` keeps refreshing that folder:
 ```bash
 sudo cp deploy/balkar/nginx-balkar-front.conf /etc/nginx/sites-available/balkar-front
 sudo nginx -t && sudo systemctl reload nginx
@@ -87,7 +96,8 @@ The migration changes the database schema, so going back means restoring it.
 cd ~/balkar-docker && docker compose down
 export PGPASSWORD=...   # as above
 pg_restore -h 127.0.0.1 -U postgres --clean --if-exists -d balkar2 ~/backups/balkar2-pre-mooc-<date>.dump
-pm2 start balkar-back
+pm2 start ~/ecosystem.config.js --only balkar-back
+rm -rf /var/www/balkar/balkar-front/dist && mv /var/www/balkar/balkar-front/dist-pre-mooc /var/www/balkar/balkar-front/dist
 sudo cp ~/backups/nginx-balkar-front.pre-mooc /etc/nginx/sites-available/balkar-front
 sudo nginx -t && sudo systemctl reload nginx
 ```
@@ -95,4 +105,13 @@ sudo nginx -t && sudo systemctl reload nginx
 ## Later deploys
 
 `cd ~/balkar-docker && ./deploy.sh` (same as `~/deploy-urnet.sh` on URR).
-A specific build: `IMAGE_TAG=mooc-<commit sha> ./deploy.sh`.
+A specific build: `IMAGE_TAG=mooc-<full commit sha> ./deploy.sh` (the tag
+uses the full 40-character sha).
+
+## Done on 2026-10-25
+
+Switched over 09:39–09:42 (3 minutes down). Backups in `~/backups/*pre-mooc*`
+(database, uploads, old front build, old .env, nginx file). pm2 `balkar-back`
+removed; `~/deploy-balkar-back.sh` renamed to `.old`. URR was updated the same
+day with `~/deploy-urnet.sh`; its previous images are tagged `:pre-merge` on
+that server.
