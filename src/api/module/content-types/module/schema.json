@@ -73,7 +73,8 @@
       "components": [
         "content.text",
         "content.image",
-        "content.video"
+        "content.video",
+        "content.markdown"
       ]
     },
     "learning_space": {
@@ -97,6 +98,28 @@
         }
       },
       "type": "string"
+    },
+    "moduleType": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "enumeration",
+      "enum": [
+        "Content",
+        "Monitoring"
+      ],
+      "default": "Content"
+    },
+    "uploadFiles": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "boolean",
+      "default": false
     }
   }
 }

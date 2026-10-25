@@ -82,6 +82,8 @@ ssl
 nbproject
 public/uploads/*
 !public/uploads/.gitkeep
+# Certificates are generated per user on download (personal data); regenerated if missing
+public/certificates/
 
 ############################
 # Node.js

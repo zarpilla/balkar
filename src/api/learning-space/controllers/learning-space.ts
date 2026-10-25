@@ -31,6 +31,9 @@ export default factories.createCoreController(
               "product",
               "localizations",
               "content_modules",
+              "content_modules.content",
+              "content_modules.content.image",
+              "content_modules.content.video",
               "content_modules.units",
               "content_modules.units.lessons",
               "content_modules.units.content",
@@ -322,14 +325,19 @@ export default factories.createCoreController(
                   unit.bookmarked = false;
                 }
               }
-              module.completedPct =
-                module.units.filter((u) => u.completedPct === 1).length /
-                module.units.length;
+              module.completedPct = module.units.length
+                ? module.units.filter((u) => u.completedPct === 1).length /
+                  module.units.length
+                : 0;
             }
-            if (space.content_modules && space.content_modules.length) {
+            // Monitoring modules (migrated from Balkar) have no completion.
+            const trackedModules = (space.content_modules || []).filter(
+              (m) => m.moduleType !== "Monitoring"
+            );
+            if (trackedModules.length) {
               space.contentCompletedPct =
-                space.content_modules.filter((m) => m.completedPct === 1)
-                  .length / space.content_modules.length;
+                trackedModules.filter((m) => m.completedPct === 1).length /
+                trackedModules.length;
 
               space.contentCompleted = completed.length;
               space.contentNotCompleted = notCompleted.length;
@@ -357,6 +365,14 @@ export default factories.createCoreController(
               if (moduleSubmissions) {
                 module.submissions = moduleSubmissions;
               }
+            }
+
+            // Content modules use the module uid as submission moduleId
+            // (Balkar's migrated modules keep their old moduleId as uid).
+            for (const module of space.content_modules || []) {
+              module.submissions = submissions.filter(
+                (submission: any) => submission.moduleId === module.uid
+              );
             }
 
             const forums = await strapi.entityService.findMany(

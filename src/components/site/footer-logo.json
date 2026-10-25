@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_site_footer_logos",
+  "info": {
+    "displayName": "Footer logo",
+    "description": "Extra logo in the site footer, with an optional link"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "url": {
+      "type": "string"
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

@@ -24,6 +24,47 @@
       ],
       "type": "media",
       "multiple": false
+    },
+    "siteName": {
+      "type": "string"
+    },
+    "logoHeader": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "logoFooter": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "favicon": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "theme": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::theme.theme"
+    },
+    "defaultLocale": {
+      "type": "string"
+    },
+    "publicHome": {
+      "type": "boolean",
+      "default": true
+    },
+    "footerLogos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "site.footer-logo"
     }
   }
 }

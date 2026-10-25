@@ -1,0 +1,76 @@
+{
+  "_comment": "Dashboard card images for Balkar spaces, cut from each space banner where there is no text. Keyed by the banner file hash. left/top/width/height are fractions of the banner. fit 'contain' places the crop over `background`; blur softens text-only banners. Banners not listed get the generic version (whole banner over a blurred copy).",
+  "2_fb31053ef4": {
+    "label": "Iltiŕ Hub 2024 (otter)",
+    "left": 0.62,
+    "top": 0.46,
+    "width": 0.33,
+    "height": 0.42
+  },
+  "4_1800x500_cb102dc8d5": {
+    "label": "Comunitat d'aprenentatge (hands)",
+    "left": 0.35,
+    "top": 0,
+    "width": 0.5,
+    "height": 1
+  },
+  "Baner_BALKAR_15_94de266eb5": {
+    "label": "Regenerative Leadership (watercolour)",
+    "left": 0,
+    "top": 0,
+    "width": 0.3,
+    "height": 0.24,
+    "blur": 8
+  },
+  "Baner_BALKAR_6_6298b3a3e7": {
+    "label": "Community-Led Climate Action (stripes)",
+    "left": 0.19,
+    "top": 0,
+    "width": 0.2,
+    "height": 1
+  },
+  "Banner_Iltir_Hub_amb_logo_cofinancat_UE_cfcaf7310a": {
+    "label": "Iltir Hub 2025 Miceli (mycelium)",
+    "left": 0.545,
+    "top": 0,
+    "width": 0.29,
+    "height": 1
+  },
+  "B_Anners_CURSOS_BALKAR_4_3c4ac2c4f8": {
+    "label": "Social Biomimicry EN (dark collage)",
+    "left": 0.71,
+    "top": 0,
+    "width": 0.29,
+    "height": 1
+  },
+  "B_Anners_CURSOS_BALKAR_5_77774f73fa": {
+    "label": "Biomimesis Social ES (dark collage)",
+    "left": 0.71,
+    "top": 0,
+    "width": 0.29,
+    "height": 1
+  },
+  "Rural_biorregional_I_Sm_translocal_community_80efe2d483": {
+    "label": "Rural Bioregionalism (leaf)",
+    "left": 0,
+    "top": 0,
+    "width": 0.23,
+    "height": 1,
+    "fit": "contain",
+    "background": "#ffffff"
+  },
+  "SIMBIOTS_ESTIU_2025_13_5bf2126f3f": {
+    "label": "Simbionts (dragonfly wings)",
+    "left": 0.27,
+    "top": 0.16,
+    "width": 0.23,
+    "height": 0.21
+  },
+  "thebioregionalconversations_07b8efbcfe": {
+    "label": "The Bioregional Conversations (delta)",
+    "left": 0.63,
+    "top": 0,
+    "width": 0.37,
+    "height": 1
+  }
+}

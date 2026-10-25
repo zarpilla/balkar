@@ -1,0 +1,32 @@
+# area.balkar.earth / api.balkar.earth
+# Same images as edu.urbanresilienceresearch.net; per-site settings come from
+# .env and from the Strapi `administration` single type.
+#
+# Differences with the URR compose file:
+# - Postgres runs on the host (127.0.0.1:5432), not in a container, so the
+#   backend uses the host network and listens on PORT (1347) directly.
+# - Uploads stay where they were: /var/www/balkar/balkar-back/public/uploads.
+services:
+  strapi:
+    container_name: balkar-strapi
+    image: ${DOCKERHUB_USERNAME}/balkar-back:${IMAGE_TAG:-mooc}
+    restart: unless-stopped
+    env_file: .env
+    network_mode: host
+    # The image runs as `node` (uid 1000); the uploads folder belongs to
+    # resi:resi (1001:1003, mode 775). Adding the resi group gives write access.
+    group_add:
+      - "1003"
+    volumes:
+      - /var/www/balkar/balkar-back/public/uploads:/opt/app/public/uploads
+      # Generated certificates (regenerated on demand if missing)
+      - ./certificates:/opt/app/public/certificates
+
+  frontend:
+    container_name: balkar-frontend
+    image: ${DOCKERHUB_USERNAME}/balkar-front:${IMAGE_TAG:-mooc}
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE: ${VITE_API_BASE}
+    ports:
+      - "127.0.0.1:3010:80"

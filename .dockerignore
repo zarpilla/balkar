@@ -11,3 +11,8 @@ build/
 .env.test.local
 .env.production.local
 database-data/
+# runtime files: uploads are a mounted volume, certificates are regenerated on demand
+public/uploads/*
+!public/uploads/.gitkeep
+public/certificates/
+dist/

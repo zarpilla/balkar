@@ -1,0 +1,118 @@
+/*
+ * Balkar global theme (area.balkar.earth).
+ * Stored in Strapi as the "Balkar" theme and linked from administration.theme;
+ * the front injects it on every page. It overrides the mooc default theme
+ * variables with Balkar's palette: the two creams (#FBF7EB background,
+ * #EFDDA2 highlights), yellow #F3C857 and dark blue #020034.
+ */
+:root {
+  --balkar-cream: #FBF7EB;
+  --balkar-cream-dark: #EFDDA2;
+  --balkar-yellow: #F3C857;
+  --balkar-dark: #020034;
+
+  --theme-primary: var(--balkar-dark);
+  --theme-primary-rgb: 2, 0, 52;
+  --theme-primary-light: var(--balkar-cream);
+  --theme-primary-hover: #1d1b5c;
+
+  --theme-secondary: var(--balkar-yellow);
+  --theme-secondary-rgb: 243, 200, 87;
+  --theme-secondary-light: var(--balkar-cream-dark);
+  --theme-secondary-hover: #e6b347;
+
+  --theme-accent-blue: var(--balkar-dark);
+  --theme-accent-blue-rgb: 2, 0, 52;
+  --theme-accent-blue-light: var(--balkar-cream-dark);
+  --theme-accent-blue-light-rgb: 239, 221, 162;
+  --theme-accent-blue-bg: var(--balkar-cream);
+
+  --theme-info: var(--balkar-cream-dark);
+  --theme-info-bg: var(--balkar-cream);
+
+  --color-primary: var(--theme-primary);
+  --color-primary-light: var(--theme-primary-light);
+  --color-primary-hover: var(--theme-primary-hover);
+  --color-secondary: var(--theme-secondary);
+  --color-secondary-light: var(--theme-secondary-light);
+  --color-secondary-hover: var(--theme-secondary-hover);
+  --color-accent: var(--theme-accent-blue);
+  --color-accent-light: var(--theme-accent-blue-light);
+  --color-info: var(--theme-info);
+  --color-background-secondary: var(--balkar-cream);
+  --color-background-muted: var(--balkar-cream);
+
+  --icon-primary: var(--balkar-dark);
+  --icon-secondary: var(--balkar-yellow);
+  --icon-accent: var(--balkar-dark);
+
+  --progress-bar-bg: rgba(243, 200, 87, 0.4);
+  --progress-bar-fill: var(--balkar-yellow);
+
+  /* legacy aliases still used by some components */
+  --Green: var(--balkar-dark);
+  --Blau-fosc: var(--balkar-dark);
+  --Mimosa: var(--balkar-yellow);
+  --Blue-Grey: var(--balkar-cream-dark);
+  --Resilience-fosc: var(--balkar-dark);
+  --Canya: var(--balkar-cream-dark);
+  --Balkar: var(--balkar-yellow);
+  --Balkar-bg: var(--balkar-cream);
+
+  /* footer as on the old Balkar site */
+  --footer-bg: var(--balkar-yellow);
+  --footer-logo-height: 64px;
+  --footer-bg-image-opacity: 0;
+
+  /* dashboard cards: the image fades into the cream background */
+  --card-overlay-rgb: 239, 221, 162;
+  --card-overlay-opacity: 0.55;
+}
+
+header {
+  background: var(--balkar-cream);
+}
+
+/* user box in the header: no white box on the cream header */
+header .auth-wrapper {
+  background: transparent !important;
+}
+
+/* dashboard: no white gap between the header and the spaces block */
+.about {
+  margin-top: 0 !important;
+  padding-top: 2rem;
+}
+
+/* narrower footer than the URR one */
+footer.footer {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+}
+footer.footer .container,
+footer.footer .row {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  align-items: center;
+}
+footer.footer .footer-contact {
+  margin-top: 0;
+}
+
+/* header: logo and user block centred vertically */
+header .logo-outter {
+  margin-top: 0 !important;
+  padding: 8px 0;
+}
+header .logo-outter > .row {
+  align-items: center;
+}
+header .auth-wrapper {
+  margin-top: 0 !important;
+}
+@media (min-width: 768px) {
+  /* guest header: no empty space under the logo row */
+  header.pb-4 {
+    padding-bottom: 0 !important;
+  }
+}

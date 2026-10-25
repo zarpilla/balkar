@@ -27,6 +27,9 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:mooc
+          # `mooc` is what both servers pull; `mooc-<sha>` allows going back to a build
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:mooc
+            ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:mooc-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

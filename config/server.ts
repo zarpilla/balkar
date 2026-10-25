@@ -11,7 +11,8 @@ export default ({ env }) => ({
     populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
   },
   cron: {
-    enabled: false,
+    // Enable with CRON_ENABLED=true (Balkar sends payment emails this way).
+    enabled: env.bool('CRON_ENABLED', false),
     tasks: cronTasks,
   },
 });

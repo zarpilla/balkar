@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_content_markdowns",
+  "info": {
+    "displayName": "Markdown",
+    "description": "Markdown/HTML text (used by content migrated from the old spaces structure)"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "text": {
+      "type": "richtext"
+    }
+  }
+}
