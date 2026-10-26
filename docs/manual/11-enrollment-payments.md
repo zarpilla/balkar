@@ -75,7 +75,7 @@ Payments go through **Stripe**. A **Product** is a price:
 | **paymentEmails** | Addresses notified right after each payment. |
 | **stripeProductId**, **stripePriceId** | **Filled in automatically** when you save the product. Don't edit them. |
 
-![A product](images/11-enrollment-payments/urr-admin-product.png)
+![A product (Balkar)](images/11-enrollment-payments/balkar-admin-product.png)
 
 When you **create** a product, the platform creates it in Stripe. When you **change** its name, description, image or price, it updates Stripe; a new price applies to new payments only. After changing a price, check in the Stripe dashboard that the new price is there.
 

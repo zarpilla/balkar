@@ -83,7 +83,7 @@ export async function frontLogin (page, site, who = 'STUDENT', locale) {
   if (!email || !password) throw new Error(`${site.toUpperCase()}_${who}_EMAIL / _PASSWORD missing in .env.manual`)
   await page.goto(front + '/login')
   if (locale) await setLocale(page, locale)
-  await page.locator('input[type=email], input[name=email]').first().fill(email)
+  await page.locator('form input:not([type=password])').first().fill(email)
   await page.locator('input[type=password]').first().fill(password)
   await page.locator('button[type=submit]').first().click()
   await page.waitForFunction(() => !!localStorage.getItem('user.jwt'), null, { timeout: 30_000 })
@@ -105,8 +105,8 @@ export async function settle (page, ms = 1200) {
 // Blur every element whose own text contains an email address.
 async function blurEmails (page) {
   await page.evaluate(() => {
-    // the sites' own public contact addresses can stay visible
-    const own = /@(balkar\.earth|urbanresilienceresearch\.net|resilience\.earth)\b/
+    // the sites' own generic contact addresses (info@, hello@) can stay visible
+    const own = /^(info|hello|contact)@(balkar\.earth|urbanresilienceresearch\.net|resilience\.earth)$/
     const personal = /[\w.+-]+@[\w-]+\.[\w.-]+/g
     const re = { test: s => (s.match(personal) || []).some(e => !own.test(e)) }
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
@@ -131,7 +131,26 @@ export async function shot (page, chapter, site, name, { blur = [], keepEmails, 
       e.style.outlineOffset = '3px'
     }))
   }
-  await page.screenshot({ path: file, animations: 'disabled', ...options })
+  if (options.element) {
+    // a single element (e.g. one content block), with a little margin around it
+    const { element, pad = 16 } = options
+    await element.scrollIntoViewIfNeeded()
+    const box = await element.boundingBox()
+    if (!box) throw new Error(`${name}: element not visible`)
+    const view = page.viewportSize()
+    const docH = await page.evaluate(() => document.documentElement.scrollHeight)
+    const clip = {
+      x: Math.max(0, box.x - pad),
+      y: Math.max(0, box.y - pad),
+      width: Math.min(view.width, box.width + 2 * pad),
+      height: Math.min(docH, box.height + 2 * pad)
+    }
+    // clip coordinates are relative to the page when fullPage is set
+    const scrollY = await page.evaluate(() => window.scrollY)
+    await page.screenshot({ path: file, animations: 'disabled', fullPage: true, clip: { ...clip, y: clip.y + scrollY } })
+  } else {
+    await page.screenshot({ path: file, animations: 'disabled', ...options })
+  }
   for (const sel of highlight) await page.locator(sel).evaluateAll(els => els.forEach(e => { e.style.outline = '' }))
   console.log('  saved', path.relative(imagesDir, file))
   return file

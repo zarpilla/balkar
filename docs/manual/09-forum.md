@@ -32,8 +32,6 @@ Learners get unread-message counters only for channels where they are listed by 
 
 Messages written by an account with **manager** ticked (in **User**) show a **Teacher** badge. See [12. Following learners](12-progress-managers.md#course-managers).
 
-![Teacher badge on a forum message](images/09-forum/urr-teacher-badge.png)
-
 ## Moderating
 
 Messages are in **Content Manager › Message**: author, channel, text, attached file, and the parent message if it is a reply. To remove an inappropriate message, delete it there. Check its replies (the **children** field) too.

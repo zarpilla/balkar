@@ -33,7 +33,7 @@ The **Admin** tab has two views:
 - **Users Progress**: every enrolled learner with their overall percentage and, for each module, unit and lesson, whether and when they completed it.
 - **Content Progress**: for each module, unit and lesson, how many learners completed it and who.
 
-![The Admin tab: users progress](images/12-progress-managers/urr-course-admin.png)
+![The Admin tab of the test course](images/12-progress-managers/urr-course-admin.png)
 
 The manager is also counted as a learner in these statistics. Their forum messages show a **Teacher** badge ([9. Forum](09-forum.md)).
 
@@ -43,6 +43,6 @@ The manager is also counted as a learner in these statistics. Their forum messag
 
 When a module has **uploadFiles** ticked ([7. Course structure](07-course-structure.md#module)), its pages show an upload box. Learners can upload files and delete their own.
 
-![Upload box in a module](images/12-progress-managers/balkar-upload.png)
+![Upload box at the bottom of a module page (Balkar)](images/12-progress-managers/balkar-upload.png)
 
 Uploaded files are listed in **Content Manager › Submission** with the learner, the course and the module (**moduleId** is the module's uid). There is no page on the site to review them: open each Submission in the admin panel to download the file.

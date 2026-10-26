@@ -82,7 +82,7 @@ On the test course, changing a unit's **title** and **shortTitle**:
 
 | Before | After |
 |---|---|
-| ![before](images/07-course-structure/test-unit-before.png) | ![after](images/07-course-structure/test-unit-after.png) |
+| ![before](images/07-course-structure/urr-test-unit-before.png) | ![after](images/07-course-structure/urr-test-unit-after.png) |
 
 ## Hiding or removing content
 

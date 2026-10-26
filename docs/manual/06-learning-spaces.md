@@ -69,17 +69,17 @@ Before enrolling, visitors and learners only receive the course's presentation (
 
 ## Example: changing the card and the theme
 
-On the test course, changing **nameMore** and the **bannerOther** image:
+On the test course, filling in **nameMore** and the **bannerOther** image:
 
 | Before | After |
 |---|---|
-| ![card before](images/06-learning-spaces/test-card-before.png) | ![card after](images/06-learning-spaces/test-card-after.png) |
+| ![card before](images/06-learning-spaces/urr-test-card-before.png) | ![card after](images/06-learning-spaces/urr-test-card-after.png) |
 
-And linking a different **theme** to the course: only that course's pages change colour; the rest of the site keeps the site theme.
+And linking the **theme** "Test blue" to the test course: only that course's pages change colour; the rest of the site keeps the site theme.
 
 | Before | After |
 |---|---|
-| ![theme before](images/06-learning-spaces/test-theme-before.png) | ![theme after](images/06-learning-spaces/test-theme-after.png) |
+| ![theme before](images/06-learning-spaces/urr-test-theme-before.png) | ![theme after](images/06-learning-spaces/urr-test-theme-after.png) |
 
 ## Theme
 

@@ -15,9 +15,9 @@ Almost all the work happens in **Content Manager** (left menu). It lists two gro
 
 ![Content Manager with the list of content types](images/02-admin-basics/urr-content-manager.png)
 
-Clicking a content type shows its entries. You can search, filter, sort by column and choose which columns to show (the gear icon). **Create new entry** is at the top right.
+Clicking a content type shows its entries (here, the units). You can search, filter, sort by column and choose which columns to show (the gear icon). **Create new entry** is at the top right.
 
-![List of learning spaces](images/02-admin-basics/urr-list.png)
+![List of units](images/02-admin-basics/urr-list.png)
 
 Clicking an entry opens its edit form. Fields are on the left. Relations to other entries (e.g. the course a module belongs to), the language and the publish status are on the right.
 

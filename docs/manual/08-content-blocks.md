@@ -4,7 +4,7 @@
 
 Unit and lesson pages are built from **blocks**. In the **content** field click **Add a component to content**, choose the block type, fill it in, and drag the blocks to put them in order.
 
-![Adding a block to a lesson](images/08-content-blocks/urr-admin-add-block.png)
+![A video block and the block picker (Add a component to content)](images/08-content-blocks/urr-admin-add-block.png)
 
 | Block | Use it for |
 |---|---|
