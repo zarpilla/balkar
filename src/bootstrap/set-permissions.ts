@@ -43,11 +43,29 @@ async function setPermissions(roleType, newPermissions) {
   await Promise.all(updatePromises);
 }
 
+// Removes permissions that must not exist (some were granted by hand in the admin panel).
+async function removePermissions(roleType, permissionsToRemove) {
+  const role = await strapi
+    .query("plugin::users-permissions.role")
+    .findOne({ where: { type: roleType } });
+  const actions = Object.entries(permissionsToRemove).flatMap(
+    ([controller, list]: [string, string[]]) => list.map((a) => `${controller}.${a}`)
+  );
+  // (deleteMany with a relation filter generates invalid SQL on Postgres: find the ids first)
+  const found = await strapi
+    .query("plugin::users-permissions.permission")
+    .findMany({ where: { role: role.id, action: { $in: actions } }, select: ["id", "action"] });
+  if (found.length) {
+    await strapi
+      .query("plugin::users-permissions.permission")
+      .deleteMany({ where: { id: { $in: found.map((p) => p.id) } } });
+    console.log(`Removed ${roleType} permission(s): ${found.map((p) => p.action).join(", ")}`);
+  }
+}
+
 async function start() {
   await setPermissions("authenticated", {
     "api::learning-space.learning-space": [
-      "find",
-      "findOne",
       "findUid",
       "findMine",
       "adminUsersProgress",
@@ -69,8 +87,6 @@ async function start() {
     "api::channel.channel": ["findMessages", "createPrivateChannel"],
     "api::message.message": [
       "create",
-      "find",
-      "findOne",
       "findChildren",
       "update",
       "delete",
@@ -119,6 +135,17 @@ async function start() {
     "api::subtitle.subtitle": ["findFileById", "findTranscriptById"],
     // i18n listLocales
     "plugin::i18n.locales": ["listLocales"],
+  });
+
+  // The generic list endpoints return every course (with its content) or every forum message,
+  // whatever the enrollment. The site only uses the uid / mine / channel endpoints, which check it.
+  await removePermissions("public", {
+    "api::learning-space.learning-space": ["find", "findOne"],
+    "api::message.message": ["find", "findOne"],
+  });
+  await removePermissions("authenticated", {
+    "api::learning-space.learning-space": ["find", "findOne"],
+    "api::message.message": ["find", "findOne"],
   });
 }
 

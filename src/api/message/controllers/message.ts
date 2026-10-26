@@ -4,6 +4,7 @@
 
 import { factories } from "@strapi/strapi";
 import _ from "lodash";
+import { canReadChannel } from "../../../utils/access";
 // export default factories.createCoreController('api::message.message');
 
 export default factories.createCoreController(
@@ -29,6 +30,10 @@ export default factories.createCoreController(
             ],
           }
         );
+
+        if (!message || !(await canReadChannel(ctx.state.user, message.channel?.uid))) {
+          return ctx.forbidden("You are not enrolled in this course.");
+        }
 
         message.userId = message.users_permissions_user.id;
         message.username = `${message.users_permissions_user.name} ${message.users_permissions_user.lastname}`;        

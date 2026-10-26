@@ -5,12 +5,16 @@
 import { factories } from "@strapi/strapi";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
+import { canReadChannel } from "../../../utils/access";
 
 export default factories.createCoreController(
   "api::channel.channel",
   ({ strapi }) => ({
     findMessages: async (ctx, next) => {
       try {
+        if (!(await canReadChannel(ctx.state.user, ctx.params.uid))) {
+          return ctx.forbidden("You are not enrolled in this course.");
+        }
         const messages = await strapi.entityService.findMany(
           "api::message.message",
           {

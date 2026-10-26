@@ -12,6 +12,7 @@ import { factories } from "@strapi/strapi";
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
+import { isEnrolled, hasCertificatePayment } from "../../../utils/access";
 
 // learningSpaceCertificate contains to_x, to_y, course_x, course_y, date_x, date_y that are the position in pixels for the dynamic fields on the certificate background
 // learningSpaceCertificate also contains the background image in learningSpaceCertificate.background.url, relative to the Strapi server base URL
@@ -183,6 +184,23 @@ export default factories.createCoreController(
         return ctx.badRequest(
           "This learning space does not have a certificate."
         );
+      }
+
+      if (!(await isEnrolled(user.id, learningSpace.uid))) {
+        return ctx.forbidden("You are not enrolled in this course.");
+      }
+
+      // The certificate is paid if any localization of the space has a certificate product.
+      const allLocales = await strapi.entityService.findMany(
+        "api::learning-space.learning-space",
+        { filters: { uid: learningSpace.uid }, populate: ["certificateProduct"], locale: "all" }
+      );
+      const certificateIsPaid = allLocales.some((s: any) => !!s.certificateProduct);
+      if (
+        certificateIsPaid &&
+        !(await hasCertificatePayment(user.email, learningSpace.uid))
+      ) {
+        return ctx.forbidden("The certificate has not been paid.");
       }
 
       // Check if user has completed all lessons

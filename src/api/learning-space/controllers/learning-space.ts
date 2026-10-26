@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { toPublicSpace, removeInternalFields } from "../../../utils/access";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
 
@@ -436,6 +437,16 @@ export default factories.createCoreController(
             space.certificatePayment = { paid: true };
           }
 
+          // Visitors and learners who aren't enrolled only get the course presentation and
+          // outline, not the content of units and lessons.
+          const fullAccess =
+            !!ctx.state.user && (space.enrolled === true || space.manager === true);
+          if (!fullAccess) {
+            toPublicSpace(space);
+            space.forum = null;
+          }
+          removeInternalFields(space);
+
           ctx.body = space;
         }
       } catch (err) {
@@ -475,11 +486,12 @@ export default factories.createCoreController(
           }
         );
 
-        const spacesUid = spaces.map((space: any) => space.uid);
-
         const spacesEnrolled = spaces.map((space: any) => {
-          const enrollment = enrollments.find((enrollment) =>
-            spacesUid.includes(enrollment.learning_space.uid)
+          // Enrollments point at the default-locale space; all localizations share its uid.
+          const enrollment = enrollments.find(
+            (enrollment) =>
+              enrollment.learning_space &&
+              enrollment.learning_space.uid === space.uid
           );
           if (enrollment) {
             space.enrolled = true;
@@ -536,6 +548,12 @@ export default factories.createCoreController(
         const contentType = strapi.contentType(
           "api::learning-space.learning-space"
         );
+
+        // The dashboard only shows cards: no course content in this list.
+        spacesEnrolledOrPublic.forEach((space: any) => {
+          toPublicSpace(space);
+          removeInternalFields(space);
+        });
 
         const sanitizedResults = await sanitize.contentAPI.output(
           spacesEnrolledOrPublic,

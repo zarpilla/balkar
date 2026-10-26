@@ -4,6 +4,7 @@
 import { factories } from "@strapi/strapi";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
+import { canUseSpace } from "../../../utils/access";
 
 export default factories.createCoreController(
   "api::forum.forum",
@@ -32,8 +33,13 @@ export default factories.createCoreController(
         const space: any = spaces[0];
 
         if (!space.forum) {
-          ctx.status = 504;
+          ctx.status = 404;
           ctx.body = { ok: false };
+          return;
+        }
+
+        if (!(await canUseSpace(ctx.state.user, space.uid))) {
+          return ctx.forbidden("You are not enrolled in this course.");
         }
 
         const channels = space.forum.channels
