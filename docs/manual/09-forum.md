@@ -6,6 +6,10 @@ A course can have a **forum**, shown as the *Community* tab. A forum is divided 
 
 ![Course forum](images/09-forum/urr-forum.png)
 
+Inside a channel, learners write at the top and the messages appear below, newest first, each with *Send response* for replies:
+
+![A channel with a message (test course)](images/09-forum/urr-forum-message.png)
+
 ## Setting up a forum
 
 1. Create a **Forum**: **name**, **description** (shown at the top of the forum page) and **learning_space**.
@@ -31,6 +35,8 @@ Learners get unread-message counters only for channels where they are listed by 
 ## Teachers
 
 Messages written by an account with **manager** ticked (in **User**) show a **Teacher** badge. See [12. Following learners](12-progress-managers.md#course-managers).
+
+![Teacher badge next to the author's name](images/09-forum/urr-teacher-badge.png)
 
 ## Moderating
 

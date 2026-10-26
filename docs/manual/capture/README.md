@@ -18,6 +18,7 @@ cp .env.manual.example .env.manual  # then fill in the logins (git-ignored)
 | `node public.mjs [filter]` | Pages anyone can see: home, login, register, landing page. No login needed. |
 | `node test-data.mjs urr\|balkar [--enroll <uid>]` | Creates the test student and the hidden test course (`docs-manual-test`) through the admin API, and enrolls the student in it (and in `<uid>`). `--cleanup` removes them again. |
 | `node private.mjs [filter]` | Admin panel and learner pages (needs the logins), and the before/after examples. These change the **test course** through the admin API and put the original values back. |
+| `node forum-certificate.mjs [forum\|certificate]` | On the test course: a forum with a teacher's message, and the student completing the course and downloading the certificate. Everything is removed again at the end (delete the generated PDF from the server's `public/certificates` too). |
 | `node certificate-layout.mjs [urr\|balkar] [id]` | Draws the certificate layout diagram from a Certificate entry and its background. |
 | `python3 optimize-images.py` | Shrinks the screenshots (256-colour palette). Run it after capturing. |
 | `node check-images.mjs` | Lists images the chapters reference that are missing, and images nobody references. |

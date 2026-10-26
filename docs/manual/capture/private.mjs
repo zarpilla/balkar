@@ -176,6 +176,12 @@ const shots = [
     await shot(page, '05-emails', 'urr', 'admin-list')
   }],
 
+  ['05-emails', 'urr', 'admin-entry', async () => {
+    const page = await session('urr', 'admin')
+    await admin(page, cmUrl('urr', 'api::email-template.email-template', 2, 'en'), 'reset_password')
+    await shot(page, '05-emails', 'urr', 'admin-entry', { fullPage: true })
+  }],
+
   // ---------- 06 learning spaces
   ['06-learning-spaces', 'urr', 'admin-list', async () => {
     const page = await session('urr', 'admin')

@@ -24,6 +24,8 @@ All addresses fields take a **comma-separated** list: `ana@example.org, joan@exa
 | **subject** | The email subject |
 | **content** | The email body, in **HTML** |
 
+![The reset_password template](images/05-emails/urr-admin-entry.png)
+
 Each template is translated with the language selector, like any other entry. The learner receives the version in their language:
 
 - confirmation: the language they used when registering;

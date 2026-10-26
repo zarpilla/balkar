@@ -4,7 +4,11 @@
 
 A course with a **certificate** gets a *Certificate* tab. When a learner has completed **every** lesson (and every unit without lessons), the tab offers a **Download** button that creates a PDF with their name.
 
-![Certificate page of a course](images/10-certificates/urr-certificate-page.png)
+![Certificate page before the course is completed](images/10-certificates/urr-certificate-page.png)
+
+Once everything is completed, the page offers the download:
+
+![Certificate page of a completed course](images/10-certificates/urr-certificate-ready.png)
 
 The text on that page above the button is the course's **certificateLesson** ([6. Courses](06-learning-spaces.md)). Use it to explain the requirements. Until the course is completed, the page shows the `certificate-explanation-not-completed` text ([4. Interface texts](04-translations.md)).
 
@@ -33,6 +37,10 @@ For each text:
 **color** sets the colour of all texts, as a hex code (`#020034`). Default is black.
 
 ![Where the fields go on the page](images/10-certificates/certificate-layout.png)
+
+And the PDF a learner downloads with these settings:
+
+![A downloaded certificate](images/10-certificates/urr-certificate-pdf.png)
 
 ## Testing a design
 
