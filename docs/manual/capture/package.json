@@ -1,0 +1,12 @@
+{
+  "name": "balkar-manual-capture",
+  "private": true,
+  "description": "Takes the course-administrator manual screenshots (URR and Balkar) with Playwright",
+  "type": "module",
+  "scripts": {
+    "capture": "node capture.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

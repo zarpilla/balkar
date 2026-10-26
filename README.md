@@ -1,3 +1,12 @@
+# balkar-back
+
+Strapi backend shared by the two e-learning sites: **URR** (edu.urbanresilienceresearch.net) and **Balkar** (area.balkar.earth). Frontend: [zarpilla/balkar-front](https://github.com/zarpilla/balkar-front).
+
+## Documentation
+
+- **[Course administrator manual](docs/manual/README.md)**: what each content type is for and how changes in the admin panel show up on the site, with screenshots of both sites.
+- [Balkar deployment](deploy/balkar/DEPLOY.md) and [Balkar data migration](MIGRATION_BALKAR.md).
+
 # 🚀 Getting started with Strapi
 
 Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
