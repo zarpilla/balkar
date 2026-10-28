@@ -2,7 +2,7 @@ version: "3"
 services:
   strapi:
     container_name: lms-strapi
-    image: ${DOCKERHUB_USERNAME}/balkar-back:mooc
+    image: ${DOCKERHUB_USERNAME}/balkar-back:latest
     restart: unless-stopped
     env_file: .env
     environment:
@@ -34,7 +34,7 @@ services:
 
   frontend:
     container_name: lms-frontend
-    image: ${DOCKERHUB_USERNAME}/balkar-front:mooc
+    image: ${DOCKERHUB_USERNAME}/balkar-front:latest
     restart: unless-stopped
     env_file: .env
     environment:

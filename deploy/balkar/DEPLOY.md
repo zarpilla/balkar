@@ -1,15 +1,15 @@
-# Deploying area.balkar.earth with the mooc Docker images
+# Deploying area.balkar.earth with the Docker images
 
 Balkar moves from pm2 + a static front build to the same Docker images as
-URR (`<dockerhub-user>/balkar-back:mooc`, `<dockerhub-user>/balkar-front:mooc`). The data
+URR (`<dockerhub-user>/balkar-back:latest`, `<dockerhub-user>/balkar-front:latest`). The data
 migration is described in `../../MIGRATION_BALKAR.md`.
 
 Server: `ssh <user>@<server-ip>` (ask the team for the details). Expected downtime: 10–15 minutes.
 
 ## 0. Before the day (no downtime)
 
-1. Push `mooc` (back and front). GitHub Actions builds and pushes the images
-   (`:mooc` and `:mooc-<sha>`). Check that both workflows are green.
+1. Push `main` (back and front). GitHub Actions builds and pushes the images
+   (`:latest` and `:main-<sha>`). Check that both workflows are green.
    URR does not change until someone runs `~/deploy-urnet.sh` there.
 2. On the Balkar server, prepare the folder:
    ```bash
@@ -105,7 +105,7 @@ sudo nginx -t && sudo systemctl reload nginx
 ## Later deploys
 
 `cd ~/balkar-docker && ./deploy.sh` (same as `~/deploy-urnet.sh` on URR).
-A specific build: `IMAGE_TAG=mooc-<full commit sha> ./deploy.sh` (the tag
+A specific build: `IMAGE_TAG=main-<full commit sha> ./deploy.sh` (the tag
 uses the full 40-character sha).
 
 ## Done on 2026-10-25
@@ -115,3 +115,9 @@ Switched over 09:39–09:42 (3 minutes down). Backups in `~/backups/*pre-mooc*`
 removed; `~/deploy-balkar-back.sh` renamed to `.old`. URR was updated the same
 day with `~/deploy-urnet.sh`; its previous images are tagged `:pre-merge` on
 that server.
+
+## 2026-10-28: `mooc` branch retired
+
+Images are now built from `main` and tagged `:latest` and `:main-<sha>`; both
+servers pull `:latest`. Older builds keep their `:mooc-<sha>` tags on Docker
+Hub, so `IMAGE_TAG=mooc-<full commit sha> ./deploy.sh` still works for them.

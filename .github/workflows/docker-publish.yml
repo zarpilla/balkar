@@ -1,9 +1,9 @@
-name: Build and Publish Docker image (mooc)
+name: Build and Publish Docker image
 
 on:
   push:
     branches:
-      - mooc
+      - main
 
 jobs:
   build-and-push:
@@ -27,9 +27,9 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          # `mooc` is what both servers pull; `mooc-<sha>` allows going back to a build
+          # `latest` is what both servers pull; `main-<sha>` allows going back to a build
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:mooc
-            ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:mooc-${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/balkar-back:main-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
