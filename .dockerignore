@@ -16,3 +16,5 @@ public/uploads/*
 !public/uploads/.gitkeep
 public/certificates/
 dist/
+# server deploy files and docs are not needed in the image
+deploy/
