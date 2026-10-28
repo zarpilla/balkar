@@ -64,6 +64,9 @@ The tab bar under the banner shows *Content*, *Progress*, *Bookmarks*, *Communit
 | **public** | On: visitors and logged-in learners who aren't enrolled see the card in the catalogue (*All courses*). Off: the card is only shown to learners enrolled in the course. **The landing page still works** for anyone who has its address, so a course with *public* off can be shared by sending its link. |
 | **product** | If set, learners must pay before enrolling. |
 | **enrollmentEmails** | Addresses notified of every new enrollment (comma-separated). |
+| **reminderDays** | Remind learners who stopped for this many days ([5. Emails](05-emails.md#notifications)). Empty: no reminders. |
+
+A course doesn't need to be translated: when it has no version in the learner's language, the catalogue, the dashboard and the course pages show it in the site's default language, or else in the language it exists in.
 
 Before enrolling, visitors and learners only receive the course's presentation (name, images, public description, public lesson, price) and its outline (module, unit and lesson titles). The content of units and lessons, the private description and the certificate lesson are only sent to enrolled learners and the course's managers.
 

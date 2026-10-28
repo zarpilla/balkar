@@ -45,4 +45,18 @@ When a module has **uploadFiles** ticked ([7. Course structure](07-course-struct
 
 ![Upload box at the bottom of a module page (Balkar)](images/12-progress-managers/balkar-upload.png)
 
-Uploaded files are listed in **Content Manager › Submission** with the learner, the course and the module (**moduleId** is the module's uid). There is no page on the site to review them: open each Submission in the admin panel to download the file.
+Course managers review the uploads in the course's **Admin › Submissions** tab: each upload shows the learner, the module, the date and the files. The manager can write **feedback** and a **grade** (free text, e.g. `9/10` or `Pass`) and save. The learner sees them under their upload on the module page and gets an email a few minutes later ([5. Emails](05-emails.md#notifications)). *Pending review* lists the uploads without feedback or grade.
+
+Uploads are also listed in **Content Manager › Submission** (learner, course, module, feedback, grade, reviewer).
+
+## Quiz results
+
+Each time a learner submits a quiz, the answers and the score are saved (**Quiz attempt** entries, created by the site). The **Admin › Quizzes** tab shows, for every quiz in the course, how many learners tried it, how many passed and the average best score, and for each learner the number of attempts, best and last score and whether they passed. The score is computed on the server with the same rule as on the page (**minToPass**, or every answer right).
+
+Attempts made before this feature existed weren't saved.
+
+## Announcements
+
+In **Admin › Announcements** a course manager writes a **subject** and a **message** (plain text) and clicks *Send to all learners*. Every learner enrolled in the course gets it by email, in their language for the course name and the email text.
+
+Emails leave after a short delay (15 minutes by default). Until then, *Cancel* stops the emails not sent yet. The list shows how many were sent, are pending or were cancelled.

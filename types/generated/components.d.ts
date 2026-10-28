@@ -26,6 +26,18 @@ export interface ContentImage extends Schema.Component {
   };
 }
 
+export interface ContentMarkdown extends Schema.Component {
+  collectionName: 'components_content_markdowns';
+  info: {
+    description: 'Markdown/HTML text (used by content migrated from the old spaces structure)';
+    displayName: 'Markdown';
+  };
+  attributes: {
+    text: Attribute.RichText;
+    title: Attribute.String;
+  };
+}
+
 export interface ContentQuiz extends Schema.Component {
   collectionName: 'components_content_quizzes';
   info: {
@@ -79,6 +91,19 @@ export interface ContentVideo extends Schema.Component {
     transcript: Attribute.Media<'files'>;
     url: Attribute.String;
     video: Attribute.Media<'videos'>;
+  };
+}
+
+export interface SiteFooterLogo extends Schema.Component {
+  collectionName: 'components_site_footer_logos';
+  info: {
+    description: 'Extra logo in the site footer, with an optional link';
+    displayName: 'Footer logo';
+  };
+  attributes: {
+    alt: Attribute.String;
+    image: Attribute.Media<'images'>;
+    url: Attribute.String;
   };
 }
 
@@ -185,10 +210,12 @@ declare module '@strapi/types' {
     export interface Components {
       'content.accordion': ContentAccordion;
       'content.image': ContentImage;
+      'content.markdown': ContentMarkdown;
       'content.quiz': ContentQuiz;
       'content.slider': ContentSlider;
       'content.text': ContentText;
       'content.video': ContentVideo;
+      'site.footer-logo': SiteFooterLogo;
       'spaces.content': SpacesContent;
       'spaces.module': SpacesModule;
       'spaces.topic': SpacesTopic;

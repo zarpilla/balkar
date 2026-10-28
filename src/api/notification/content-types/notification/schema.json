@@ -1,0 +1,75 @@
+{
+  "kind": "collectionType",
+  "collectionName": "notifications",
+  "info": {
+    "singularName": "notification",
+    "pluralName": "notifications",
+    "displayName": "Notification",
+    "description": "Email queue: pending emails are checked again and sent by the cron task"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "mention",
+        "reply",
+        "review",
+        "announcement",
+        "reminder"
+      ],
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "spaceUid": {
+      "type": "string"
+    },
+    "learning_space": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::learning-space.learning-space"
+    },
+    "message": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::message.message"
+    },
+    "submission": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::submission.submission"
+    },
+    "announcement": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::announcement.announcement"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "sent",
+        "cancelled",
+        "failed"
+      ],
+      "default": "pending",
+      "required": true
+    },
+    "sendAfter": {
+      "type": "datetime"
+    },
+    "sentAt": {
+      "type": "datetime"
+    },
+    "error": {
+      "type": "text"
+    }
+  }
+}

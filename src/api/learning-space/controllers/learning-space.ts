@@ -3,7 +3,9 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { toPublicSpace, removeInternalFields } from "../../../utils/access";
+import { toPublicSpace, removeInternalFields, isSpaceManager } from "../../../utils/access";
+import { findSpaceWithFallback, removeDrafts } from "../../../utils/content";
+import { notificationsEnabled, queueAnnouncement } from "../../../utils/notifications";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
 
@@ -12,13 +14,12 @@ export default factories.createCoreController(
   ({ strapi }) => ({
     findUid: async (ctx, next) => {
       try {
-        const spaces = await strapi.entityService.findMany(
-          "api::learning-space.learning-space",
+        // When the course isn't translated to the requested language, the default-language
+        // version is returned (enrollment, payments and certificates already use it).
+        const found = await findSpaceWithFallback(
+          ctx.params.uid,
+          (ctx.query.locale as string) || "en",
           {
-            filters: {
-              uid: ctx.params.uid,
-              publishedAt: { $ne: null },
-            },
             populate: [
               "modules",
               "modules.topics",
@@ -92,9 +93,9 @@ export default factories.createCoreController(
               "certificateProduct",
               "theme"
             ],
-            locale: ctx.query.locale || "en",
           }
         );
+        const spaces = found ? [removeDrafts(found)] : [];
 
         const spaceForums = [];
 
@@ -464,7 +465,7 @@ export default factories.createCoreController(
               populate: ["learning_space"],
             });
 
-        const spaces = await strapi.entityService.findMany(
+        const allLocales = await strapi.entityService.findMany(
           "api::learning-space.learning-space",
           {
             filters: {
@@ -482,9 +483,27 @@ export default factories.createCoreController(
               "modules.topics.contents.media",
               "localizations",
             ],
-            locale: ctx.query.locale,
+            locale: "all",
           }
         );
+
+        // One card per course: the requested language, else the site's default language, else
+        // any language (courses not translated yet were missing from the dashboard).
+        const requested = (ctx.query.locale as string) || "en";
+        const admin: any = await strapi.entityService.findMany(
+          "api::administration.administration",
+          {}
+        );
+        const defaultLocale = admin?.defaultLocale || "en";
+        const rank = (s: any) =>
+          s.locale === requested ? 0 : s.locale === defaultLocale ? 1 : 2;
+        const byUid = new Map<string, any>();
+        for (const s of allLocales as any[]) {
+          const key = s.uid || `id-${s.id}`;
+          const current = byUid.get(key);
+          if (!current || rank(s) < rank(current)) byUid.set(key, s);
+        }
+        const spaces = [...byUid.values()].sort((a: any, b: any) => a.id - b.id);
 
         const spacesEnrolled = spaces.map((space: any) => {
           // Enrollments point at the default-locale space; all localizations share its uid.
@@ -661,13 +680,10 @@ export default factories.createCoreController(
         const uid = ctx.params.uid;
 
         // Find the learning space
-        const spaces = await strapi.entityService.findMany(
-          "api::learning-space.learning-space",
+        const found = await findSpaceWithFallback(
+          uid,
+          (ctx.query.locale as string) || "en",
           {
-            filters: {
-              uid: uid,
-              publishedAt: { $ne: null },
-            },
             populate: [
               "modules",
               "modules.topics",
@@ -676,9 +692,9 @@ export default factories.createCoreController(
               "content_modules.units.lessons",
               "localizations",
             ],
-            locale: ctx.query.locale || "en",
           }
         );
+        const spaces = found ? [removeDrafts(found)] : [];
 
         if (spaces.length === 0) {
           ctx.status = 404;
@@ -914,13 +930,10 @@ export default factories.createCoreController(
         const uid = ctx.params.uid;
 
         // Find the learning space
-        const spaces = await strapi.entityService.findMany(
-          "api::learning-space.learning-space",
+        const found = await findSpaceWithFallback(
+          uid,
+          (ctx.query.locale as string) || "en",
           {
-            filters: {
-              uid: uid,
-              publishedAt: { $ne: null },
-            },
             populate: [
               "modules",
               "modules.topics",
@@ -929,9 +942,9 @@ export default factories.createCoreController(
               "content_modules.units.lessons",
               "localizations",
             ],
-            locale: ctx.query.locale || "en",
           }
         );
+        const spaces = found ? [removeDrafts(found)] : [];
 
         if (spaces.length === 0) {
           ctx.status = 404;
@@ -1145,5 +1158,277 @@ export default factories.createCoreController(
         ctx.body = { ok: false, error: "Internal server error" };
       }
     },
+
+    /** Quiz results of the course, for its managers. */
+    adminQuizAttempts: async (ctx) => {
+      const space = await loadManagedSpace(ctx, [
+        "content_modules",
+        "content_modules.units",
+        "content_modules.units.content.quiz",
+        "content_modules.units.lessons",
+        "content_modules.units.lessons.content.quiz",
+      ]);
+      if (!space) return;
+
+      // Quizzes in the course, in page order, with where they are.
+      const quizzes: any[] = [];
+      const addQuizzes = (content: any[], path: string[], pageTitle: string) => {
+        for (const block of content || []) {
+          if (block?.__component !== "content.quiz" || !block.quiz) continue;
+          const quizUid = block.quiz.uid || String(block.quiz.id);
+          if (quizzes.some((q) => q.quizUid === quizUid)) continue;
+          quizzes.push({
+            quizUid,
+            title: block.quiz.title || pageTitle,
+            pageTitle,
+            path: path.filter(Boolean).join(" › "),
+            minToPass: block.quiz.minToPass || null,
+          });
+        }
+      };
+      for (const module of space.content_modules || []) {
+        for (const unit of module.units || []) {
+          addQuizzes(unit.content, [module.title, unit.title], unit.title);
+          for (const lesson of unit.lessons || []) {
+            addQuizzes(lesson.content, [module.title, unit.title, lesson.title], lesson.title);
+          }
+        }
+      }
+
+      const attempts = await strapi.entityService.findMany("api::quiz-attempt.quiz-attempt", {
+        filters: { spaceUid: space.uid },
+        populate: { user: { fields: ["id", "name", "lastname", "email", "username"] } },
+        sort: { createdAt: "asc" },
+        limit: -1,
+      });
+
+      const rowsByKey = new Map<string, any>();
+      for (const a of attempts as any[]) {
+        if (!a.user) continue;
+        const key = `${a.user.id}|${a.quizUid}`;
+        if (!rowsByKey.has(key)) {
+          rowsByKey.set(key, {
+            user: { id: a.user.id, name: a.user.name, lastname: a.user.lastname, email: a.user.email },
+            quizUid: a.quizUid,
+            attempts: 0,
+            bestScore: 0,
+            lastScore: 0,
+            passed: false,
+            lastAt: null,
+          });
+          // Quizzes removed from the course still show up with their stored title.
+          if (!quizzes.some((q) => q.quizUid === a.quizUid)) {
+            quizzes.push({ quizUid: a.quizUid, title: a.quizTitle || a.quizUid, pageTitle: "", path: "", minToPass: null });
+          }
+        }
+        const row = rowsByKey.get(key);
+        row.attempts++;
+        row.bestScore = Math.max(row.bestScore, a.score || 0);
+        row.lastScore = a.score || 0;
+        row.passed = row.passed || !!a.passed;
+        row.lastAt = a.createdAt;
+      }
+      const rows = [...rowsByKey.values()];
+
+      for (const quiz of quizzes) {
+        const own = rows.filter((r) => r.quizUid === quiz.quizUid);
+        quiz.learners = own.length;
+        quiz.passed = own.filter((r) => r.passed).length;
+        quiz.avgBestScore = own.length
+          ? Math.round(own.reduce((sum, r) => sum + r.bestScore, 0) / own.length)
+          : null;
+      }
+
+      ctx.body = { quizzes, rows, meta: { totalUsers: await countEnrolled(space.uid) } };
+    },
+
+    /** Files uploaded by learners, for review by the course managers. */
+    adminSubmissions: async (ctx) => {
+      const space = await loadManagedSpace(ctx, ["content_modules", "modules"]);
+      if (!space) return;
+
+      const moduleTitles = new Map<string, string>();
+      for (const m of space.content_modules || []) moduleTitles.set(String(m.uid), m.title);
+      for (const m of space.modules || []) moduleTitles.set(String(m.moduleId), m.name);
+
+      const submissions = await strapi.entityService.findMany("api::submission.submission", {
+        filters: { learning_space: { uid: space.uid } },
+        populate: {
+          file: true,
+          users_permissions_user: { fields: ["id", "name", "lastname", "email"] },
+          reviewedBy: { fields: ["id", "name", "lastname"] },
+        },
+        sort: { createdAt: "desc" },
+        limit: -1,
+      });
+
+      ctx.body = {
+        submissions: (submissions as any[]).map((s) => ({
+          id: s.id,
+          createdAt: s.createdAt,
+          user: s.users_permissions_user
+            ? {
+                id: s.users_permissions_user.id,
+                name: s.users_permissions_user.name,
+                lastname: s.users_permissions_user.lastname,
+                email: s.users_permissions_user.email,
+              }
+            : null,
+          moduleUid: s.moduleId,
+          moduleTitle: moduleTitles.get(String(s.moduleId)) || s.moduleId,
+          files: (s.file || []).map((f: any) => ({
+            id: f.id,
+            name: f.name,
+            url: f.url,
+            mime: f.mime,
+            size: f.size,
+          })),
+          feedback: s.feedback || null,
+          grade: s.grade || null,
+          reviewedAt: s.reviewedAt || null,
+          reviewedBy: s.reviewedBy ? { name: s.reviewedBy.name, lastname: s.reviewedBy.lastname } : null,
+        })),
+      };
+    },
+
+    adminAnnouncements: async (ctx) => {
+      const space = await loadManagedSpace(ctx, []);
+      if (!space) return;
+
+      const announcements = await strapi.entityService.findMany("api::announcement.announcement", {
+        filters: { spaceUid: space.uid },
+        populate: { author: { fields: ["name", "lastname"] } },
+        sort: { createdAt: "desc" },
+        limit: -1,
+      });
+      const ids = (announcements as any[]).map((a) => a.id);
+      const notifications = ids.length
+        ? await strapi.entityService.findMany("api::notification.notification", {
+            filters: { announcement: { id: { $in: ids } } },
+            fields: ["status"],
+            populate: { announcement: { fields: ["id"] } },
+            limit: -1,
+          })
+        : [];
+
+      ctx.body = {
+        announcements: (announcements as any[]).map((a) => {
+          const own = (notifications as any[]).filter((n) => n.announcement?.id === a.id);
+          const count = (status: string) => own.filter((n) => n.status === status).length;
+          return {
+            id: a.id,
+            subject: a.subject,
+            text: a.text,
+            createdAt: a.createdAt,
+            author: a.author ? { name: a.author.name, lastname: a.author.lastname } : null,
+            recipients: own.length,
+            sent: count("sent"),
+            pending: count("pending"),
+            cancelled: count("cancelled"),
+            cancellable: count("pending") > 0,
+          };
+        }),
+      };
+    },
+
+    adminCreateAnnouncement: async (ctx) => {
+      const space = await loadManagedSpace(ctx, []);
+      if (!space) return;
+      if (!notificationsEnabled()) {
+        return ctx.forbidden("Notification emails are switched off on this site.");
+      }
+
+      const { subject, text } = ctx.request.body?.data || {};
+      const cleanSubject = typeof subject === "string" ? subject.trim().slice(0, 200) : "";
+      const cleanText = typeof text === "string" ? text.trim().slice(0, 20000) : "";
+      if (!cleanSubject || !cleanText) return ctx.badRequest("subject and text are required");
+
+      const announcement: any = await strapi.entityService.create("api::announcement.announcement", {
+        data: {
+          learning_space: space.id,
+          spaceUid: space.uid,
+          author: ctx.state.user.id,
+          subject: cleanSubject,
+          text: cleanText,
+        },
+      });
+      const recipients = await queueAnnouncement(announcement, space.uid);
+
+      ctx.body = {
+        ok: true,
+        announcement: {
+          id: announcement.id,
+          subject: announcement.subject,
+          text: announcement.text,
+          createdAt: announcement.createdAt,
+          recipients,
+        },
+      };
+    },
+
+    /** Cancels the emails of an announcement that haven't been sent yet. */
+    adminCancelAnnouncement: async (ctx) => {
+      const space = await loadManagedSpace(ctx, []);
+      if (!space) return;
+
+      const announcement: any = await strapi.entityService.findOne(
+        "api::announcement.announcement",
+        ctx.params.id,
+        { fields: ["id", "spaceUid"] }
+      );
+      if (!announcement || announcement.spaceUid !== space.uid) {
+        return ctx.notFound("Announcement not found");
+      }
+
+      const pending = await strapi.entityService.findMany("api::notification.notification", {
+        filters: { announcement: { id: announcement.id }, status: "pending" },
+        fields: ["id"],
+        limit: -1,
+      });
+      const ids = (pending as any[]).map((n) => n.id);
+      if (ids.length) {
+        await strapi.db.query("api::notification.notification").updateMany({
+          where: { id: { $in: ids } },
+          data: { status: "cancelled", error: "cancelled by a course manager" },
+        });
+      }
+      ctx.body = { ok: true, cancelled: ids.length };
+    },
   })
 );
+
+/**
+ * The course with this uid (in ?locale=, with fallback, drafts removed) when the logged-in user
+ * manages it; otherwise answers 403/404 and returns null.
+ */
+async function loadManagedSpace(ctx: any, populate: string[]) {
+  const user = ctx.state.user;
+  if (!user?.manager) {
+    ctx.status = 403;
+    ctx.body = { ok: false, error: "Only managers can access this endpoint" };
+    return null;
+  }
+  const space = await findSpaceWithFallback(ctx.params.uid, (ctx.query.locale as string) || "en", {
+    populate,
+  });
+  if (!space) {
+    ctx.status = 404;
+    ctx.body = { ok: false, error: "Learning space not found" };
+    return null;
+  }
+  if (!(await isSpaceManager(user, space.uid))) {
+    ctx.status = 403;
+    ctx.body = { ok: false, error: "You are not a manager of this learning space" };
+    return null;
+  }
+  return removeDrafts(space);
+}
+
+async function countEnrolled(spaceUid: string) {
+  const enrollments = await strapi.entityService.findMany("api::enrollment.enrollment", {
+    filters: { learning_space: { uid: spaceUid } },
+    populate: { users_permissions_user: { fields: ["id"] } },
+    limit: -1,
+  });
+  return new Set((enrollments as any[]).map((e) => e.users_permissions_user?.id).filter(Boolean)).size;
+}

@@ -1,6 +1,8 @@
 const { nanoid } = require("nanoid");
 const permissionsSetter = require("./bootstrap/set-permissions").default;
 const { setMetaComponents } = require("./bootstrap/meta-components");
+const { findTemplate } = require("./utils/email");
+const { seedUiTexts } = require("./bootstrap/ui-texts");
 
 module.exports = {
   async bootstrap() {
@@ -8,6 +10,7 @@ module.exports = {
 
     await permissionsSetter();
     setMetaComponents(strapi);
+    await seedUiTexts();
 
     // Override users-permissions email methods directly
     const originalSendConfirmationEmail =
@@ -25,16 +28,9 @@ module.exports = {
         const locale = user.locale || "en";
 
         try {
-          // Try to find localized email template
-          const template = await strapi.entityService.findMany(
-            "api::email-template.email-template",
-            {
-              filters: {
-                type: "email_confirmation",
-              },
-              locale: locale,
-            }
-          );
+          // Template in the user's language, else the site's default language, else English.
+          const found = await findTemplate("email_confirmation", locale);
+          const template = found ? [found] : [];
 
           if (template && template.length > 0) {
             if (!user.confirmationToken) {

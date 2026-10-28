@@ -41,6 +41,18 @@ npm run build
 yarn build
 ```
 
+## Scheduled tasks and notification emails
+
+Notification emails are off unless `NOTIFICATIONS_ENABLED=true`: with it off nothing is queued or sent, and the front hides the announcements tab and the email setting in the profile.
+
+The server runs scheduled tasks only with `CRON_ENABLED=true` (set it on every site):
+
+- payment summary emails, every 10 minutes;
+- the notification queue (forum mentions and replies, submission reviews, announcements, course reminders), every 5 minutes;
+- course reminders, prepared every day at 9:00 Europe/Madrid.
+
+Other settings: `NOTIFICATION_DELAY_MINUTES` (default 15) is how long a notification waits before it is checked again and sent. `FRONTEND_URL` is the learner site's address, used in email links and certificate verification links (without it, the origin of *Administration › Reset password front url* is used).
+
 ## ⚙️ Deployment
 
 Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.

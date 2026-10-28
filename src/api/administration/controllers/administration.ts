@@ -3,6 +3,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { notificationsEnabled } from "../../../utils/notifications";
 
 const mediaUrl = (media: any) => (media && media.url ? media.url : null);
 
@@ -28,6 +29,7 @@ export default factories.createCoreController(
         styles: admin?.theme?.styles || null,
         defaultLocale: admin?.defaultLocale || null,
         publicHome: admin?.publicHome !== false,
+        notificationsEnabled: notificationsEnabled(),
       };
     },
   })

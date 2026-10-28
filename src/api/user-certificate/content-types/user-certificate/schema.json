@@ -30,6 +30,13 @@
     },
     "filename": {
       "type": "string"
+    },
+    "code": {
+      "type": "string",
+      "unique": true
+    },
+    "signature": {
+      "type": "string"
     }
   }
 }

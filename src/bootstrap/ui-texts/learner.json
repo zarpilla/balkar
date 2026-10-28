@@ -1,0 +1,97 @@
+{
+  "submission-teacher-feedback": {
+    "en": "Teacher's feedback",
+    "ca": "Comentari del professorat",
+    "es": "Comentario del profesorado"
+  },
+  "submission-grade": {
+    "en": "Grade",
+    "ca": "Qualificació",
+    "es": "Calificación"
+  },
+  "certificate-share-title": {
+    "en": "Share your certificate",
+    "ca": "Comparteix el teu certificat",
+    "es": "Comparte tu certificado"
+  },
+  "certificate-verify-explanation": {
+    "en": "Anyone can check that your certificate is genuine at this address:",
+    "ca": "Qualsevol persona pot comprovar que el teu certificat és autèntic en aquesta adreça:",
+    "es": "Cualquier persona puede comprobar que tu certificado es auténtico en esta dirección:"
+  },
+  "certificate-copy-link": {
+    "en": "Copy link",
+    "ca": "Copia l'enllaç",
+    "es": "Copiar enlace"
+  },
+  "certificate-link-copied": {
+    "en": "Copied!",
+    "ca": "Copiat!",
+    "es": "¡Copiado!"
+  },
+  "certificate-open-pdf": {
+    "en": "Open the PDF",
+    "ca": "Obre el PDF",
+    "es": "Abrir el PDF"
+  },
+  "verify-title": {
+    "en": "Certificate verification",
+    "ca": "Verificació de certificat",
+    "es": "Verificación de certificado"
+  },
+  "verify-loading": {
+    "en": "Checking the certificate…",
+    "ca": "Comprovant el certificat…",
+    "es": "Comprobando el certificado…"
+  },
+  "verify-valid": {
+    "en": "This certificate is valid",
+    "ca": "Aquest certificat és vàlid",
+    "es": "Este certificado es válido"
+  },
+  "verify-issued-to": {
+    "en": "Issued to",
+    "ca": "Atorgat a",
+    "es": "Otorgado a"
+  },
+  "verify-course": {
+    "en": "Course",
+    "ca": "Curs",
+    "es": "Curso"
+  },
+  "verify-hours": {
+    "en": "Duration",
+    "ca": "Durada",
+    "es": "Duración"
+  },
+  "verify-issued-on": {
+    "en": "Issued on",
+    "ca": "Data d'emissió",
+    "es": "Fecha de emisión"
+  },
+  "verify-issued-by": {
+    "en": "Issued by",
+    "ca": "Emès per",
+    "es": "Emitido por"
+  },
+  "verify-code": {
+    "en": "Code",
+    "ca": "Codi",
+    "es": "Código"
+  },
+  "verify-not-found": {
+    "en": "Certificate not found",
+    "ca": "No s'ha trobat el certificat",
+    "es": "No se ha encontrado el certificado"
+  },
+  "verify-not-found-explanation": {
+    "en": "There is no certificate with the code {code}. Check that the address is complete.",
+    "ca": "No hi ha cap certificat amb el codi {code}. Comprova que l'adreça sigui completa.",
+    "es": "No hay ningún certificado con el código {code}. Comprueba que la dirección esté completa."
+  },
+  "profile-email-notifications": {
+    "en": "Email me about forum mentions, replies and course reminders",
+    "ca": "Envia'm correus quan em mencionin o responguin al fòrum, i recordatoris dels cursos",
+    "es": "Envíame correos cuando me mencionen o respondan en el foro, y recordatorios de los cursos"
+  }
+}

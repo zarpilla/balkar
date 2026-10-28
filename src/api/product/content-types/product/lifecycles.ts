@@ -1,70 +1,99 @@
+import { errors } from "@strapi/utils";
+
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
+/**
+ * Products are mirrored in Stripe. When Stripe refuses a change, saving fails with the Stripe
+ * error in the admin panel instead of leaving the product and Stripe out of step.
+ */
+const stripeError = (action: string, e: any) => {
+  console.error(`Stripe: could not ${action}`, e);
+  return new errors.ApplicationError(
+    `Stripe: could not ${action}: ${e?.message || e}. Nothing was saved.`
+  );
+};
+
+const cents = (price: any) => Math.round(Number(price) * 100);
+
+const createInStripe = async (product: any) =>
+  stripe.products.create({
+    name: product.name,
+    description: product.description || undefined,
+    default_price_data: {
+      unit_amount: cents(product.price),
+      currency: "EUR",
+    },
+  });
+
 export default {
-  afterCreate: async (event) => {
+  beforeCreate: async (event) => {
+    const data = event.params.data;
+    if (data.stripeProductId || data.price === undefined || data.price === null) return;
     try {
-      const data = event.result;
-      const product = await stripe.products.create({
-        name: data.name,
-        description: data.description,
-        // active: data.publishedAt !== null,
-        default_price_data: {
-          unit_amount: data.price * 100,
-          currency: "EUR",
-        },
-      });
-      await strapi.entityService.update("api::product.product", data.id, {
-        data: {
-          stripeProductId: product.id,
-          stripePriceId: product.default_price,
-        },
-      });
+      const product = await createInStripe(data);
+      data.stripeProductId = product.id;
+      data.stripePriceId = product.default_price;
     } catch (e) {
-      console.error("afterCreate error", e);
+      throw stripeError("create the product", e);
     }
   },
+
   beforeUpdate: async (event) => {
+    const data = event.params.data;
+    const id = event.params.where?.id ?? data.id;
+    if (!id) return;
+    const previous: any = await strapi.entityService.findOne("api::product.product", id);
+    if (!previous) return;
+
+    const next = { ...previous, ...data };
+
     try {
-      const data = event.params.data;
-      const previous = await strapi.entityService.findOne(
-        "api::product.product",
-        data.id
-      );
-      if (data.name !== previous.name || data.description !== previous.description || data.publishedAt !== previous.publishedAt) {
-        await stripe.products.update(data.stripeProductId, {
-          name: data.name,
-          description: data.description,
-          // active: data.publishedAt !== null,
-        });        
+      // Products whose creation in Stripe failed earlier.
+      if (!previous.stripeProductId) {
+        if (next.price === undefined || next.price === null) return;
+        const product = await createInStripe(next);
+        data.stripeProductId = product.id;
+        data.stripePriceId = product.default_price;
+        return;
       }
 
-      if (data.price !== previous.price) {
+      if (
+        ("name" in data && data.name !== previous.name) ||
+        ("description" in data && data.description !== previous.description)
+      ) {
+        await stripe.products.update(previous.stripeProductId, {
+          name: next.name,
+          description: next.description || "",
+        });
+      }
+
+      if ("price" in data && Number(data.price) !== Number(previous.price)) {
         const price = await stripe.prices.create({
           currency: "EUR",
-          unit_amount: data.price * 100,
-          product: data.stripeProductId,
+          unit_amount: cents(data.price),
+          product: previous.stripeProductId,
         });
-
-        await stripe.products.update(data.stripeProductId, {
+        await stripe.products.update(previous.stripeProductId, {
           default_price: price.id,
         });
-
-        await strapi.entityService.update("api::product.product", data.id, {
-          data: {
-            stripePriceId: price.id,
-          },
-        });
+        // Saved with this same update (an update from here would run these hooks again).
+        data.stripePriceId = price.id;
       }
     } catch (e) {
-      console.error("afterUpdate error", e);
+      throw stripeError("update the product", e);
     }
   },
+
   afterUpdate: async (event) => {
-    const data = event.result;    
-    if (data.image && data.image.url) {
-      await stripe.products.update(data.stripeProductId, {        
-        images: [`${process.env.STRAPI_URL}${data.image.url}`],
+    const data = event.result;
+    if (!data?.stripeProductId || !data.image?.url) return;
+    try {
+      await stripe.products.update(data.stripeProductId, {
+        images: [`${process.env.STRAPI_URL || strapi.config.get("server.url")}${data.image.url}`],
       });
+    } catch (e) {
+      // The image is cosmetic: don't block saving for it.
+      console.error("Stripe: could not update the product image", e);
     }
-  }
+  },
 };

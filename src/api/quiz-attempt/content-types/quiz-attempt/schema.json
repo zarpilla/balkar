@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quiz_attempts",
+  "info": {
+    "singularName": "quiz-attempt",
+    "pluralName": "quiz-attempts",
+    "displayName": "Quiz attempt",
+    "description": "A learner's answers to a quiz (written by the site)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "learning_space": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::learning-space.learning-space"
+    },
+    "spaceUid": {
+      "type": "string"
+    },
+    "quizUid": {
+      "type": "string"
+    },
+    "quizTitle": {
+      "type": "string"
+    },
+    "pageUid": {
+      "type": "string"
+    },
+    "answers": {
+      "type": "json"
+    },
+    "correct": {
+      "type": "integer"
+    },
+    "total": {
+      "type": "integer"
+    },
+    "score": {
+      "type": "integer"
+    },
+    "passed": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

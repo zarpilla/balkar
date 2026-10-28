@@ -127,6 +127,15 @@
     },
     "color": {
       "type": "string"
+    },
+    "qr_x": {
+      "type": "integer"
+    },
+    "qr_y": {
+      "type": "integer"
+    },
+    "qr_size": {
+      "type": "integer"
     }
   }
 }

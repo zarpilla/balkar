@@ -12,7 +12,23 @@ import { factories } from "@strapi/strapi";
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
+import QRCode from "qrcode";
 import { isEnrolled, hasCertificatePayment } from "../../../utils/access";
+import { courseCompletion, findSpaceWithFallback, removeDrafts } from "../../../utils/content";
+import { getSite } from "../../../utils/email";
+
+/** Verification codes: no 0/O/1/I/L to avoid misreading. */
+const CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+const newCode = () =>
+  Array.from(crypto.randomBytes(10), (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join("");
+
+/** What the PDF depends on: when it changes, the PDF is generated again. */
+const pdfSignature = (issuedTo: string, courseName: string, certificate: any) =>
+  crypto
+    .createHash("sha1")
+    .update(JSON.stringify([issuedTo, courseName, certificate.id, certificate.updatedAt, certificate.background?.url]))
+    .digest("hex");
 
 // learningSpaceCertificate contains to_x, to_y, course_x, course_y, date_x, date_y that are the position in pixels for the dynamic fields on the certificate background
 // learningSpaceCertificate also contains the background image in learningSpaceCertificate.background.url, relative to the Strapi server base URL
@@ -43,7 +59,15 @@ interface LearningSpaceCertificate {
   hours_font?: "font1" | "font2";
   background: {
     url: string; // URL of the background image
-  };  
+  };
+  qr_x?: number; // QR code with the verification link (only when qr_x and qr_y are set)
+  qr_y?: number;
+  qr_size?: number; // points, default 80
+}
+
+interface VerificationQr {
+  png: Buffer;
+  code: string;
 }
 
 // Helper function to convert pixels to points
@@ -57,7 +81,8 @@ const generateCertificatePDF = (
   learningSpaceName: string,
   issuedAt: Date,
   learningSpaceCertificate: LearningSpaceCertificate,
-  filename: string
+  filename: string,
+  qr?: VerificationQr
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
@@ -127,6 +152,18 @@ const generateCertificatePDF = (
         .font(hoursFont)
         .fontSize(pxToPt(learningSpaceCertificate.hours_fontsize || 15))        
         .text(learningSpaceCertificate.hours, learningSpaceCertificate.hours_x, learningSpaceCertificate.hours_y, { align: learningSpaceCertificate.hours_align || "left" });
+    }
+
+    // Verification QR code, with the code under it
+    if (qr) {
+      const size = learningSpaceCertificate.qr_size || 80;
+      const x = learningSpaceCertificate.qr_x;
+      const y = learningSpaceCertificate.qr_y;
+      doc.image(qr.png, x, y, { width: size, height: size });
+      doc
+        .font("font1")
+        .fontSize(7)
+        .text(qr.code, x, y + size + 2, { width: size, align: "center", lineBreak: false });
     }
 
     // Finalize the PDF and end the stream
@@ -203,7 +240,8 @@ export default factories.createCoreController(
         return ctx.forbidden("The certificate has not been paid.");
       }
 
-      // Check if user has completed all lessons
+      // Check that the learner completed every required page (drafts and Monitoring modules
+      // don't count).
       const spacesLocalized = [
         learningSpace.id,
         ...learningSpace.localizations.map((l: any) => l.id),
@@ -225,83 +263,12 @@ export default factories.createCoreController(
         }
       );
 
-      // Helper function to match progress by UID across all localizations
-      const findProgressByUid = (lesson: any) => {
-        return progresses.find((progress: any) => {
-          if (!progress.lesson) return false;
-          // If the lesson UID matches directly
-          if (progress.lesson.uid === lesson.uid) return true;
-          // If no UID on progress lesson, fall back to ID matching (backward compatibility)
-          return progress.lesson.id === lesson.id;
-        });
-      };
-
-      const findUnitProgressByUid = (unit: any) => {
-        return progresses.find((progress: any) => {
-          if (!progress.unit) return false;
-          // If the unit UID matches directly
-          if (progress.unit.uid === unit.uid) return true;
-          // If no UID on progress unit, fall back to ID matching (backward compatibility)
-          return progress.unit.id === unit.id;
-        });
-      };
-
-      // Check completion status
-      let allLessonsCompleted = true;
-      let totalLessons = 0;
-      let completedLessons = 0;
-
-      if (
-        learningSpace.content_modules &&
-        learningSpace.content_modules.length > 0
-      ) {
-        for (const module of learningSpace.content_modules) {
-          for (const unit of module.units) {
-            if (unit.lessons && unit.lessons.length > 0) {
-              // Unit has lessons - check each lesson
-              for (const lesson of unit.lessons) {
-                totalLessons++;
-                const progress = findProgressByUid(lesson);
-                if (progress) {
-                  completedLessons++;
-                } else {
-                  allLessonsCompleted = false;
-                }
-              }
-            } else {
-              // Unit without lessons - check unit completion directly
-              totalLessons++;
-              const progress = findUnitProgressByUid(unit);
-              if (progress) {
-                completedLessons++;
-              } else {
-                allLessonsCompleted = false;
-              }
-            }
-          }
-        }
-      }
-
-      if (!allLessonsCompleted) {
+      const completion = courseCompletion(removeDrafts(learningSpace), progresses);
+      if (!completion.isComplete) {
         return ctx.badRequest(
-          `Certificate cannot be issued. Please complete all lessons first. Progress: ${completedLessons}/${totalLessons} completed.`
+          `Certificate cannot be issued. Please complete all lessons first. Progress: ${completion.completed}/${completion.total} completed.`
         );
       }
-
-      // Check if certificate already issued
-      const existingCertificate = await strapi.entityService.findMany(
-        "api::user-certificate.user-certificate",
-        {
-          filters: {
-            user: user.id,
-            learning_space: { id: learningSpace.id },
-          },
-        }
-      );
-
-      // if (existingCertificate.length > 0) {
-      //   return ctx.badRequest("Certificate already issued.");
-      // }
 
       const userData = await strapi.entityService.findOne(
         "plugin::users-permissions.user",
@@ -312,45 +279,23 @@ export default factories.createCoreController(
         return ctx.notFound("User not found.");
       }
 
-      // Issue certificate
-      let pdfFilename: string;
-      let userCertificate: any;
-      let shouldGeneratePDF = false;
+      const learningSpaceCertificate = learningSpace.certificate;
+      const issuedTo = [userData.name, userData.lastname].filter(Boolean).join(" ");
+      const signature = pdfSignature(issuedTo, learningSpace.name, learningSpaceCertificate);
 
-      if (existingCertificate && existingCertificate.length > 0) {
-        userCertificate = existingCertificate[0];
-        
-        if (userCertificate.filename) {
-          // Use existing filename
-          pdfFilename = userCertificate.filename;
-          
-          // Check if PDF file actually exists on filesystem
-          const pdfPath = `./public/certificates/${pdfFilename}.pdf`;
-          if (!fs.existsSync(pdfPath)) {
-            // File doesn't exist, need to regenerate
-            shouldGeneratePDF = true;
-          }
-        } else {
-          // Existing certificate but no filename stored, generate new one
-          pdfFilename = uuidv4();
-          shouldGeneratePDF = true;
-          
-          // Update the existing certificate with the new filename
-          userCertificate = await strapi.entityService.update(
-            "api::user-certificate.user-certificate",
-            userCertificate.id,
-            {
-              data: {
-                filename: pdfFilename,
-              },
-            }
-          );
+      const existing = await strapi.entityService.findMany(
+        "api::user-certificate.user-certificate",
+        {
+          filters: {
+            user: user.id,
+            learning_space: { id: { $in: spacesLocalized } },
+          },
+          sort: { id: "asc" },
         }
-      } else {
-        // Create new certificate
-        pdfFilename = uuidv4();
-        shouldGeneratePDF = true;
-        
+      );
+
+      let userCertificate: any = existing[0];
+      if (!userCertificate) {
         userCertificate = await strapi.entityService.create(
           "api::user-certificate.user-certificate",
           {
@@ -358,41 +303,122 @@ export default factories.createCoreController(
               user: user.id,
               learning_space: learningSpace.id,
               issuedAt: new Date(),
-              issuedTo: `${userData.name} ${userData.lastname}`,
-              filename: pdfFilename,
+              issuedTo,
+              code: newCode(),
             },
           }
         );
+      } else if (!userCertificate.code) {
+        // Certificates issued before verification codes existed.
+        userCertificate = await strapi.entityService.update(
+          "api::user-certificate.user-certificate",
+          userCertificate.id,
+          { data: { code: newCode() } }
+        );
       }
 
-      const learningSpaceCertificate = learningSpace.certificate;
+      const site = await getSite();
+      const serverUrl = String(strapi.config.get("server.url") || "").replace(/\/+$/, "");
+      const origin = ctx.request.headers.origin;
+      const frontendUrl =
+        site.frontendUrl !== serverUrl || !origin ? site.frontendUrl : origin;
+      const verifyUrl = `${frontendUrl}/verify/${userCertificate.code}`;
 
-      // Generate PDF only if needed
-      if (shouldGeneratePDF) {
+      // Generate the PDF again when the name, the course name or the design changed, or when
+      // the file is missing. The issue date stays the same.
+      const pdfMissing =
+        !userCertificate.filename ||
+        !fs.existsSync(`./public/certificates/${userCertificate.filename}.pdf`);
+      if (pdfMissing || userCertificate.signature !== signature) {
+        const oldFilename = userCertificate.filename;
+        const pdfFilename = uuidv4();
+        const hasQr =
+          learningSpaceCertificate.qr_x !== null && learningSpaceCertificate.qr_x !== undefined &&
+          learningSpaceCertificate.qr_y !== null && learningSpaceCertificate.qr_y !== undefined;
         try {
+          const qr = hasQr
+            ? {
+                png: await QRCode.toBuffer(verifyUrl, {
+                  margin: 1,
+                  width: Math.max(160, (learningSpaceCertificate.qr_size || 80) * 4),
+                  color: { dark: learningSpaceCertificate.color || "#000000", light: "#ffffff" },
+                }),
+                code: userCertificate.code,
+              }
+            : undefined;
           await generateCertificatePDF(
-            userCertificate.issuedTo,
+            issuedTo,
             learningSpace.name,
             new Date(userCertificate.issuedAt),
             learningSpaceCertificate,
-            pdfFilename
+            pdfFilename,
+            qr
           );
         } catch (error) {
           console.error("Error generating certificate PDF:", error);
           return ctx.internalServerError("Failed to generate certificate PDF.");
         }
+        userCertificate = await strapi.entityService.update(
+          "api::user-certificate.user-certificate",
+          userCertificate.id,
+          { data: { filename: pdfFilename, issuedTo, signature } }
+        );
+        if (oldFilename && oldFilename !== pdfFilename) {
+          fs.rm(`./public/certificates/${oldFilename}.pdf`, { force: true }, () => {});
+        }
       }
 
-      // return the certificate data with pdf url
-      const certificateData = {
+      ctx.body = {
         ...userCertificate,
+        signature: undefined,
         learning_space_name: learningSpace.name,
         learning_space_certificate: learningSpaceCertificate,
-        pdfUrl: `/certificates/${pdfFilename}.pdf`,
-        pdfFilename: pdfFilename,
+        pdfUrl: `/certificates/${userCertificate.filename}.pdf`,
+        pdfFilename: userCertificate.filename,
+        verifyUrl,
+        hours: learningSpaceCertificate.hours || null,
+        siteName: site.name || null,
       };
+    },
 
-      ctx.body = certificateData;
+    /** Public check of a certificate by its verification code (link or QR code on the PDF). */
+    verify: async (ctx) => {
+      const code = String(ctx.params.code || "").trim().toUpperCase();
+      const found = code
+        ? await strapi.entityService.findMany("api::user-certificate.user-certificate", {
+            filters: { code },
+            populate: {
+              learning_space: { fields: ["uid", "name"], populate: { certificate: { fields: ["hours"] } } },
+            },
+            limit: 1,
+          })
+        : [];
+      const certificate: any = found[0];
+      if (!certificate) {
+        ctx.status = 404;
+        ctx.body = { valid: false };
+        return;
+      }
+
+      const spaceUid = certificate.learning_space?.uid;
+      const space: any = spaceUid
+        ? await findSpaceWithFallback(spaceUid, (ctx.query.locale as string) || undefined, {
+            fields: ["name"],
+            populate: { certificate: { fields: ["hours"] } },
+          })
+        : null;
+      const site = await getSite();
+
+      ctx.body = {
+        valid: true,
+        code: certificate.code,
+        issuedTo: certificate.issuedTo,
+        course: space?.name || certificate.learning_space?.name || null,
+        issuedAt: certificate.issuedAt,
+        // Other language versions may not link the certificate: use the issued course's.
+        hours: space?.certificate?.hours || certificate.learning_space?.certificate?.hours || null,
+        siteName: site.name || null,
+      };
     },
   })
 );

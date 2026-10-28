@@ -2,6 +2,7 @@
  * user-avatar controller
  */
 
+import { findTemplate } from "../../../utils/email";
 import { factories } from "@strapi/strapi";
 import { nanoid } from "nanoid";
 
@@ -73,31 +74,23 @@ export default factories.createCoreController(
       const url = `${resetPasswordFrontUrl}${resetPasswordToken}`;
       const locale2 = locale || user.locale || "en";
 
-      // Try to find localized email template
-      const template = await strapi.entityService.findMany(
-        "api::email-template.email-template",
-        {
-          filters: { type: "reset_password" },
-          locale: locale2,
-        }
-      );
-
+      // Template in the learner's language, else the site's default language, else English.
+      const template = await findTemplate("reset_password", locale2);
 
       const logoUrl = `${strapi.config.get("server.url")}${
         administration?.logo?.url || ""
       }`;
 
-      const html = template[0].content
-            .replace(/\{\{URL\}\}/g, url)
-            .replace(/\{\{LOGO\}\}/g, logoUrl)
-            .replace(/\{\{USER\}\}/g, user.username || user.email)
-            .replace(/\{\{EMAIL\}\}/g, user.email)
-            .replace(/\{\{NAME\}\}/g, user.name || user.username || user.email)
-
-      if (template && template.length > 0) {
+      if (template) {
+        const html = template.content
+          .replace(/\{\{URL\}\}/g, url)
+          .replace(/\{\{LOGO\}\}/g, logoUrl)
+          .replace(/\{\{USER\}\}/g, user.username || user.email)
+          .replace(/\{\{EMAIL\}\}/g, user.email)
+          .replace(/\{\{NAME\}\}/g, user.name || user.username || user.email);
         await strapi.plugins["email"].services.email.send({
           to: user.email,
-          subject: template[0].subject,
+          subject: template.subject,
           html: html,
         });
         return ctx.send({ ok: true });

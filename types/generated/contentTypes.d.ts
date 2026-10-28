@@ -381,12 +381,66 @@ export interface ApiAdministrationAdministration extends Schema.SingleType {
       'admin::user'
     > &
       Attribute.Private;
+    defaultLocale: Attribute.String;
+    favicon: Attribute.Media<'images'>;
+    footerLogos: Attribute.Component<'site.footer-logo', true>;
     logo: Attribute.Media<'images'>;
+    logoFooter: Attribute.Media<'images'>;
+    logoHeader: Attribute.Media<'images'>;
     paymentEmails: Attribute.String;
+    publicHome: Attribute.Boolean & Attribute.DefaultTo<true>;
     resetPasswordFrontUrl: Attribute.String;
+    siteName: Attribute.String;
+    theme: Attribute.Relation<
+      'api::administration.administration',
+      'oneToOne',
+      'api::theme.theme'
+    >;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::administration.administration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiAnnouncementAnnouncement extends Schema.CollectionType {
+  collectionName: 'announcements';
+  info: {
+    description: 'A message from a course manager to everyone enrolled, sent by email';
+    displayName: 'Announcement';
+    pluralName: 'announcements';
+    singularName: 'announcement';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    author: Attribute.Relation<
+      'api::announcement.announcement',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::announcement.announcement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    learning_space: Attribute.Relation<
+      'api::announcement.announcement',
+      'manyToOne',
+      'api::learning-space.learning-space'
+    >;
+    spaceUid: Attribute.String;
+    subject: Attribute.String & Attribute.Required;
+    text: Attribute.Text & Attribute.Required;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::announcement.announcement',
       'oneToOne',
       'admin::user'
     > &
@@ -521,6 +575,9 @@ export interface ApiCertificateCertificate extends Schema.CollectionType {
     hours_x: Attribute.Integer;
     hours_y: Attribute.Integer;
     name: Attribute.String;
+    qr_size: Attribute.Integer;
+    qr_x: Attribute.Integer;
+    qr_y: Attribute.Integer;
     to_align: Attribute.Enumeration<['left', 'center', 'right']>;
     to_font: Attribute.Enumeration<['font1', 'font2']>;
     to_fontsize: Attribute.Integer;
@@ -664,7 +721,15 @@ export interface ApiEmailTemplateEmailTemplate extends Schema.CollectionType {
           translate: 'translate';
         };
       }>;
-    type: Attribute.Enumeration<['email_confirmation', 'reset_password']> &
+    type: Attribute.Enumeration<
+      [
+        'email_confirmation',
+        'reset_password',
+        'notification_digest',
+        'announcement',
+        'course_reminder'
+      ]
+    > &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1036,6 +1101,18 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         };
       }>;
     publishedAt: Attribute.DateTime;
+    reminderDays: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
     theme: Attribute.Relation<
       'api::learning-space.learning-space',
       'oneToOne',
@@ -1096,7 +1173,8 @@ export interface ApiLessonLesson extends Schema.CollectionType {
         'content.video',
         'content.accordion',
         'content.quiz',
-        'content.slider'
+        'content.slider',
+        'content.markdown'
       ]
     > &
       Attribute.SetPluginOptions<{
@@ -1278,7 +1356,7 @@ export interface ApiModuleModule extends Schema.CollectionType {
   };
   attributes: {
     content: Attribute.DynamicZone<
-      ['content.text', 'content.image', 'content.video']
+      ['content.text', 'content.image', 'content.video', 'content.markdown']
     > &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -1320,6 +1398,13 @@ export interface ApiModuleModule extends Schema.CollectionType {
           translate: 'translate';
         };
       }>;
+    moduleType: Attribute.Enumeration<['Content', 'Monitoring']> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<'Content'>;
     publishedAt: Attribute.DateTime;
     shortTitle: Attribute.String &
       Attribute.SetPluginOptions<{
@@ -1365,6 +1450,78 @@ export interface ApiModuleModule extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    uploadFiles: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
+  };
+}
+
+export interface ApiNotificationNotification extends Schema.CollectionType {
+  collectionName: 'notifications';
+  info: {
+    description: 'Email queue: pending emails are checked again and sent by the cron task';
+    displayName: 'Notification';
+    pluralName: 'notifications';
+    singularName: 'notification';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    announcement: Attribute.Relation<
+      'api::notification.notification',
+      'manyToOne',
+      'api::announcement.announcement'
+    >;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::notification.notification',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    error: Attribute.Text;
+    learning_space: Attribute.Relation<
+      'api::notification.notification',
+      'manyToOne',
+      'api::learning-space.learning-space'
+    >;
+    message: Attribute.Relation<
+      'api::notification.notification',
+      'manyToOne',
+      'api::message.message'
+    >;
+    sendAfter: Attribute.DateTime;
+    sentAt: Attribute.DateTime;
+    spaceUid: Attribute.String;
+    status: Attribute.Enumeration<['pending', 'sent', 'cancelled', 'failed']> &
+      Attribute.Required &
+      Attribute.DefaultTo<'pending'>;
+    submission: Attribute.Relation<
+      'api::notification.notification',
+      'manyToOne',
+      'api::submission.submission'
+    >;
+    type: Attribute.Enumeration<
+      ['mention', 'reply', 'review', 'announcement', 'reminder']
+    > &
+      Attribute.Required;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::notification.notification',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    user: Attribute.Relation<
+      'api::notification.notification',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
   };
 }
 
@@ -1527,6 +1684,54 @@ export interface ApiProgressProgress extends Schema.CollectionType {
   };
 }
 
+export interface ApiQuizAttemptQuizAttempt extends Schema.CollectionType {
+  collectionName: 'quiz_attempts';
+  info: {
+    description: "A learner's answers to a quiz (written by the site)";
+    displayName: 'Quiz attempt';
+    pluralName: 'quiz-attempts';
+    singularName: 'quiz-attempt';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    answers: Attribute.JSON;
+    correct: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::quiz-attempt.quiz-attempt',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    learning_space: Attribute.Relation<
+      'api::quiz-attempt.quiz-attempt',
+      'manyToOne',
+      'api::learning-space.learning-space'
+    >;
+    pageUid: Attribute.String;
+    passed: Attribute.Boolean & Attribute.DefaultTo<false>;
+    quizTitle: Attribute.String;
+    quizUid: Attribute.String;
+    score: Attribute.Integer;
+    spaceUid: Attribute.String;
+    total: Attribute.Integer;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::quiz-attempt.quiz-attempt',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    user: Attribute.Relation<
+      'api::quiz-attempt.quiz-attempt',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiQuizQuiz extends Schema.CollectionType {
   collectionName: 'quizzes';
   info: {
@@ -1655,13 +1860,21 @@ export interface ApiSubmissionSubmission extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    feedback: Attribute.Text;
     file: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    grade: Attribute.String;
     learning_space: Attribute.Relation<
       'api::submission.submission',
       'oneToOne',
       'api::learning-space.learning-space'
     >;
     moduleId: Attribute.String;
+    reviewedAt: Attribute.DateTime;
+    reviewedBy: Attribute.Relation<
+      'api::submission.submission',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::submission.submission',
@@ -1858,7 +2071,8 @@ export interface ApiUnitUnit extends Schema.CollectionType {
         'content.image',
         'content.accordion',
         'content.quiz',
-        'content.slider'
+        'content.slider',
+        'content.markdown'
       ]
     > &
       Attribute.SetPluginOptions<{
@@ -1986,6 +2200,7 @@ export interface ApiUserCertificateUserCertificate
     draftAndPublish: false;
   };
   attributes: {
+    code: Attribute.String & Attribute.Unique;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::user-certificate.user-certificate',
@@ -2001,6 +2216,7 @@ export interface ApiUserCertificateUserCertificate
       'oneToOne',
       'api::learning-space.learning-space'
     >;
+    signature: Attribute.String;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::user-certificate.user-certificate',
@@ -2203,103 +2419,6 @@ export interface PluginI18NLocale extends Schema.CollectionType {
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'plugin::i18n.locale',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface PluginTranslateBatchTranslateJob
-  extends Schema.CollectionType {
-  collectionName: 'translate_batch_translate_jobs';
-  info: {
-    displayName: 'Translate Batch Translate Job';
-    pluralName: 'batch-translate-jobs';
-    singularName: 'batch-translate-job';
-  };
-  options: {
-    comment: '';
-    draftAndPublish: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
-  };
-  attributes: {
-    autoPublish: Attribute.Boolean & Attribute.DefaultTo<false>;
-    contentType: Attribute.String;
-    createdAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'plugin::translate.batch-translate-job',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    entityIds: Attribute.JSON;
-    failureReason: Attribute.JSON;
-    progress: Attribute.Float & Attribute.DefaultTo<0>;
-    sourceLocale: Attribute.String;
-    status: Attribute.Enumeration<
-      [
-        'created',
-        'setup',
-        'running',
-        'paused',
-        'finished',
-        'cancelled',
-        'failed'
-      ]
-    > &
-      Attribute.DefaultTo<'created'>;
-    targetLocale: Attribute.String;
-    updatedAt: Attribute.DateTime;
-    updatedBy: Attribute.Relation<
-      'plugin::translate.batch-translate-job',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface PluginTranslateUpdatedEntry extends Schema.CollectionType {
-  collectionName: 'translate_updated_entries';
-  info: {
-    displayName: 'Translate updated Entry';
-    pluralName: 'updated-entries';
-    singularName: 'updated-entry';
-  };
-  options: {
-    comment: '';
-    draftAndPublish: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
-  };
-  attributes: {
-    contentType: Attribute.String;
-    createdAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'plugin::translate.updated-entry',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    groupID: Attribute.String;
-    localesWithUpdates: Attribute.JSON;
-    updatedAt: Attribute.DateTime;
-    updatedBy: Attribute.Relation<
-      'plugin::translate.updated-entry',
       'oneToOne',
       'admin::user'
     > &
@@ -2562,6 +2681,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    emailNotifications: Attribute.Boolean & Attribute.DefaultTo<true>;
     interests: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToMany',
@@ -2625,6 +2745,7 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::administration.administration': ApiAdministrationAdministration;
+      'api::announcement.announcement': ApiAnnouncementAnnouncement;
       'api::bookmark.bookmark': ApiBookmarkBookmark;
       'api::certificate-payment.certificate-payment': ApiCertificatePaymentCertificatePayment;
       'api::certificate.certificate': ApiCertificateCertificate;
@@ -2638,10 +2759,12 @@ declare module '@strapi/types' {
       'api::mention.mention': ApiMentionMention;
       'api::message.message': ApiMessageMessage;
       'api::module.module': ApiModuleModule;
+      'api::notification.notification': ApiNotificationNotification;
       'api::payment-intent.payment-intent': ApiPaymentIntentPaymentIntent;
       'api::pre-enrollement.pre-enrollement': ApiPreEnrollementPreEnrollement;
       'api::product.product': ApiProductProduct;
       'api::progress.progress': ApiProgressProgress;
+      'api::quiz-attempt.quiz-attempt': ApiQuizAttemptQuizAttempt;
       'api::quiz.quiz': ApiQuizQuiz;
       'api::space-manager.space-manager': ApiSpaceManagerSpaceManager;
       'api::submission.submission': ApiSubmissionSubmission;
@@ -2655,8 +2778,6 @@ declare module '@strapi/types' {
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
-      'plugin::translate.batch-translate-job': PluginTranslateBatchTranslateJob;
-      'plugin::translate.updated-entry': PluginTranslateUpdatedEntry;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;

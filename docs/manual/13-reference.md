@@ -9,7 +9,7 @@
 | **Administration** | Site settings: logos, theme, default language, public home, email settings | Admin | ✅ | – | – | [3](03-site-settings.md) |
 | **Theme** | CSS colour theme for the site or a course | Admin | ✅ | – | – | [3](03-site-settings.md#theme-colours) |
 | **Translation** | Fixed texts of the site | Admin | ✅ | ✓ | – | [4](04-translations.md) |
-| **Email Template** | Confirmation and password-reset emails | Admin | ✅ | ✓ | – | [5](05-emails.md) |
+| **Email Template** | Texts of the emails sent to learners | Admin | ✅ | ✓ | – | [5](05-emails.md) |
 | **Learning space** | A course | Admin | ✅ | ✓ | ✓ | [6](06-learning-spaces.md) |
 | **Module** | Section of a course (left-hand menu) | Admin | ✅ | ✓ | ✓ | [7](07-course-structure.md) |
 | **Unit** | Page inside a module | Admin | ✅ | ✓ | ✓ | [7](07-course-structure.md) |
@@ -20,6 +20,9 @@
 | **Channel** | A topic in a forum | Admin | ✅ | ✓ | – | [9](09-forum.md) |
 | **Message** | A forum message | Learner | ⚠️ moderation | – | – | [9](09-forum.md#moderating) |
 | **Mention** | (not used) | – | ⛔ | – | – | – |
+| **Quiz attempt** | A learner's answers and score for a quiz | Platform | ⛔ | – | – | [12](12-progress-managers.md#quiz-results) |
+| **Announcement** | A message from a course manager to the enrolled learners | Platform (Admin tab) | ⛔ | – | – | [12](12-progress-managers.md#announcements) |
+| **Notification** | Email queue: mentions, replies, reviews, announcements, reminders | Platform | ⛔ | – | – | [5](05-emails.md#notifications) |
 | **User Channel Read** | Last message read per learner and channel | Platform | ⛔ | – | – | [9](09-forum.md) |
 | **Certificate** | Certificate design | Admin | ✅ | – | – | [10](10-certificates.md) |
 | **UserCertificate** | A certificate issued to a learner | Platform | ⚠️ delete to regenerate | – | – | [10](10-certificates.md#testing-a-design) |

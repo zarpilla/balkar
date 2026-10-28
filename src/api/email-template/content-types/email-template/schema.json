@@ -24,7 +24,10 @@
       "type": "enumeration",
       "enum": [
         "email_confirmation",
-        "reset_password"
+        "reset_password",
+        "notification_digest",
+        "announcement",
+        "course_reminder"
       ]
     },
     "subject": {

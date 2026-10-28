@@ -44,18 +44,21 @@ And the PDF a learner downloads with these settings:
 
 ## Testing a design
 
-> ⚠️ A learner's PDF is created **once**, the first time they download it, and kept. Later changes to the design, or to the learner's name, don't change certificates already issued.
+A learner's PDF is created the first time they download it. It is created again, with the **same issue date and verification code**, the next time they download it if the design (the Certificate entry), the course name or the learner's name changed.
 
-To check a new design:
+To check a new design, use a test account that has completed the course: download the certificate, change the design, and download it again.
 
-1. use a test account that has completed the course, download the certificate and look at it;
-2. to try again, delete that account's entry in **UserCertificate**: the next download creates a new PDF with the current design.
+When a learner asks to correct their name, they fix it in their profile (or you do it in **User**) and download the certificate again.
 
-The same applies when a learner asks to correct their name: fix it in **User**, delete their **UserCertificate** entry for the course, and ask them to download it again.
+## Verification
+
+Every issued certificate has a **verification code** (10 letters and digits, e.g. `96V2NVR5VK`). After downloading, the certificate page shows the verification link, `https://<site>/verify/<code>`, with a *Copy link* button. Anyone can open it without an account and see the name, the course, the date, the hours and the site.
+
+To print a **QR code** with the verification link on the PDF, fill in the certificate's **qr_x** and **qr_y** (top-left corner, in points, like the other positions) and optionally **qr_size** (default 80 points). The code is written in small letters under the QR. Leave qr_x empty for no QR code.
 
 ## Issued certificates
 
-**Content Manager › UserCertificate** lists every certificate issued: learner, course, date, the name printed on it and the file name. The PDF itself is at `https://<api address>/certificates/<filename>.pdf`.
+**Content Manager › UserCertificate** lists every certificate issued: learner, course, date, the name printed on it, the file name and the verification **code**. The PDF itself is at `https://<api address>/certificates/<filename>.pdf`.
 
 ## Paid certificates
 

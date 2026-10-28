@@ -33,6 +33,20 @@
     },
     "moduleId": {
       "type": "string"
-    }    
+    },
+    "feedback": {
+      "type": "text"
+    },
+    "grade": {
+      "type": "string"
+    },
+    "reviewedAt": {
+      "type": "datetime"
+    },
+    "reviewedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
   }
 }

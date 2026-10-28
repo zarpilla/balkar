@@ -126,6 +126,10 @@
     },
     "occupation": {
       "type": "string"
+    },
+    "emailNotifications": {
+      "type": "boolean",
+      "default": true
     }
   }
 }
