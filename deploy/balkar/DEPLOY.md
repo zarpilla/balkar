@@ -4,7 +4,7 @@ Balkar moves from pm2 + a static front build to the same Docker images as
 URR (`<dockerhub-user>/balkar-back:mooc`, `<dockerhub-user>/balkar-front:mooc`). The data
 migration is described in `../../MIGRATION_BALKAR.md`.
 
-Server: `ssh <user>@<server-ip>`. Expected downtime: 10–15 minutes.
+Server: `ssh <user>@<server-ip>` (ask the team for the details). Expected downtime: 10–15 minutes.
 
 ## 0. Before the day (no downtime)
 

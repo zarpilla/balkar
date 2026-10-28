@@ -9,7 +9,7 @@
 services:
   strapi:
     container_name: balkar-strapi
-    image: ${DOCKERHUB_USERNAME}/balkar-back:${IMAGE_TAG:-mooc}
+    image: ${DOCKERHUB_USERNAME:?set DOCKERHUB_USERNAME in .env}/balkar-back:${IMAGE_TAG:-mooc}
     restart: unless-stopped
     env_file: .env
     network_mode: host
@@ -24,7 +24,7 @@ services:
 
   frontend:
     container_name: balkar-frontend
-    image: ${DOCKERHUB_USERNAME}/balkar-front:${IMAGE_TAG:-mooc}
+    image: ${DOCKERHUB_USERNAME:?set DOCKERHUB_USERNAME in .env}/balkar-front:${IMAGE_TAG:-mooc}
     restart: unless-stopped
     environment:
       VITE_API_BASE: ${VITE_API_BASE}
