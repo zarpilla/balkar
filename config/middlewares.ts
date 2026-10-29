@@ -1,4 +1,5 @@
 export default [
+  "global::block-brotli",
   "strapi::logger",
   "strapi::errors",
   "strapi::security",
