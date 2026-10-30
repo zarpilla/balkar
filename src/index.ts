@@ -2,6 +2,7 @@ const { nanoid } = require("nanoid");
 const permissionsSetter = require("./bootstrap/set-permissions").default;
 const { findTemplate } = require("./utils/email");
 const { seedUiTexts } = require("./bootstrap/ui-texts");
+const { setFieldDescriptions } = require("./bootstrap/field-descriptions");
 
 module.exports = {
   async bootstrap() {
@@ -9,6 +10,11 @@ module.exports = {
 
     await permissionsSetter();
     await seedUiTexts();
+    try {
+      await setFieldDescriptions(strapi);
+    } catch (err) {
+      strapi.log.error(`Field help texts not set: ${err.message}`);
+    }
 
     // Override users-permissions email methods directly
     const originalSendConfirmationEmail =

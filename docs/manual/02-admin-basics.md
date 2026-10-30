@@ -23,6 +23,8 @@ Clicking an entry opens its edit form. Fields are on the left. Relations to othe
 
 ![Edit form of a course](images/02-admin-basics/urr-edit.png)
 
+Most fields have a short help text under them saying what they change on the site. The texts come from the platform (`src/bootstrap/field-descriptions.ts`) and are set on every start; one changed by hand in **Configure the view** is kept.
+
 > **Tip:** content types that the platform fills in by itself (enrollments, progress, messages, payment records…) are listed in [13. All content types at a glance](13-reference.md). Look at them, but avoid editing them unless a chapter tells you to.
 
 ## Draft and published
