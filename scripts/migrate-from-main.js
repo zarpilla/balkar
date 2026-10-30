@@ -21,12 +21,13 @@
  *  2. forums / channels: sets locale + uid, and creates a copy for each other
  *     language of the learning space, sharing the uid (messages are read by
  *     channel uid, so all languages see the same conversation).
- *  3. course content: each learning space's `modules` component (module ->
- *     topics -> contents) becomes Module -> Unit entities with
- *     content.markdown / content.image / content.video blocks. The old
- *     moduleId / topicId become the new uids, so progress and submissions keep
- *     pointing at the same thing. The old component data is left untouched.
+ *  3. dashboard card images cut from the banners (see below).
  *  4. progresses: links each progress to the new module / unit.
+ *
+ * It also converted each learning space's old `modules` component (module ->
+ * topics -> contents) into Module -> Unit entities, keeping the old moduleId /
+ * topicId as uids. That step ran on Balkar on 2026-10-25 and was removed with
+ * the `modules` field on 2026-10-30; it is in the git history if needed.
  *  5. branding: optional, see scripts/balkar-branding.js.
  */
 
@@ -195,122 +196,8 @@ async function migrateForums() {
 }
 
 // ---------------------------------------------------------------------------
-// 3. Course content
+// 3. Dashboard card images
 // ---------------------------------------------------------------------------
-function mapContents(contents) {
-  const blocks = [];
-  for (const c of contents || []) {
-    if (c.text && c.text.trim()) {
-      blocks.push({ __component: 'content.markdown', text: c.text });
-    }
-    const media = c.media;
-    if (media) {
-      const mime = media.mime || '';
-      if (mime.startsWith('image')) {
-        blocks.push({ __component: 'content.image', image: media.id });
-      } else if (mime.startsWith('video')) {
-        blocks.push({ __component: 'content.video', video: media.id, title: media.name });
-      } else {
-        // PDFs and other files: a download link (the front prefixes /uploads with the API base)
-        blocks.push({ __component: 'content.markdown', text: `[${media.name}](${media.url})` });
-      }
-    }
-  }
-  return blocks;
-}
-
-async function migrateContent() {
-  const spaces = await strapi.entityService.findMany('api::learning-space.learning-space', {
-    locale: 'all',
-    publicationState: 'preview',
-    limit: -1,
-    populate: {
-      modules: {
-        populate: {
-          contents: { populate: { media: true } },
-          topics: { populate: { contents: { populate: { media: true } } } },
-        },
-      },
-      content_modules: true,
-    },
-  });
-
-  const moduleIdsByUid = {};
-  const unitIdsByUid = {};
-  let moduleCount = 0;
-  let unitCount = 0;
-  const now = new Date();
-
-  for (const space of spaces) {
-    if (!space.modules || space.modules.length === 0) continue;
-    if (space.content_modules && space.content_modules.length > 0) {
-      log(`content: space ${space.id} already has content modules, skipping`);
-      continue;
-    }
-    const locale = space.locale;
-    const publishedAt = space.publishedAt ? now : null;
-
-    for (const [i, mod] of space.modules.entries()) {
-      // Empty ids exist in old data; derive one that is the same in every language.
-      const moduleUid = mod.moduleId || `${space.uid}-m${i}`;
-      const topics = mod.topics || [];
-      const created = await strapi.entityService.create('api::module.module', {
-        data: {
-          title: mod.name,
-          shortTitle: mod.name,
-          menuTitle: mod.name,
-          uid: moduleUid,
-          moduleType: mod.moduleType || 'Content',
-          uploadFiles: !!mod.uploadFiles,
-          locale,
-          learning_space: space.id,
-          content: [],
-          publishedAt,
-        },
-      });
-      moduleCount++;
-      (moduleIdsByUid[moduleUid] = moduleIdsByUid[moduleUid] || []).push(created.id);
-
-      // A module without topics showed its own contents and had its own
-      // "mark as completed" button. The new structure needs at least one unit.
-      // The new front opens the first unit when a module is selected, so the
-      // module's own contents (its intro) go at the start of the first unit.
-      const units = topics.length
-        ? topics.map((t, j) => ({
-            title: t.name,
-            uid: t.topicId || `${moduleUid}-t${j}`,
-            contents: j === 0 ? [...(mod.contents || []), ...(t.contents || [])] : t.contents,
-          }))
-        : [{ title: mod.name, uid: `${moduleUid}-main`, contents: mod.contents }];
-
-      for (const u of units) {
-        const unit = await strapi.entityService.create('api::unit.unit', {
-          data: {
-            title: u.title,
-            shortTitle: u.title,
-            menuTitle: u.title,
-            uid: u.uid,
-            locale,
-            module: created.id,
-            content: mapContents(u.contents),
-            publishedAt,
-          },
-        });
-        unitCount++;
-        (unitIdsByUid[u.uid] = unitIdsByUid[u.uid] || []).push(unit.id);
-      }
-    }
-  }
-
-  for (const ids of Object.values(moduleIdsByUid)) {
-    if (ids.length > 1) await linkLocalizations(null, 'api::module.module', ids);
-  }
-  for (const ids of Object.values(unitIdsByUid)) {
-    if (ids.length > 1) await linkLocalizations(null, 'api::unit.unit', ids);
-  }
-  log(`content: ${moduleCount} modules and ${unitCount} units created`);
-}
-
 // The mooc dashboard cards show `bannerOther` (about 5:4), which Balkar spaces
 // do not have. Their banners are very wide (up to 5:1) and full of text, so a
 // plain crop cuts the text. scripts/data/balkar-card-crops.json lists, per
@@ -466,7 +353,6 @@ async function main() {
       await migrateTranslations(trx);
       await addNewTranslations();
       await migrateForums();
-      await migrateContent();
       await generateCardImages();
       await migrateProgress();
       if (!APPLY) throw new DryRun();

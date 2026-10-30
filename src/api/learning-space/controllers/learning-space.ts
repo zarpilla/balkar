@@ -21,15 +21,9 @@ export default factories.createCoreController(
           (ctx.query.locale as string) || "en",
           {
             populate: [
-              "modules",
-              "modules.topics",
-              "modules.contents",
-              "modules.contents.media",
               "banner",
               "bannerIntro",
               "bannerOther",
-              "modules.topics.contents",
-              "modules.topics.contents.media",
               "product",
               "localizations",
               "content_modules",
@@ -178,49 +172,6 @@ export default factories.createCoreController(
               }
             );
 
-            for await (const module of space.modules) {
-              for await (const topic of module.topics) {
-                const progress = progresses.find(
-                  (progress: any) =>
-                    progress.topicId === topic.topicId &&
-                    progress.moduleId === module.moduleId
-                );
-                if (progress) {
-                  topic.completed = true;
-                } else {
-                  topic.completed = false;
-                }
-              }
-              if (
-                module.topics &&
-                module.topics.length &&
-                module.moduleType !== "Monitoring"
-              ) {
-                module.completedPct =
-                  module.topics && module.topics.length
-                    ? module.topics.filter((topic: any) => topic.completed)
-                        .length / module.topics.length
-                    : 0;
-              } else if (module.moduleType !== "Monitoring") {
-                const progress = progresses.find(
-                  (progress: any) =>
-                    progress.topicId === null &&
-                    progress.moduleId === module.moduleId
-                );
-                if (progress) {
-                  module.completed = true;
-                  module.completedPct = 1;
-                } else {
-                  module.completed = false;
-                  module.completedPct = 0;
-                }
-              }
-            }
-
-            space.completedPct =
-              space.modules.filter((m) => m.completedPct === 1).length /
-              space.modules.filter((m) => m.moduleType !== "Monitoring").length;
-
             const completed = [];
             const notCompleted = [];
 
@@ -360,15 +311,6 @@ export default factories.createCoreController(
               }
             );
 
-            for await (const module of space.modules) {
-              const moduleSubmissions = submissions.filter(
-                (submission: any) => submission.moduleId === module.moduleId
-              );
-              if (moduleSubmissions) {
-                module.submissions = moduleSubmissions;
-              }
-            }
-
             // Content modules use the module uid as submission moduleId
             // (Balkar's migrated modules keep their old moduleId as uid).
             for (const module of space.content_modules || []) {
@@ -472,15 +414,9 @@ export default factories.createCoreController(
               publishedAt: { $ne: null },
             },
             populate: [
-              "modules",
-              "modules.topics",
-              "modules.contents",
-              "modules.contents.media",
               "banner",
               "bannerIntro",
               "bannerOther",
-              "modules.topics.contents",
-              "modules.topics.contents.media",
               "localizations",
             ],
             locale: "all",
@@ -538,32 +474,6 @@ export default factories.createCoreController(
           (s: any) => s.enrolled || s.public
         );
 
-        for await (const space of spacesEnrolledOrPublic) {
-          for await (const module of space.modules) {
-            for await (const topic of module.topics) {
-              const progress = progresses.find(
-                (progress: any) =>
-                  progress.topicId === topic.topicId &&
-                  progress.learning_space.id === space.id
-              );
-              if (progress) {
-                topic.completed = true;
-              } else {
-                topic.completed = false;
-              }
-            }
-            module.completedPct =
-              module.topics && module.topics.length
-                ? module.topics.filter((topic: any) => topic.completed).length /
-                  module.topics.length
-                : 0;
-          }
-
-          space.completedPct =
-            space.modules.filter((m) => m.completedPct === 1).length /
-            space.modules.length;
-        }
-
         const contentType = strapi.contentType(
           "api::learning-space.learning-space"
         );
@@ -588,83 +498,6 @@ export default factories.createCoreController(
         ctx.body = err;
       }
     },
-    fixSubmissions: async (ctx, next) => {
-      const spaces = await strapi.entityService.findMany(
-        "api::learning-space.learning-space",
-        {
-          populate: ["modules", "modules.topics"],
-        }
-      );
-
-      const progresses = await strapi.entityService.findMany(
-        "api::progress.progress",
-        {
-          limit: -1,
-          populate: ["learning_space"],
-        }
-      );
-
-      const response = [];
-      for await (const progress of progresses) {
-        const space = spaces.find(
-          (s: any) => s.id === progress.learning_space.id
-        );
-        for await (const module of (space as any).modules) {
-          if (progress.topicId) {
-            for await (const topic of (module as any).topics) {
-              if (
-                progress.topicId === topic.id.toString() &&
-                progress.moduleId === module.id.toString()
-              ) {
-                const resp = await strapi.entityService.update(
-                  "api::progress.progress",
-                  progress.id,
-                  {
-                    data: { topicId: topic.topicId, moduleId: module.moduleId },
-                  }
-                );
-                response.push(resp);
-              }
-            }
-          } else {
-            if (progress.moduleId === module.id.toString()) {
-              const resp = await strapi.entityService.update(
-                "api::progress.progress",
-                progress.id,
-                { data: { moduleId: module.moduleId } }
-              );
-              response.push(resp);
-            }
-          }
-        }
-      }
-
-      const submissions = await strapi.entityService.findMany(
-        "api::submission.submission",
-        {
-          limit: -1,
-          populate: ["learning_space"],
-        }
-      );
-
-      for await (const submission of submissions) {
-        const space = spaces.find(
-          (s: any) => s.id === submission.learning_space.id
-        );
-        for await (const module of (space as any).modules) {
-          if (submission.moduleId === module.id.toString()) {
-            const resp = await strapi.entityService.update(
-              "api::submission.submission",
-              submission.id,
-              { data: { moduleId: module.moduleId } }
-            );
-            response.push(resp);
-          }
-        }
-      }
-
-      ctx.body = { ok: true };
-    },
     adminUsersProgress: async (ctx, next) => {
       try {
         // Check if user is manager
@@ -685,8 +518,6 @@ export default factories.createCoreController(
           (ctx.query.locale as string) || "en",
           {
             populate: [
-              "modules",
-              "modules.topics",
               "content_modules",
               "content_modules.units",
               "content_modules.units.lessons",
@@ -786,45 +617,7 @@ export default factories.createCoreController(
               progress.users_permissions_user.id === user.id
           );
 
-          // Process old modules structure
-          const modulesProgress =
-            space.modules?.map((module: any) => {
-              const topicsProgress =
-                module.topics?.map((topic: any) => {
-                  const progress = userProgresses.find(
-                    (p: any) =>
-                      p.topicId === topic.topicId &&
-                      p.moduleId === module.moduleId
-                  );
-                  return {
-                    topicId: topic.topicId,
-                    name: topic.name,
-                    completed: !!progress,
-                    completedAt: progress?.createdAt || null,
-                  };
-                }) || [];
-
-              const moduleProgress = userProgresses.find(
-                (p: any) => p.topicId === null && p.moduleId === module.moduleId
-              );
-
-              return {
-                moduleId: module.moduleId,
-                name: module.name,
-                moduleType: module.moduleType,
-                completed: !!moduleProgress,
-                completedAt: moduleProgress?.createdAt || null,
-                topics: topicsProgress,
-                completedPct: topicsProgress.length
-                  ? topicsProgress.filter((t) => t.completed).length /
-                    topicsProgress.length
-                  : moduleProgress
-                  ? 1
-                  : 0,
-              };
-            }) || [];
-
-          // Process new content modules structure
+          // Progress by module, unit and lesson
           const contentModulesProgress =
             space.content_modules?.map((module: any) => {
               const unitsProgress =
@@ -881,13 +674,8 @@ export default factories.createCoreController(
             email: user.email,
             name: user.name,
             lastname: user.lastname,
-            modules: modulesProgress,
             contentModules: contentModulesProgress,
             overallProgress: {
-              modules: modulesProgress.length
-                ? modulesProgress.filter((m) => m.completedPct === 1).length /
-                  modulesProgress.length
-                : 0,
               contentModules: contentModulesProgress.length
                 ? contentModulesProgress.filter((m) => m.completedPct === 1)
                     .length / contentModulesProgress.length
@@ -905,7 +693,6 @@ export default factories.createCoreController(
           users: usersProgress,
           meta: {
             totalUsers: usersProgress.length,
-            totalModules: space.modules?.length || 0,
             totalContentModules: space.content_modules?.length || 0,
           },
         };
@@ -935,8 +722,6 @@ export default factories.createCoreController(
           (ctx.query.locale as string) || "en",
           {
             populate: [
-              "modules",
-              "modules.topics",
               "content_modules",
               "content_modules.units",
               "content_modules.units.lessons",
@@ -1030,58 +815,7 @@ export default factories.createCoreController(
 
         // Organize data by content structure
         const contentProgress = {
-          // Old modules structure
-          modules:
-            space.modules?.map((module: any) => {
-              const topics =
-                module.topics?.map((topic: any) => {
-                  const topicProgresses = progresses.filter(
-                    (p: any) =>
-                      p.users_permissions_user &&
-                      p.topicId === topic.topicId &&
-                      p.moduleId === module.moduleId
-                  );
-
-                  return {
-                    topicId: topic.topicId,
-                    name: topic.name,
-                    completedBy: topicProgresses.map((p: any) => ({
-                      id: p.users_permissions_user.id,
-                      username: p.users_permissions_user.username,
-                      email: p.users_permissions_user.email,
-                      completedAt: p.createdAt,
-                    })),
-                    completionRate: uniqueUsers.length
-                      ? topicProgresses.length / uniqueUsers.length
-                      : 0,
-                  };
-                }) || [];
-
-              const moduleProgresses = progresses.filter(
-                (p: any) =>
-                  p.users_permissions_user &&
-                  p.topicId === null &&
-                  p.moduleId === module.moduleId
-              );
-
-              return {
-                moduleId: module.moduleId,
-                title: module.title,
-                moduleType: module.moduleType,
-                topics: topics,
-                completedBy: moduleProgresses.map((p: any) => ({
-                  id: p.users_permissions_user.id,
-                  username: p.users_permissions_user.username,
-                  email: p.users_permissions_user.email,
-                  completedAt: p.createdAt,
-                })),
-                completionRate: uniqueUsers.length
-                  ? moduleProgresses.length / uniqueUsers.length
-                  : 0,
-              };
-            }) || [],
-
-          // New content modules structure
+          // Completion by module, unit and lesson
           contentModules:
             space.content_modules?.map((module: any) => {
               const units =
@@ -1148,7 +882,6 @@ export default factories.createCoreController(
           content: contentProgress,
           meta: {
             totalUsers: uniqueUsers.length,
-            totalModules: space.modules?.length || 0,
             totalContentModules: space.content_modules?.length || 0,
           },
         };
@@ -1244,12 +977,11 @@ export default factories.createCoreController(
 
     /** Files uploaded by learners, for review by the course managers. */
     adminSubmissions: async (ctx) => {
-      const space = await loadManagedSpace(ctx, ["content_modules", "modules"]);
+      const space = await loadManagedSpace(ctx, ["content_modules"]);
       if (!space) return;
 
       const moduleTitles = new Map<string, string>();
       for (const m of space.content_modules || []) moduleTitles.set(String(m.uid), m.title);
-      for (const m of space.modules || []) moduleTitles.set(String(m.moduleId), m.name);
 
       const submissions = await strapi.entityService.findMany("api::submission.submission", {
         filters: { learning_space: { uid: space.uid } },

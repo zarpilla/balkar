@@ -47,4 +47,3 @@ Components are groups of fields inside an entry. They don't appear as content ty
 |---|---|---|
 | Text, Markdown, Image, Video, Accordion, Slider, Quiz | **content** of Unit and Lesson | [8](08-content-blocks.md) |
 | Footer logo | **footerLogos** of Administration | [3](03-site-settings.md) |
-| Module, Topic, Content (`spaces.*`) | **modules** of Learning space: old content, not shown | [6](06-learning-spaces.md#fields-to-ignore) |

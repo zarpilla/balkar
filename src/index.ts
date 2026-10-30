@@ -1,6 +1,5 @@
 const { nanoid } = require("nanoid");
 const permissionsSetter = require("./bootstrap/set-permissions").default;
-const { setMetaComponents } = require("./bootstrap/meta-components");
 const { findTemplate } = require("./utils/email");
 const { seedUiTexts } = require("./bootstrap/ui-texts");
 
@@ -9,7 +8,6 @@ module.exports = {
     console.log("Bootstrapping Backend...");
 
     await permissionsSetter();
-    setMetaComponents(strapi);
     await seedUiTexts();
 
     // Override users-permissions email methods directly

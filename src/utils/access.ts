@@ -98,16 +98,6 @@ export const toPublicSpace = (space: any) => {
     })),
   }));
 
-  // Legacy modules component (pre-2026 content): keep the outline only.
-  space.modules = (space.modules || []).map((module: any) => ({
-    ...pick(module, ["id", "name", "moduleType", "uploadFiles", "moduleId"]),
-    contents: [],
-    topics: (module.topics || []).map((topic: any) => ({
-      ...pick(topic, ["id", "name", "topicId"]),
-      contents: [],
-    })),
-  }));
-
   return space;
 };
 

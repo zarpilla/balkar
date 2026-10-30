@@ -1029,15 +1029,6 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'oneToMany',
       'api::learning-space.learning-space'
     >;
-    modules: Attribute.Component<'spaces.module', true> &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-        translate: {
-          translate: 'translate';
-        };
-      }>;
     name: Attribute.String &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -2426,6 +2417,103 @@ export interface PluginI18NLocale extends Schema.CollectionType {
   };
 }
 
+export interface PluginTranslateBatchTranslateJob
+  extends Schema.CollectionType {
+  collectionName: 'translate_batch_translate_jobs';
+  info: {
+    displayName: 'Translate Batch Translate Job';
+    pluralName: 'batch-translate-jobs';
+    singularName: 'batch-translate-job';
+  };
+  options: {
+    comment: '';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    autoPublish: Attribute.Boolean & Attribute.DefaultTo<false>;
+    contentType: Attribute.String;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::translate.batch-translate-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    entityIds: Attribute.JSON;
+    failureReason: Attribute.JSON;
+    progress: Attribute.Float & Attribute.DefaultTo<0>;
+    sourceLocale: Attribute.String;
+    status: Attribute.Enumeration<
+      [
+        'created',
+        'setup',
+        'running',
+        'paused',
+        'finished',
+        'cancelled',
+        'failed'
+      ]
+    > &
+      Attribute.DefaultTo<'created'>;
+    targetLocale: Attribute.String;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'plugin::translate.batch-translate-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface PluginTranslateUpdatedEntry extends Schema.CollectionType {
+  collectionName: 'translate_updated_entries';
+  info: {
+    displayName: 'Translate updated Entry';
+    pluralName: 'updated-entries';
+    singularName: 'updated-entry';
+  };
+  options: {
+    comment: '';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    contentType: Attribute.String;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::translate.updated-entry',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    groupID: Attribute.String;
+    localesWithUpdates: Attribute.JSON;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'plugin::translate.updated-entry',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -2778,6 +2866,8 @@ declare module '@strapi/types' {
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
+      'plugin::translate.batch-translate-job': PluginTranslateBatchTranslateJob;
+      'plugin::translate.updated-entry': PluginTranslateUpdatedEntry;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;

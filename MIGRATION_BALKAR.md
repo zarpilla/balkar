@@ -15,7 +15,11 @@ The `mooc` code now serves both sites. Per-site differences live in Strapi data
 | submissions by `moduleId` | unchanged (module uid = old moduleId) | — |
 | no dashboard card image (`bannerOther`) | card image cut from each banner where there is no text | `scripts/migrate-from-main.js` + `scripts/data/balkar-card-crops.json` |
 
-The old `modules` component data is left in place (not shown by the front).
+The old `modules` component was kept until every module, topic, text and file
+was checked against the new modules and units on a copy of the production
+database (2026-10-30: 111 modules, 204 units, 270 content blocks, no
+differences); the field and its tables were then removed, along with the
+content step of `scripts/migrate-from-main.js`.
 About 47 old progress rows do not match any current topic (they point to topics
 deleted from the courses or to a much older id format); they were already
 invisible before and stay unlinked.

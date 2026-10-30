@@ -16,11 +16,6 @@ export default {
     },
     {
       method: "GET",
-      path: "/learning-spaces/submissions",
-      handler: "learning-space.fixSubmissions",
-    },
-    {
-      method: "GET",
       path: "/learning-spaces/admin/:uid/users-progress",
       handler: "learning-space.adminUsersProgress",
     },
