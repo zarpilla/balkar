@@ -39,6 +39,10 @@ The manager is also counted as a learner in these statistics. Their forum messag
 
 > The course Admin tab is not the same as the Strapi admin panel. Course managers don't need a Strapi account.
 
+### Reviewing unpublished pages
+
+Course managers also see the course's **draft** modules, units, lessons and quizzes, which learners don't see. They are marked with a **Not published** badge in the menu and the *Progress* tab, and a notice at the top of the page. Use it to review new content on the site before publishing it in the admin panel. Draft pages don't count in the manager's progress percentage.
+
 ## Submissions
 
 When a module has **uploadFiles** ticked ([7. Course structure](07-course-structure.md#module)), its pages show an upload box. Learners can upload files and delete their own.
