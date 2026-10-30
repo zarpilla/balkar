@@ -22,12 +22,6 @@
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "topicId": {
-      "type": "string"
-    },
-    "moduleId": {
-      "type": "string"
-    },
     "module": {
       "type": "relation",
       "relation": "oneToOne",

@@ -20,9 +20,16 @@ was checked against the new modules and units on a copy of the production
 database (2026-10-30: 111 modules, 204 units, 270 content blocks, no
 differences); the field and its tables were then removed, along with the
 content step of `scripts/migrate-from-main.js`.
-About 47 old progress rows do not match any current topic (they point to topics
-deleted from the courses or to a much older id format); they were already
-invisible before and stay unlinked.
+
+47 old progress rows were left unlinked by the migration. 28 of them (9
+learners, *Especialización en Biomímesis Social*) were progress on the English
+version, whose topics had different ids from the Catalan one; the migration
+`database/migrations/2026.10.30T01.00.00.relink-old-progress.js` links them to
+the English units. The other 19 point to topics that no longer exist (or to a
+module-level completion that never counted) and are deleted. After that the
+progress `moduleId` / `topicId` fields and the unused course fields `users` and
+`global` were removed (`global` only hid a "back to course" button in the old
+forum page; `users` was not used by any code).
 
 ## Steps on the server
 

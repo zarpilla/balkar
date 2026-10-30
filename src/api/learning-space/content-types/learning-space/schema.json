@@ -79,17 +79,6 @@
         }
       }
     },
-    "users": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "plugin::users-permissions.user",
-      "pluginOptions": {
-        "translate": {
-          "translate": "translate"
-        }
-      },
-      "mappedBy": "learning_spaces"
-    },
     "public": {
       "pluginOptions": {
         "i18n": {
@@ -97,15 +86,6 @@
         }
       },
       "type": "boolean"
-    },
-    "global": {
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "type": "boolean",
-      "default": false
     },
     "product": {
       "type": "relation",

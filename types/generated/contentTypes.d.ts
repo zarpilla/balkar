@@ -1016,13 +1016,6 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
           localized: false;
         };
       }>;
-    global: Attribute.Boolean &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }> &
-      Attribute.DefaultTo<false>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::learning-space.learning-space',
@@ -1127,16 +1120,6 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
-    users: Attribute.Relation<
-      'api::learning-space.learning-space',
-      'manyToMany',
-      'plugin::users-permissions.user'
-    > &
-      Attribute.SetPluginOptions<{
-        translate: {
-          translate: 'translate';
-        };
-      }>;
   };
 }
 
@@ -1653,8 +1636,6 @@ export interface ApiProgressProgress extends Schema.CollectionType {
       'oneToOne',
       'api::module.module'
     >;
-    moduleId: Attribute.String;
-    topicId: Attribute.String;
     unit: Attribute.Relation<
       'api::progress.progress',
       'oneToOne',
@@ -2776,11 +2757,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::interest.interest'
     >;
     lastname: Attribute.String;
-    learning_spaces: Attribute.Relation<
-      'plugin::users-permissions.user',
-      'manyToMany',
-      'api::learning-space.learning-space'
-    >;
     locale: Attribute.String & Attribute.DefaultTo<'en'>;
     location: Attribute.String;
     manager: Attribute.Boolean;

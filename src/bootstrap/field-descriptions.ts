@@ -68,8 +68,6 @@ export const contentTypeDescriptions: Descriptions = {
     theme: "Colour theme for this course's pages only, on top of the site theme.",
     enrollmentEmails: `Notified of every new enrollment. ${EMAILS}`,
     reminderDays: "Email learners who stopped for this many days without finishing (e.g. 14). Empty: no reminders.",
-    users: NOT_USED,
-    global: NOT_USED,
   },
   "api::module.module": {
     menuTitle: "Entry in the course's left-hand menu.",
@@ -198,10 +196,6 @@ export const contentTypeDescriptions: Descriptions = {
     feedback: "Manager's comment, shown to the learner (who gets an email).",
     grade: "Free text, e.g. 9/10 or Pass.",
   },
-  "api::progress.progress": {
-    topicId: "Old progress (before October 2026). Not used.",
-    moduleId: "Old progress (before October 2026). Not used.",
-  },
   "api::payment-intent.payment-intent": {
     state: "intent: payment page opened · received: paid · handled: included in a summary email · error.",
   },
@@ -233,7 +227,6 @@ export const contentTypeDescriptions: Descriptions = {
     interests: NOT_USED,
     allowPrivateMessages: NOT_USED,
     avatar: NOT_USED,
-    learning_spaces: NOT_USED,
   },
 };
 

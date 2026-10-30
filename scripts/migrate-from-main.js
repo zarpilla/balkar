@@ -22,12 +22,12 @@
  *     language of the learning space, sharing the uid (messages are read by
  *     channel uid, so all languages see the same conversation).
  *  3. dashboard card images cut from the banners (see below).
- *  4. progresses: links each progress to the new module / unit.
  *
  * It also converted each learning space's old `modules` component (module ->
  * topics -> contents) into Module -> Unit entities, keeping the old moduleId /
- * topicId as uids. That step ran on Balkar on 2026-10-25 and was removed with
- * the `modules` field on 2026-10-30; it is in the git history if needed.
+ * topicId as uids, and linked the old progress to them. Those steps ran on
+ * Balkar on 2026-10-25 and were removed with the old fields on 2026-10-30;
+ * they are in the git history if needed.
  *  5. branding: optional, see scripts/balkar-branding.js.
  */
 
@@ -301,42 +301,6 @@ async function generateCardImages() {
 }
 
 // ---------------------------------------------------------------------------
-// 4. Progress
-// ---------------------------------------------------------------------------
-async function migrateProgress() {
-  const progresses = await strapi.db.query('api::progress.progress').findMany({
-    where: { unit: null, moduleId: { $notNull: true } },
-    populate: { learning_space: true },
-  });
-  let linked = 0;
-  const unmatched = [];
-  for (const p of progresses) {
-    const locale = p.learning_space && p.learning_space.locale;
-    const moduleWhere = { uid: p.moduleId };
-    if (locale) moduleWhere.locale = locale;
-    const mod = await strapi.db.query('api::module.module').findOne({ where: moduleWhere });
-    if (!mod) {
-      unmatched.push(p.id);
-      continue;
-    }
-    const unitUid = p.topicId || `${p.moduleId}-main`;
-    const unit = await strapi.db
-      .query('api::unit.unit')
-      .findOne({ where: { uid: unitUid, module: mod.id } });
-    if (!unit) {
-      unmatched.push(p.id);
-      continue;
-    }
-    await strapi.db
-      .query('api::progress.progress')
-      .update({ where: { id: p.id }, data: { module: mod.id, unit: unit.id } });
-    linked++;
-  }
-  log(`progress: ${linked} linked to the new units, ${unmatched.length} without a match`);
-  if (unmatched.length) log(`progress: unmatched ids: ${unmatched.join(', ')}`);
-}
-
-// ---------------------------------------------------------------------------
 async function main() {
   const strapiFactory = require('@strapi/strapi');
   const appDir = path.resolve(__dirname, '..');
@@ -354,7 +318,6 @@ async function main() {
       await addNewTranslations();
       await migrateForums();
       await generateCardImages();
-      await migrateProgress();
       if (!APPLY) throw new DryRun();
     });
     log('done');

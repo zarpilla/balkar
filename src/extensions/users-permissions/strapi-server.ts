@@ -17,7 +17,6 @@ const PROTECTED_FIELDS = [
   "password",
   "resetPasswordToken",
   "confirmationToken",
-  "learning_spaces",
   "createdAt",
   "updatedAt",
   "createdBy",

@@ -65,12 +65,6 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "learning_spaces": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::learning-space.learning-space",
-      "inversedBy": "users"
-    },
     "name": {
       "type": "string"
     },

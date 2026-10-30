@@ -94,5 +94,4 @@ Each language version of a course is edited separately, **including its relation
 
 ## Fields to ignore
 
-- **users**, **global**: no longer used.
 - **uid**: see [2. Working in the admin panel](02-admin-basics.md#the-uid-field).

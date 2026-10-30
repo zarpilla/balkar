@@ -30,7 +30,7 @@ Accounts are in **Content Manager › User**.
 | **manager** | Makes the account a **teacher / course manager** ([12](12-progress-managers.md#course-managers)). |
 | **organization**, **occupation**, **nationality**, **age**, **motivation** | Filled in by the learner in their profile. |
 | **role** | Leave it as **Authenticated**. |
-| location, country, interests, allowPrivateMessages, avatar, learning_spaces | Not used at the moment. |
+| location, country, interests, allowPrivateMessages, avatar | Not used at the moment. |
 
 The **first time** a learner logs in, the dashboard asks them to complete their profile before showing the courses:
 
