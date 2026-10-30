@@ -7,7 +7,7 @@ Things that don't work the way you might expect, with a workaround for each. Mos
 **Module `content`, unit `menuTitle`, lesson `shortTitle` and video `transcript` are not used.**
 Changing them has no effect on the site.
 
-Draft modules, units and lessons of a published course are hidden from learners and don't count for completion or the certificate.
+Draft modules, units and lessons of a published course are hidden from learners and don't count for completion or the certificate. Course managers see them with a *Not published* badge.
 
 ## Languages
 

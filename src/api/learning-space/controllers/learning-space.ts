@@ -89,7 +89,8 @@ export default factories.createCoreController(
             ],
           }
         );
-        const spaces = found ? [removeDrafts(found)] : [];
+        // Drafts are removed below, or kept and marked for the course managers.
+        const spaces = found ? [found] : [];
 
         const spaceForums = [];
 
@@ -109,6 +110,8 @@ export default factories.createCoreController(
           const contentType = strapi.contentType(
             "api::learning-space.learning-space"
           );
+
+          if (!ctx.state.user) removeDrafts(space);
 
           if (ctx.state.user) {
             const enrollments = await strapi.entityService.findMany(
@@ -155,6 +158,7 @@ export default factories.createCoreController(
             } else {
               space.manager = ctx.state.user.manager;
             }
+            removeDrafts(space, { mark: space.manager === true });
 
             const progresses = await strapi.entityService.findMany(
               "api::progress.progress",
@@ -232,59 +236,38 @@ export default factories.createCoreController(
               });
             };
 
-            for await (const module of space.content_modules) {
-              for await (const unit of module.units) {
-                for await (const lesson of unit.lessons) {
-                  const progress = findProgressByUid(lesson);
-                  if (progress) {
-                    lesson.completed = true;
-                    completed.push(lesson);
-                  } else {
-                    lesson.completed = false;
-                    notCompleted.push(lesson);
-                  }
-
-                  const bookmark = findBookmarkByUid(lesson);
-                  if (bookmark) {
-                    lesson.bookmarked = true;
-                  } else {
-                    lesson.bookmarked = false;
+            // Draft pages (only sent to course managers) show their status but don't count.
+            const counted = (list: any[]) => (list || []).filter((e: any) => !e.draft);
+            for (const module of space.content_modules) {
+              for (const unit of module.units) {
+                const inDraft = !!(module.draft || unit.draft);
+                for (const lesson of unit.lessons) {
+                  lesson.completed = !!findProgressByUid(lesson);
+                  lesson.bookmarked = !!findBookmarkByUid(lesson);
+                  if (!inDraft && !lesson.draft) {
+                    (lesson.completed ? completed : notCompleted).push(lesson);
                   }
                 }
+                const lessons = counted(unit.lessons);
                 if (unit.lessons && unit.lessons.length) {
-                  unit.completedPct =
-                    unit.lessons && unit.lessons.length
-                      ? unit.lessons.filter((lesson: any) => lesson.completed)
-                          .length / unit.lessons.length
-                      : 0;
+                  unit.completedPct = lessons.length
+                    ? lessons.filter((lesson: any) => lesson.completed).length / lessons.length
+                    : 0;
                   unit.completed = unit.completedPct === 1;
                 } else {
-                  const progress = findUnitProgressByUid(unit);
-                  if (progress) {
-                    unit.completed = true;
-                    unit.completedPct = 1;
-                    completed.push(unit);
-                  } else {
-                    unit.completed = false;
-                    unit.completedPct = 0;
-                    notCompleted.push(unit);
-                  }
+                  unit.completed = !!findUnitProgressByUid(unit);
+                  unit.completedPct = unit.completed ? 1 : 0;
+                  if (!inDraft) (unit.completed ? completed : notCompleted).push(unit);
                 }
-
-                const bookmark = findUnitBookmarkByUid(unit);
-                if (bookmark) {
-                  unit.bookmarked = true;
-                } else {
-                  unit.bookmarked = false;
-                }
+                unit.bookmarked = !!findUnitBookmarkByUid(unit);
               }
-              module.completedPct = module.units.length
-                ? module.units.filter((u) => u.completedPct === 1).length /
-                  module.units.length
+              const units = counted(module.units);
+              module.completedPct = units.length
+                ? units.filter((u) => u.completedPct === 1).length / units.length
                 : 0;
             }
             // Monitoring modules (migrated from Balkar) have no completion.
-            const trackedModules = (space.content_modules || []).filter(
+            const trackedModules = counted(space.content_modules).filter(
               (m) => m.moduleType !== "Monitoring"
             );
             if (trackedModules.length) {

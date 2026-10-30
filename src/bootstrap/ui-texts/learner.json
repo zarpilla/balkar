@@ -93,5 +93,15 @@
     "en": "Email me about forum mentions, replies and course reminders",
     "ca": "Envia'm correus quan em mencionin o responguin al fòrum, i recordatoris dels cursos",
     "es": "Envíame correos cuando me mencionen o respondan en el foro, y recordatorios de los cursos"
+  },
+  "draft-badge": {
+    "en": "Not published",
+    "ca": "No publicat",
+    "es": "No publicado"
+  },
+  "draft-badge-help": {
+    "en": "Only course managers see this. Publish it in the admin panel to show it to learners.",
+    "ca": "Només ho veuen els gestors del curs. Publica-ho al panell d'administració perquè ho vegin els alumnes.",
+    "es": "Solo lo ven los gestores del curso. Publícalo en el panel de administración para que lo vean los alumnos."
   }
 }

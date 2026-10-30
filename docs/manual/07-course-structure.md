@@ -86,5 +86,5 @@ On the test course, changing a unit's **title** and **shortTitle**:
 
 ## Hiding or removing content
 
-- To hide a module, unit or lesson, **remove it from its parent's list** (or delete it). Unpublishing it is not enough inside a published course.
+- To hide a module, unit or lesson, **unpublish** it (or remove it from its parent's list). Learners no longer see it; the course managers still see it with a **Not published** badge.
 - Never change the **uid** of a module, unit or lesson in use: learners' progress and bookmarks are linked to it.

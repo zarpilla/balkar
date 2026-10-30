@@ -31,7 +31,7 @@ Most fields have a short help text under them saying what they change on the sit
 
 Courses, modules, units, lessons, quizzes and products have a **draft/published** status. A new entry starts as a **draft**. It is only visible on the site after you click **Publish**. **Unpublish** takes it back to draft.
 
-> ⚠️ For courses this hides the whole course. For modules, units and lessons **inside a published course**, unpublishing currently does *not* hide them. To hide a lesson, remove it from its unit. See [14. Known limitations](14-known-limitations.md).
+For courses this hides the whole course. Draft modules, units, lessons and quizzes **inside a published course** are hidden from learners and don't count for progress or the certificate. The course's **managers** ([12](12-progress-managers.md#course-managers)) still see them on the site, with a **Not published** badge, so they can review a page before publishing it.
 
 All other content types (forum, certificate, theme, translations, …) take effect as soon as you click **Save**.
 

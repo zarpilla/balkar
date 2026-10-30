@@ -7,27 +7,34 @@ declare const strapi: any;
 
 const isPublished = (entry: any) => !!entry && !!entry.publishedAt;
 
-/** Drops quiz blocks whose quiz is a draft (the block would render empty). */
-const removeDraftQuizzes = (content: any[]) =>
-  (content || []).filter(
-    (block: any) => block?.__component !== "content.quiz" || !block.quiz || isPublished(block.quiz)
-  );
-
 /**
- * Removes draft modules, units and lessons from a learning space loaded with populate.
- * Only the course itself was checked before, so draft pages of a published course were shown.
- * Entries loaded without `publishedAt` (e.g. a restricted `fields` list) are kept.
+ * Draft modules, units, lessons and quizzes inside a published course.
+ *
+ * By default they are removed (only the course itself was checked before, so draft pages of a
+ * published course were shown). With `mark`, for the course managers, they are kept and get
+ * `draft: true` so the site can show them with a "not published" badge; they don't count for
+ * progress. Entries loaded without `publishedAt` (e.g. a restricted `fields` list) are kept.
  */
-export const removeDrafts = (space: any) => {
+export const removeDrafts = (space: any, { mark = false }: { mark?: boolean } = {}) => {
   if (!space) return space;
-  const keep = (entry: any) => !entry || !("publishedAt" in entry) || isPublished(entry);
+  const isDraft = (entry: any) => !!entry && "publishedAt" in entry && !isPublished(entry);
+  const handle = (list: any[]) =>
+    mark
+      ? (list || []).map((entry: any) => (isDraft(entry) ? Object.assign(entry, { draft: true }) : entry))
+      : (list || []).filter((entry: any) => !isDraft(entry));
+  const handleQuizzes = (content: any[]) =>
+    (content || []).filter((block: any) => {
+      if (block?.__component !== "content.quiz" || !block.quiz || !isDraft(block.quiz)) return true;
+      if (mark) block.quiz.draft = true;
+      return mark;
+    });
 
-  space.content_modules = (space.content_modules || []).filter(keep).map((module: any) => {
-    if (Array.isArray(module.content)) module.content = removeDraftQuizzes(module.content);
-    module.units = (module.units || []).filter(keep).map((unit: any) => {
-      if (Array.isArray(unit.content)) unit.content = removeDraftQuizzes(unit.content);
-      unit.lessons = (unit.lessons || []).filter(keep).map((lesson: any) => {
-        if (Array.isArray(lesson.content)) lesson.content = removeDraftQuizzes(lesson.content);
+  space.content_modules = handle(space.content_modules).map((module: any) => {
+    if (Array.isArray(module.content)) module.content = handleQuizzes(module.content);
+    module.units = handle(module.units).map((unit: any) => {
+      if (Array.isArray(unit.content)) unit.content = handleQuizzes(unit.content);
+      unit.lessons = handle(unit.lessons).map((lesson: any) => {
+        if (Array.isArray(lesson.content)) lesson.content = handleQuizzes(lesson.content);
         return lesson;
       });
       return unit;
