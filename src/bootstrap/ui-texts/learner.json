@@ -103,5 +103,13 @@
     "en": "Only course managers see this. Publish it in the admin panel to show it to learners.",
     "ca": "Només ho veuen els gestors del curs. Publica-ho al panell d'administració perquè ho vegin els alumnes.",
     "es": "Solo lo ven los gestores del curso. Publícalo en el panel de administración para que lo vean los alumnos."
+  },
+
+  "go-to-course": { "en": "Go to course", "ca": "Anar al curs", "es": "Ir al curso" },
+  "enroll-error-title": { "en": "Enrollment failed", "ca": "No s'ha pogut fer la inscripció", "es": "No se ha podido realizar la inscripción" },
+  "enroll-error-text": {
+    "en": "We could not enroll you in this course. Please try again or contact us.",
+    "ca": "No t'hem pogut inscriure en aquest curs. Torna-ho a provar o contacta'ns.",
+    "es": "No te hemos podido inscribir en este curso. Vuelve a intentarlo o contáctanos."
   }
 }

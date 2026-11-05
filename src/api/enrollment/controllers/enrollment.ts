@@ -22,7 +22,7 @@ const findSpace = async (strapi, uid: string) => {
   return { ...space, paid: spaces.some((s: any) => !!s.product) };
 };
 
-const enrollUser = async (strapi, userId: number, space: any) => {
+const isEnrolled = async (strapi, userId: number, space: any) => {
   const existing = await strapi.entityService.findMany(
     "api::enrollment.enrollment",
     {
@@ -34,7 +34,11 @@ const enrollUser = async (strapi, userId: number, space: any) => {
       limit: 1,
     }
   );
-  if (existing.length === 0) {
+  return existing.length > 0;
+};
+
+const enrollUser = async (strapi, userId: number, space: any) => {
+  if (!(await isEnrolled(strapi, userId, space))) {
     await strapi.entityService.create("api::enrollment.enrollment", {
       data: { users_permissions_user: userId, learning_space: space.id },
     });
@@ -52,6 +56,12 @@ export default factories.createCoreController(
       if (!space) {
         ctx.status = 404;
         ctx.body = { ok: false };
+        return;
+      }
+
+      // Already enrolled (e.g. added by an admin): nothing to pay, nothing to do.
+      if (await isEnrolled(strapi, user.id, space)) {
+        ctx.body = { ok: true };
         return;
       }
 
