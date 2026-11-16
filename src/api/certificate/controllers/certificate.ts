@@ -263,6 +263,10 @@ export default factories.createCoreController(
         }
       );
 
+      if (learningSpace.hideContent) {
+        return ctx.badRequest("This space has no course content, so it has no certificate.");
+      }
+
       const completion = courseCompletion(removeDrafts(learningSpace), progresses);
       if (!completion.isComplete) {
         return ctx.badRequest(

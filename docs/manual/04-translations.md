@@ -42,6 +42,7 @@ A change to a Translation entry shows up on every page that uses the key as soon
 | `coming-soon` | The "More courses are coming soon" card |
 | `free-course`, `paid-course` | Label on a course's landing page |
 | `apuntar-se`, `go-to-course`, `resume-course` | Button on a course's landing page: *Enroll*, *Go to course* (enrolled), *Resume course* (enrolled, some content done) |
+| `free-community`, `paid-community`, `join-community`, `go-to-community` | The same label and button for a [community-only space](06-learning-spaces.md#hiding-tabs-community-only-spaces) |
 | `enroll-error-title`, `enroll-error-text` | Message shown when enrolling fails |
 | `omple-perfil`, `omple-perfil-desc` | Message asking new learners to fill in their profile |
 | `footer-contact`, `footer-contact-email` | Footer contact heading and address |

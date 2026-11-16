@@ -106,6 +106,10 @@
   },
 
   "go-to-course": { "en": "Go to course", "ca": "Anar al curs", "es": "Ir al curso" },
+  "join-community": { "en": "Join the community", "ca": "Uneix-te a la comunitat", "es": "Únete a la comunidad" },
+  "go-to-community": { "en": "Go to the community", "ca": "Anar a la comunitat", "es": "Ir a la comunidad" },
+  "free-community": { "en": "Free community", "ca": "Comunitat gratuïta", "es": "Comunidad gratuita" },
+  "paid-community": { "en": "Paid community", "ca": "Comunitat de pagament", "es": "Comunidad de pago" },
   "enroll-error-title": { "en": "Enrollment failed", "ca": "No s'ha pogut fer la inscripció", "es": "No se ha podido realizar la inscripción" },
   "enroll-error-text": {
     "en": "We could not enroll you in this course. Please try again or contact us.",

@@ -2,7 +2,7 @@
 
 > Content types: **Forum**, **Channel** (translatable); **Message** (written by learners)
 
-A course can have a **forum**, shown as the *Community* tab. A forum is divided into **channels** (topics). Learners write messages, reply to them, attach files and mention other learners with `@`.
+A course can have a **forum**, shown as the *Community* tab. A course can also be **only** a forum, with no content: see [community-only spaces](06-learning-spaces.md#hiding-tabs-community-only-spaces). A forum is divided into **channels** (topics). Learners write messages, reply to them, attach files and mention other learners with `@`.
 
 ![Course forum](images/09-forum/urr-forum.png)
 

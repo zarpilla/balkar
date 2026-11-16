@@ -54,7 +54,26 @@ Clicking the card opens the landing page.
 | **privateDescription** | A welcome text for enrolled learners. The site opens the first module automatically, so this text is rarely seen. |
 | **theme** | A colour theme for this course only (see [below](#theme)). |
 
-The tab bar under the banner shows *Content*, *Progress*, *Bookmarks*, *Community* (if there is a forum), *Certificate* (if there is a certificate) and *Admin* (for course managers, see [12](12-progress-managers.md)).
+The tab bar under the banner shows *Content*, *Progress*, *Bookmarks*, *Community* (if there is a forum), *Certificate* (if there is a certificate) and *Admin* (for course managers, see [12](12-progress-managers.md)). The first three can be hidden, see below.
+
+## Hiding tabs: community-only spaces
+
+Three switches on the course hide parts of it. They are shared by all language versions (changing one changes them all).
+
+| Field | Effect |
+|---|---|
+| **hideContent** | A **community-only space**. There's no *Content*, *Progress*, *Bookmarks* or *Certificate* tab, no modules and no reminders. Enrolled learners who open the course (from the dashboard, the landing page button or any `/space/<uid>/…` address) go straight to the *Community* tab. |
+| **hideProgress** | No *Progress* tab and no progress bar. The content stays, and pages can still be marked as completed (for the certificate). |
+| **hideBookmarks** | No *Bookmarks* tab and no *Bookmark this page* buttons. The content stays. |
+
+To set up a community-only space:
+
+1. Create the course as usual: name, images, **public**, landing page (**publicLesson** or **publicDescription**), and **product** if joining is paid.
+2. Turn **hideContent** on. Leave **content_modules**, **certificate** and **reminderDays** empty (they would be ignored anyway).
+3. Create its **forum** and channels and link the forum to the course in every language ([9. Forum](09-forum.md)). Without a forum, enrolled learners would only see the landing page.
+4. Publish.
+
+The card in the catalogue and the dashboard, and the landing page, stay as for any course. On the landing page, the label reads *Free community* / *Paid community*, and the button *Join the community* (*Go to the community* once enrolled). Joining works like enrolling in a course: free, or after paying the product. As in any course, only enrolled learners and the course's managers can read and write in the forum.
 
 ## Who can see a course
 

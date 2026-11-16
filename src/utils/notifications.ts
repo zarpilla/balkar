@@ -346,7 +346,8 @@ export const scheduleReminders = async () => {
         populate: ["content_modules", "content_modules.units", "content_modules.units.lessons"],
       })
     );
-    if (!space) continue;
+    // Community-only courses have no pages to finish.
+    if (!space || space.hideContent) continue;
 
     const enrollments = await strapi.entityService.findMany("api::enrollment.enrollment", {
       filters: { learning_space: { uid: spaceUid } },

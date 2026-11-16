@@ -57,6 +57,8 @@ Courses, modules, units, lessons, quizzes, forums and channels have a **uid** fi
 - When you **create** a course, you may type a short readable uid (lowercase words joined by hyphens, as above) to get a nice address. If you leave it empty, the platform generates a random code like `3f2c9a1e-…`. For modules, units and lessons, leave it empty.
 - All language versions of an entry share the same uid. That is how a learner's progress carries over when they switch language.
 - **Once learners are using a course, don't change any uid**: links, progress and bookmarks would break.
+- **Duplicate** (the *⋯* menu of an entry) gives the copy a **new random uid** and no translations, so the copy is a separate entry, not a second version of the original. Change it to a readable uid before sharing the copy's address. The same happens when you type, for a new entry, a uid that another entry already uses in that language.
+- A uid that another entry already uses in the same language can't be saved: the admin panel shows an error.
 
 ## The media library
 

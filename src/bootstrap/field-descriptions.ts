@@ -68,6 +68,9 @@ export const contentTypeDescriptions: Descriptions = {
     theme: "Colour theme for this course's pages only, on top of the site theme.",
     enrollmentEmails: `Notified of every new enrollment. ${EMAILS}`,
     reminderDays: "Email learners who stopped for this many days without finishing (e.g. 14). Empty: no reminders.",
+    hideContent: "On: no Content tab, modules or certificate; enrolled learners go straight to the Community tab (a community-only space). Also hides Progress and Bookmarks. The landing page stays.",
+    hideProgress: "On: no Progress tab or progress bar (the content stays).",
+    hideBookmarks: "On: no Bookmarks tab or bookmark buttons (the content stays).",
   },
   "api::module.module": {
     menuTitle: "Entry in the course's left-hand menu.",

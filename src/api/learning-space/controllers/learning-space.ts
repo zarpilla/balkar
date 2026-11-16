@@ -100,6 +100,14 @@ export default factories.createCoreController(
         } else {
           const space: any = spaces[0];
 
+          // Community-only space: no modules, progress or certificate.
+          if (space.hideContent) {
+            space.content_modules = [];
+            space.certificateLesson = null;
+            space.certificate = null;
+            space.certificateProduct = null;
+          }
+
           const spacesLocalized = [
             space.id,
             ...space.localizations.map((l: any) => l.id),
