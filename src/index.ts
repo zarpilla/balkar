@@ -24,7 +24,9 @@ module.exports = {
 
     // Override confirmation email
     strapi.plugins["users-permissions"].services.user.sendConfirmationEmail =
-      async function (user, originalSendConfirmationEmail) {
+      // Only `user` is passed: a second parameter named originalSendConfirmationEmail used to hide
+      // the saved original, so sites without an email_confirmation template sent nothing.
+      async function (user) {
         console.log(
           "💌 sendConfirmationEmail called with locale:",
           user.locale
