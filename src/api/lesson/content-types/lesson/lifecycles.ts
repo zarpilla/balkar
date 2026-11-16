@@ -1,9 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { uniqueUidLifecycles } from "../../../../utils/unique-uid";
 
-export default {
-  beforeCreate(event) {
-    if (!event.params.data.uid) {
-      event.params.data.uid = uuidv4();
-    }    
-  },
-};
+// New uid when missing or already used in the entry's language (e.g. "Duplicate" in the admin).
+export default uniqueUidLifecycles;
