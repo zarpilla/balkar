@@ -49,5 +49,10 @@ export default {
       path: "/learning-spaces/admin/:uid/announcements/:id",
       handler: "learning-space.adminCancelAnnouncement",
     },
+    {
+      method: "POST",
+      path: "/learning-spaces/admin/:uid/enroll",
+      handler: "learning-space.adminEnroll",
+    },
   ],
 };

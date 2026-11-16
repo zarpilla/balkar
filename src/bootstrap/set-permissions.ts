@@ -75,6 +75,7 @@ async function start() {
       "adminAnnouncements",
       "adminCreateAnnouncement",
       "adminCancelAnnouncement",
+      "adminEnroll",
     ],
     "api::quiz-attempt.quiz-attempt": ["submit"],
     "api::translation.translation": ["find"],

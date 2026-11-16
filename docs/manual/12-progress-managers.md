@@ -28,7 +28,7 @@ A **course manager** (teacher, tutor) is a learner account that also sees the co
 
 ![SpaceManager entry](images/12-progress-managers/urr-admin-spacemanager.png)
 
-The **Admin** tab has two views:
+The **Admin** tab has these views: *Progress* (below), *Quizzes*, *Submissions*, *Announcements* (when notification emails are on) and *Enroll people*. The *Progress* view has two tables:
 
 - **Users Progress**: every enrolled learner with their overall percentage and, for each module, unit and lesson, whether and when they completed it.
 - **Content Progress**: for each module, unit and lesson, how many learners completed it and who.
@@ -58,6 +58,16 @@ Uploads are also listed in **Content Manager › Submission** (learner, course, 
 Each time a learner submits a quiz, the answers and the score are saved (**Quiz attempt** entries, created by the site). The **Admin › Quizzes** tab shows, for every quiz in the course, how many learners tried it, how many passed and the average best score, and for each learner the number of attempts, best and last score and whether they passed. The score is computed on the server with the same rule as on the page (**minToPass**, or every answer right).
 
 Attempts made before this feature existed weren't saved.
+
+## Enrolling people by email
+
+In **Admin › Enroll people** a course manager pastes a list of email addresses (one per line, or separated by commas, semicolons or spaces; a column copied from a spreadsheet or `Name <email>` also work) and clicks *Enroll*, then confirms. Up to 500 addresses at a time.
+
+- People who **already have an account** with that address are enrolled at once.
+- The others get a **PreEnrollement** with **payment** ticked: they are enrolled automatically when they register or log in with that address ([11](11-enrollment-payments.md#enrolling-someone-yourself)).
+- Nobody is asked to pay, even in a paid course, and **no email is sent**: tell them yourself (e.g. with the course's landing-page link, `/space/<uid>/about`). The course's **enrollmentEmails** are notified of each enrollment created, as usual.
+
+The result lists each address: *Enrolled*, *Was already enrolled*, *No account yet: enrolled when they sign up*, or *No account yet: was already waiting*. Running the same list again does no harm.
 
 ## Announcements
 

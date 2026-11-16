@@ -60,10 +60,11 @@ What a logged-in learner sees on the landing page:
 
 ### Enrolling someone yourself
 
-There are two ways, both of which work for paid courses too:
+There are two ways, both of which work for paid courses too, and a shortcut for several people:
 
 - **The learner already has an account:** create an **Enrollment** with the **user** and the **learning space** (default-language version). On a paid course they don't have to pay: they see *Go to course* straight away.
 - **The learner has no account yet** (e.g. a group you invite): create a **PreEnrollement** with their **email** and the course **uid**. For a **paid** course, also tick **payment**: otherwise it is ignored. When they register (or log in) with that email, the platform turns it into an enrollment automatically and deletes the PreEnrollement.
+- **Several people at once**: a course manager can paste their emails in the course's **Admin › Enroll people** tab ([12](12-progress-managers.md#enrolling-people-by-email)); it does the two cases above for each address.
 
 When someone registers from the landing page of a **free** course, the platform creates a PreEnrollement for that course by itself, so they are enrolled as soon as they log in. For paid courses, only a payment (or an admin ticking **payment**) creates one that counts.
 

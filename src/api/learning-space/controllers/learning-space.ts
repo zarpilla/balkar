@@ -8,6 +8,9 @@ import { findSpaceWithFallback, removeDrafts } from "../../../utils/content";
 import { notificationsEnabled, queueAnnouncement } from "../../../utils/notifications";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
+import { bulkEnroll, extractEmails, findEnrollableSpace } from "../../../utils/enrollments";
+
+const MAX_BULK_ENROLL = 500;
 
 export default factories.createCoreController(
   "api::learning-space.learning-space",
@@ -1087,6 +1090,28 @@ export default factories.createCoreController(
           recipients,
         },
       };
+    },
+
+    /**
+     * Enrolls people by email (pasted list). Accounts are enrolled now; other addresses get a
+     * pre-enrollment, payment waived, that becomes an enrollment when they sign up or log in.
+     */
+    adminEnroll: async (ctx) => {
+      const space = await loadManagedSpace(ctx, []);
+      if (!space) return;
+
+      const emails = extractEmails(ctx.request.body?.data?.emails);
+      if (!emails.length) return ctx.badRequest("No email addresses found");
+      if (emails.length > MAX_BULK_ENROLL) {
+        return ctx.badRequest(`At most ${MAX_BULK_ENROLL} addresses at a time`);
+      }
+
+      const target = await findEnrollableSpace(space.uid);
+      const results = await bulkEnroll(target, emails);
+      strapi.log.info(
+        `Bulk enrollment in ${space.uid} by user ${ctx.state.user.id}: ${results.length} addresses`
+      );
+      ctx.body = { ok: true, results };
     },
 
     /** Cancels the emails of an announcement that haven't been sent yet. */

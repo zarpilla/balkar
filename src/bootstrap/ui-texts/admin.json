@@ -57,5 +57,16 @@
   "admin-announcement-stats": { "en": "{recipients} recipients · {sent} sent · {pending} pending", "ca": "{recipients} destinataris · {sent} enviats · {pending} pendents", "es": "{recipients} destinatarios · {sent} enviados · {pending} pendientes" },
   "admin-announcement-cancelled-count": { "en": "{count} cancelled", "ca": "{count} cancel·lats", "es": "{count} cancelados" },
   "admin-announcement-cancel": { "en": "Cancel sending", "ca": "Cancel·la l'enviament", "es": "Cancelar el envío" },
-  "admin-announcement-cancel-confirm": { "en": "Cancel the emails that haven't been sent yet?", "ca": "Vols cancel·lar els correus que encara no s'han enviat?", "es": "¿Quieres cancelar los correos que aún no se han enviado?" }
+  "admin-announcement-cancel-confirm": { "en": "Cancel the emails that haven't been sent yet?", "ca": "Vols cancel·lar els correus que encara no s'han enviat?", "es": "¿Quieres cancelar los correos que aún no se han enviado?" },
+  "admin-tab-enroll": { "en": "Enroll people", "ca": "Inscriure persones", "es": "Inscribir personas" },
+  "admin-enroll-help": { "en": "Paste email addresses (one per line, or separated by commas or spaces). People who already have an account are enrolled now; the others will be enrolled when they sign up or log in with that address. Nobody is asked to pay and no email is sent.", "ca": "Enganxa adreces de correu (una per línia, o separades per comes o espais). Les persones que ja tenen compte queden inscrites ara; les altres quedaran inscrites quan es registrin o entrin amb aquesta adreça. No se'ls demana pagar i no s'envia cap correu.", "es": "Pega direcciones de correo (una por línea, o separadas por comas o espacios). Las personas que ya tienen cuenta quedan inscritas ahora; las demás quedarán inscritas cuando se registren o entren con esa dirección. No se les pide pagar y no se envía ningún correo." },
+  "admin-enroll-emails": { "en": "Email addresses", "ca": "Adreces de correu", "es": "Direcciones de correo" },
+  "admin-enroll-found": { "en": "{count} addresses found", "ca": "{count} adreces trobades", "es": "{count} direcciones encontradas" },
+  "admin-enroll-submit": { "en": "Enroll", "ca": "Inscriu", "es": "Inscribir" },
+  "admin-enroll-confirm": { "en": "Enroll {count} people in this course?", "ca": "Vols inscriure {count} persones en aquest curs?", "es": "¿Quieres inscribir a {count} personas en este curso?" },
+  "admin-enroll-results": { "en": "Result", "ca": "Resultat", "es": "Resultado" },
+  "admin-enroll-status-enrolled": { "en": "Enrolled", "ca": "Inscrita", "es": "Inscrita" },
+  "admin-enroll-status-already-enrolled": { "en": "Was already enrolled", "ca": "Ja hi estava inscrita", "es": "Ya estaba inscrita" },
+  "admin-enroll-status-pre-enrolled": { "en": "No account yet: enrolled when they sign up", "ca": "Encara sense compte: s'inscriurà en registrar-se", "es": "Aún sin cuenta: se inscribirá al registrarse" },
+  "admin-enroll-status-already-pre-enrolled": { "en": "No account yet: was already waiting", "ca": "Encara sense compte: ja estava pendent", "es": "Aún sin cuenta: ya estaba pendiente" }
 }
