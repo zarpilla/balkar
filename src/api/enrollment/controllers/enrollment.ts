@@ -7,7 +7,7 @@
 
 import { factories } from "@strapi/strapi";
 import { hasPaidPreEnrollment } from "../../../utils/access";
-import { enrollUser, findEnrollableSpace, isEnrolledIn } from "../../../utils/enrollments";
+import { enrollUser, findEnrollableSpace, isComingSoon, isEnrolledIn } from "../../../utils/enrollments";
 
 export default factories.createCoreController(
   "api::enrollment.enrollment",
@@ -26,6 +26,13 @@ export default factories.createCoreController(
       // Already enrolled (e.g. added by an admin): nothing to pay, nothing to do.
       if (await isEnrolledIn(user.id, space)) {
         ctx.body = { ok: true };
+        return;
+      }
+
+      // Announced but not open yet (admins and managers can still enroll people).
+      if (isComingSoon(space)) {
+        ctx.status = 403;
+        ctx.body = { ok: false, error: "coming-soon" };
         return;
       }
 

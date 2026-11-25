@@ -5,6 +5,7 @@
 import { factories } from "@strapi/strapi";
 import { v4 as uuidv4 } from "uuid";
 import { sendPaymentEmails } from "../services/payment-intent";
+import { isComingSoon } from "../../../utils/enrollments";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const unparsed = Symbol.for("unparsedBody");
@@ -95,6 +96,12 @@ export default factories.createCoreController(
             populate: ["product"],
           }
         );
+
+        if (spaces.length > 0 && isComingSoon(spaces[0])) {
+          ctx.status = 403;
+          ctx.body = { ok: false, error: "coming-soon" };
+          return;
+        }
 
         if (spaces.length > 0) {
           const space: any = spaces[0];

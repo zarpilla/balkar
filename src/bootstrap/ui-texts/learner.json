@@ -129,5 +129,14 @@
     "en": "The channel could not be created. Please try again.",
     "ca": "No s'ha pogut crear el canal. Torna-ho a provar.",
     "es": "No se ha podido crear el canal. Vuelve a intentarlo."
+  },
+
+  "coming-soon-section": { "en": "Coming soon", "ca": "Properament", "es": "Próximamente" },
+  "coming-soon-badge": { "en": "Coming soon", "ca": "Properament", "es": "Próximamente" },
+  "coming-soon-starts": { "en": "Starts on {date}", "ca": "Comença el {date}", "es": "Empieza el {date}" },
+  "coming-soon-enroll-closed": {
+    "en": "This course is not open yet. You will be able to enroll when it starts.",
+    "ca": "Aquest curs encara no està obert. T'hi podràs inscriure quan comenci.",
+    "es": "Este curso aún no está abierto. Podrás inscribirte cuando empiece."
   }
 }

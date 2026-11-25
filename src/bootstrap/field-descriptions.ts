@@ -73,6 +73,8 @@ export const contentTypeDescriptions: Descriptions = {
     hideProgress: "On: no Progress tab or progress bar (the content stays).",
     hideBookmarks: "On: no Bookmarks tab or bookmark buttons (the content stays).",
     learnersCreateChannels: "On: enrolled people can create new channels in the course forum (in every language of the course). Delete unwanted ones in Channel.",
+    comingSoon: "On: the course is listed under Coming soon and nobody can enroll or pay on their own yet (admins and course managers can still enroll people). It must be published, and Public to appear in the catalogue.",
+    comingSoonDate: "Start date shown on the Coming soon card. From this day the course opens by itself (Coming soon no longer applies). Empty: no date, it stays Coming soon until you switch it off.",
   },
   "api::module.module": {
     menuTitle: "Entry in the course's left-hand menu.",

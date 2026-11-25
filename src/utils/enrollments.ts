@@ -20,6 +20,17 @@ export const findEnrollableSpace = async (uid: string) => {
   return { ...space, paid: spaces.some((s: any) => !!s.product) };
 };
 
+/** Today as YYYY-MM-DD in the site's time zone (TZ, default Europe/Madrid). */
+const today = () =>
+  new Intl.DateTimeFormat("sv-SE", { timeZone: process.env.TZ || "Europe/Madrid" }).format(new Date());
+
+/**
+ * Is the course announced but not open yet? Coming soon is on and its start date (if any) hasn't
+ * arrived: on that day the course opens by itself.
+ */
+export const isComingSoon = (space: any) =>
+  !!space?.comingSoon && (!space.comingSoonDate || String(space.comingSoonDate).slice(0, 10) > today());
+
 export const isEnrolledIn = async (userId: number, space: any) => {
   const existing = await strapi.entityService.findMany("api::enrollment.enrollment", {
     filters: { users_permissions_user: { id: userId }, learning_space: { uid: space.uid } },

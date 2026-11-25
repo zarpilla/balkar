@@ -8,7 +8,7 @@ import { findSpaceWithFallback, removeDrafts } from "../../../utils/content";
 import { notificationsEnabled, queueAnnouncement } from "../../../utils/notifications";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
-import { bulkEnroll, extractEmails, findEnrollableSpace } from "../../../utils/enrollments";
+import { bulkEnroll, extractEmails, findEnrollableSpace, isComingSoon } from "../../../utils/enrollments";
 
 const MAX_BULK_ENROLL = 500;
 
@@ -383,6 +383,8 @@ export default factories.createCoreController(
             space.forum = null;
           }
           removeInternalFields(space);
+          // Effective value: false once the start date has arrived.
+          space.comingSoon = isComingSoon(space);
 
           ctx.body = space;
         }
@@ -476,6 +478,7 @@ export default factories.createCoreController(
         spacesEnrolledOrPublic.forEach((space: any) => {
           toPublicSpace(space);
           removeInternalFields(space);
+          space.comingSoon = isComingSoon(space);
         });
 
         const sanitizedResults = await sanitize.contentAPI.output(
