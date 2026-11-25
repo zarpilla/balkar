@@ -390,6 +390,7 @@ export interface ApiAdministrationAdministration extends Schema.SingleType {
     paymentEmails: Attribute.String;
     publicHome: Attribute.Boolean & Attribute.DefaultTo<true>;
     resetPasswordFrontUrl: Attribute.String;
+    siteDescription: Attribute.Text;
     siteName: Attribute.String;
     theme: Attribute.Relation<
       'api::administration.administration',
@@ -617,6 +618,11 @@ export interface ApiChannelChannel extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    creator: Attribute.Relation<
+      'api::channel.channel',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     forum: Attribute.Relation<
       'api::channel.channel',
       'manyToOne',
@@ -1016,6 +1022,34 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
           localized: false;
         };
       }>;
+    hideBookmarks: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
+    hideContent: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
+    hideProgress: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
+    learnersCreateChannels: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::learning-space.learning-space',

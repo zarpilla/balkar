@@ -216,6 +216,8 @@ export default factories.createCoreController(
 
           space.forum.users = users;
           space.forum.private_channels = userPrivateChannels;
+          // learnersCreateChannels isn't localized: every language has the same value
+          space.forum.canCreateChannels = space.learnersCreateChannels === true;
           ctx.body = space.forum;
         }
       }

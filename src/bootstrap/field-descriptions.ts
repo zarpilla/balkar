@@ -72,6 +72,7 @@ export const contentTypeDescriptions: Descriptions = {
     hideContent: "On: no Content tab, modules or certificate; enrolled learners go straight to the Community tab (a community-only space). Also hides Progress and Bookmarks. The landing page stays.",
     hideProgress: "On: no Progress tab or progress bar (the content stays).",
     hideBookmarks: "On: no Bookmarks tab or bookmark buttons (the content stays).",
+    learnersCreateChannels: "On: enrolled people can create new channels in the course forum (in every language of the course). Delete unwanted ones in Channel.",
   },
   "api::module.module": {
     menuTitle: "Entry in the course's left-hand menu.",
@@ -125,6 +126,7 @@ export const contentTypeDescriptions: Descriptions = {
     forum: "The forum this channel belongs to.",
     users_permissions_users: "Empty: every learner enrolled in the course sees the channel. With learners selected: only they see it (working groups).",
     uid: "Leave empty. Shared by all languages, so everyone reads the same conversation.",
+    creator: "Who created the channel from the forum (when the course lets learners create channels). Empty: created in the admin.",
   },
   "api::message.message": {
     text: "Message written by the learner. To remove an inappropriate message, delete the entry (check its replies too).",

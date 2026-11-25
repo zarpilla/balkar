@@ -263,6 +263,15 @@
       },
       "type": "boolean",
       "default": false
+    },
+    "learnersCreateChannels": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "boolean",
+      "default": false
     }
   }
 }

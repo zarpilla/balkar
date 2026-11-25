@@ -5,7 +5,9 @@
 import { factories } from "@strapi/strapi";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
-import { canReadChannel } from "../../../utils/access";
+import { canReadChannel, canUseSpace } from "../../../utils/access";
+
+const MAX_CHANNEL_NAME = 80;
 
 export default factories.createCoreController(
   "api::channel.channel",
@@ -117,6 +119,90 @@ export default factories.createCoreController(
           populate: ["users_permissions_users"],
         }
       );
+    },
+
+    /**
+     * A learner creates a public channel in the forum of a course that allows it
+     * (learnersCreateChannels). The channel is created in every language of the
+     * forum with the same uid, so everyone shares the same conversation.
+     */
+    createChannel: async (ctx) => {
+      const user = ctx.state.user;
+      const { uid, name: rawName } = ctx.request.body || {};
+      const name = typeof rawName === "string" ? rawName.trim().replace(/\s+/g, " ") : "";
+      if (!uid || !name) return ctx.badRequest("uid and name are required");
+      if (name.length > MAX_CHANNEL_NAME) {
+        return ctx.badRequest(`The name can't be longer than ${MAX_CHANNEL_NAME} characters`);
+      }
+
+      // Every language version of the course, each with its own forum
+      const spaces: any[] = await strapi.entityService.findMany(
+        "api::learning-space.learning-space",
+        {
+          filters: { uid, publishedAt: { $ne: null } },
+          fields: ["id", "locale", "learnersCreateChannels"] as any,
+          populate: { forum: { fields: ["id", "locale"] } },
+          locale: "all",
+        }
+      );
+      const forums = spaces.map((s) => s.forum).filter(Boolean);
+      if (!forums.length) return ctx.notFound("Forum not found");
+      if (!spaces.some((s) => s.learnersCreateChannels)) {
+        return ctx.forbidden("This course doesn't let learners create channels.");
+      }
+      if (!(await canUseSpace(user, uid))) {
+        return ctx.forbidden("You are not enrolled in this course.");
+      }
+
+      const existing: any[] = await strapi.entityService.findMany("api::channel.channel", {
+        filters: { forum: { id: { $in: forums.map((f) => f.id) } } },
+        fields: ["id", "name", "order", "uid"],
+        populate: { users_permissions_users: { fields: ["id"] } },
+        locale: "all",
+      });
+      const publicChannels = existing.filter((c) => !c.users_permissions_users?.length);
+      const same = publicChannels.find(
+        (c) => (c.name || "").trim().toLowerCase() === name.toLowerCase()
+      );
+      if (same) {
+        ctx.status = 409;
+        ctx.body = { ok: false, error: "A channel with this name already exists", uid: same.uid };
+        return;
+      }
+      // After the existing public channels (private ones use 999)
+      const order =
+        Math.max(0, ...publicChannels.map((c) => c.order).filter((o) => typeof o === "number" && o < 999)) + 1;
+
+      let channelUid: string | undefined;
+      const ids: number[] = [];
+      for (const forum of forums) {
+        const created: any = await strapi.entityService.create("api::channel.channel", {
+          data: {
+            name,
+            order,
+            forum: forum.id,
+            locale: forum.locale,
+            creator: user.id,
+            // The first one gets a new uid; the others are its translations.
+            ...(channelUid ? { uid: channelUid, localizations: ids } : {}),
+          },
+        });
+        channelUid = channelUid || created.uid;
+        ids.push(created.id);
+      }
+      // Creating a translation only links it to the earlier ones; link them back
+      // too, as the admin does, so each language shows its translations.
+      if (ids.length > 1) {
+        for (const id of ids) {
+          await strapi.db.query("api::channel.channel").update({
+            where: { id },
+            data: { localizations: ids.filter((other) => other !== id) },
+          });
+        }
+      }
+
+      ctx.status = 201;
+      ctx.body = { ok: true, data: { uid: channelUid, name } };
     },
 
     createPrivateChannel: async (ctx, next) => {

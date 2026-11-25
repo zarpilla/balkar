@@ -91,7 +91,7 @@ async function start() {
       "markChannelAsRead",
       "markChannelAsReadAll",
     ],
-    "api::channel.channel": ["findMessages", "createPrivateChannel"],
+    "api::channel.channel": ["findMessages", "createPrivateChannel", "createChannel"],
     "api::message.message": [
       "create",
       "findChildren",

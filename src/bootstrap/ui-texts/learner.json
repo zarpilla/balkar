@@ -115,5 +115,19 @@
     "en": "We could not enroll you in this course. Please try again or contact us.",
     "ca": "No t'hem pogut inscriure en aquest curs. Torna-ho a provar o contacta'ns.",
     "es": "No te hemos podido inscribir en este curso. Vuelve a intentarlo o contáctanos."
+  },
+
+  "new-channel": { "en": "New channel", "ca": "Nou canal", "es": "Nuevo canal" },
+  "new-channel-name": { "en": "Channel name", "ca": "Nom del canal", "es": "Nombre del canal" },
+  "create-channel": { "en": "Create channel", "ca": "Crea el canal", "es": "Crear el canal" },
+  "channel-exists": {
+    "en": "There is already a channel with this name.",
+    "ca": "Ja hi ha un canal amb aquest nom.",
+    "es": "Ya hay un canal con este nombre."
+  },
+  "channel-create-error": {
+    "en": "The channel could not be created. Please try again.",
+    "ca": "No s'ha pogut crear el canal. Torna-ho a provar.",
+    "es": "No se ha podido crear el canal. Vuelve a intentarlo."
   }
 }
