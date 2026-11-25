@@ -6,6 +6,7 @@ Paste into the Strapi admin: **Content Manager › Email template › Create new
 |---|---|---|---|
 | ca | `email_confirmation` | Confirma el teu correu electrònic | `email_confirmation_ca.html` |
 | en (localization of the ca entry) | `email_confirmation` | Confirm your email address | `email_confirmation_en.html` |
+| es (localization of the ca entry) | `email_confirmation` | Confirma tu correo electrónico | `email_confirmation_es.html` |
 
 Placeholders filled in by the platform: `{{URL}}` (confirmation link) and `{{NAME}}`.
 
