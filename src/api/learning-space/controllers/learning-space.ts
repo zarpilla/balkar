@@ -135,8 +135,11 @@ export default factories.createCoreController(
               }
             );
 
-            const enrollment = enrollments.find((enrollment) =>
-              spacesLocalized.includes(enrollment.learning_space.id)
+            // Enrollments whose course was deleted have no learning_space.
+            const enrollment = enrollments.find(
+              (enrollment) =>
+                enrollment.learning_space &&
+                spacesLocalized.includes(enrollment.learning_space.id)
             );
 
             if (enrollment) {
