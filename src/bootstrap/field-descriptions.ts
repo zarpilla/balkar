@@ -21,7 +21,8 @@ type Descriptions = Record<string, Record<string, string>>;
 
 export const contentTypeDescriptions: Descriptions = {
   "api::administration.administration": {
-    siteName: "Browser tab title and logos' alternative text. Empty: Urban Resilience Research Network.",
+    siteName: "Browser tab title, title of the link preview (WhatsApp, Slack, LinkedIn…) and logos' alternative text. Empty: Urban Resilience Research Network.",
+    siteDescription: "Short text under the title in link previews (WhatsApp, Slack, LinkedIn…). Empty: no text.",
     logoHeader: "Logo at the top left of every page. Empty: the built-in URR logo.",
     logoFooter: "First logo in the footer. Empty: the built-in URR, UP2030 and EC logos.",
     footerLogos: "Extra footer logos (partners, funders). Only shown when Logo footer is set.",
@@ -29,7 +30,7 @@ export const contentTypeDescriptions: Descriptions = {
     theme: "Colour theme of the whole site. A course's own theme takes priority on its pages.",
     defaultLocale: "Language for visitors who haven't chosen one, e.g. ca or en. Also the version used for enrolling, payments and certificates when a course isn't translated. Empty: en.",
     publicHome: "On: visitors see the course catalogue on the home page. Off: visitors are sent to the login page.",
-    logo: "Logo used in the emails ({{LOGO}}). Not shown on the site.",
+    logo: "Logo used in the emails ({{LOGO}}) and as the image of link previews. Not shown on the site.",
     paymentEmails: `Receive the periodic summary of Stripe payments. ${EMAILS}`,
     resetPasswordFrontUrl: "Start of the link in the password-reset email. Must end with /reset?code=, e.g. https://area.balkar.earth/reset?code=",
   },

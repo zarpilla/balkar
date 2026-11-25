@@ -28,6 +28,9 @@
     "siteName": {
       "type": "string"
     },
+    "siteDescription": {
+      "type": "text"
+    },
     "logoHeader": {
       "type": "media",
       "multiple": false,
