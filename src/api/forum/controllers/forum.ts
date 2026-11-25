@@ -5,26 +5,26 @@ import { factories } from "@strapi/strapi";
 import { sanitize } from "@strapi/utils";
 import _ from "lodash";
 import { canUseSpace } from "../../../utils/access";
+import { findSpaceWithFallback } from "../../../utils/content";
 
 export default factories.createCoreController(
   "api::forum.forum",
   ({ strapi }) => ({
     findUid: async (ctx, next) => {
-      const spaces = await strapi.entityService.findMany(
-        "api::learning-space.learning-space",
+      // When the course isn't translated to the requested language, the default-language
+      // version (and its forum) is used, as on the course pages.
+      const found = await findSpaceWithFallback(
+        ctx.params.uid,
+        (ctx.query.locale as string) || "en",
         {
-          filters: {
-            uid: ctx.params.uid,
-            publishedAt: { $ne: null },
-          },
           populate: [
             "forum",
             "forum.channels",
             "forum.channels.users_permissions_users",
           ],
-          locale: ctx.query.locale || "en",
         }
       );
+      const spaces = found ? [found] : [];
 
       if (spaces.length === 0) {
         ctx.status = 504;
