@@ -138,5 +138,19 @@
     "en": "This course is not open yet. You will be able to enroll when it starts.",
     "ca": "Aquest curs encara no està obert. T'hi podràs inscriure quan comenci.",
     "es": "Este curso aún no está abierto. Podrás inscribirte cuando empiece."
-  }
+  },
+
+  "calendar": { "en": "Calendar", "ca": "Calendari", "es": "Calendario" },
+  "calendar-view-calendar": { "en": "Calendar", "ca": "Calendari", "es": "Calendario" },
+  "calendar-view-list": { "en": "List", "ca": "Llista", "es": "Lista" },
+  "calendar-today": { "en": "Today", "ca": "Avui", "es": "Hoy" },
+  "calendar-previous-month": { "en": "Previous month", "ca": "Mes anterior", "es": "Mes anterior" },
+  "calendar-next-month": { "en": "Next month", "ca": "Mes següent", "es": "Mes siguiente" },
+  "calendar-upcoming": { "en": "Upcoming events", "ca": "Propers esdeveniments", "es": "Próximos eventos" },
+  "calendar-past": { "en": "Past events", "ca": "Esdeveniments passats", "es": "Eventos pasados" },
+  "calendar-show-past": { "en": "Show past events ({count})", "ca": "Mostra els esdeveniments passats ({count})", "es": "Mostrar los eventos pasados ({count})" },
+  "calendar-hide-past": { "en": "Hide past events", "ca": "Amaga els esdeveniments passats", "es": "Ocultar los eventos pasados" },
+  "calendar-no-events": { "en": "There are no events yet.", "ca": "Encara no hi ha cap esdeveniment.", "es": "Todavía no hay ningún evento." },
+  "calendar-no-upcoming": { "en": "There are no upcoming events.", "ca": "No hi ha cap esdeveniment previst.", "es": "No hay ningún evento previsto." },
+  "calendar-close": { "en": "Close", "ca": "Tanca", "es": "Cerrar" }
 }

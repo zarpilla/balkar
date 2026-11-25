@@ -75,6 +75,7 @@ export const contentTypeDescriptions: Descriptions = {
     learnersCreateChannels: "On: enrolled people can create new channels in the course forum (in every language of the course). Delete unwanted ones in Channel.",
     comingSoon: "On: the course is listed under Coming soon and nobody can enroll or pay on their own yet (admins and course managers can still enroll people). It must be published, and Public to appear in the catalogue.",
     comingSoonDate: "Start date shown on the Coming soon card. From this day the course opens by itself (Coming soon no longer applies). Empty: no date, it stays Coming soon until you switch it off.",
+    showCalendar: "On: adds the Calendar tab (calendar and list) with the course's community events, for enrolled people. Add the events in Event.",
   },
   "api::module.module": {
     menuTitle: "Entry in the course's left-hand menu.",
@@ -129,6 +130,15 @@ export const contentTypeDescriptions: Descriptions = {
     users_permissions_users: "Empty: every learner enrolled in the course sees the channel. With learners selected: only they see it (working groups).",
     uid: "Leave empty. Shared by all languages, so everyone reads the same conversation.",
     creator: "Who created the channel from the forum (when the course lets learners create channels). Empty: created in the admin.",
+  },
+  "api::event.event": {
+    title: "Event title, shown in the calendar and the list.",
+    start: "Start date and time (in your browser's time zone). Leave the time at 00:00 for an all-day event.",
+    end: "Optional end date and time. Events lasting several days show on every day.",
+    image: "Optional image at the top of the event (shared by all languages).",
+    description: "Text of the event: bold, links, lists… Shown when someone opens the event.",
+    learning_space: "The course whose Calendar tab shows the event (any language version of the course).",
+    uid: "Leave empty. Shared by all languages.",
   },
   "api::message.message": {
     text: "Message written by the learner. To remove an inappropriate message, delete the entry (check its replies too).",

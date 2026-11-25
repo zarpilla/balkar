@@ -791,6 +791,95 @@ export interface ApiEnrollmentEnrollment extends Schema.CollectionType {
   };
 }
 
+export interface ApiEventEvent extends Schema.CollectionType {
+  collectionName: 'events';
+  info: {
+    description: "Community activity shown in a course's Calendar tab";
+    displayName: 'Event';
+    pluralName: 'events';
+    singularName: 'event';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    description: Attribute.RichText &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    end: Attribute.DateTime &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    image: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    learning_space: Attribute.Relation<
+      'api::event.event',
+      'manyToOne',
+      'api::learning-space.learning-space'
+    >;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::event.event',
+      'oneToMany',
+      'api::event.event'
+    >;
+    start: Attribute.DateTime &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    uid: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiForumForum extends Schema.CollectionType {
   collectionName: 'forums';
   info: {
@@ -980,6 +1069,19 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
           translate: 'translate';
         };
       }>;
+    comingSoon: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
+    comingSoonDate: Attribute.Date &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     content_modules: Attribute.Relation<
       'api::learning-space.learning-space',
       'oneToMany',
@@ -1131,6 +1233,13 @@ export interface ApiLearningSpaceLearningSpace extends Schema.CollectionType {
         },
         number
       >;
+    showCalendar: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
     theme: Attribute.Relation<
       'api::learning-space.learning-space',
       'oneToOne',
@@ -2850,6 +2959,7 @@ declare module '@strapi/types' {
       'api::channel.channel': ApiChannelChannel;
       'api::email-template.email-template': ApiEmailTemplateEmailTemplate;
       'api::enrollment.enrollment': ApiEnrollmentEnrollment;
+      'api::event.event': ApiEventEvent;
       'api::forum.forum': ApiForumForum;
       'api::interest.interest': ApiInterestInterest;
       'api::learning-space.learning-space': ApiLearningSpaceLearningSpace;
