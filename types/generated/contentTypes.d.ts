@@ -633,6 +633,31 @@ export interface ApiChannelChannel extends Schema.CollectionType {
           translate: 'translate';
         };
       }>;
+    landingContent: Attribute.DynamicZone<
+      [
+        'content.text',
+        'content.markdown',
+        'content.image',
+        'content.video',
+        'content.accordion',
+        'content.slider'
+      ]
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+        translate: {
+          translate: 'translate';
+        };
+      }>;
+    landingPage: Attribute.Boolean &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<false>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::channel.channel',

@@ -130,6 +130,8 @@ export const contentTypeDescriptions: Descriptions = {
     users_permissions_users: "Empty: every learner enrolled in the course sees the channel. With learners selected: only they see it (working groups).",
     uid: "Leave empty. Shared by all languages, so everyone reads the same conversation.",
     creator: "Who created the channel from the forum (when the course lets learners create channels). Empty: created in the admin.",
+    landingPage: "On: the channel opens on a landing page (Landing content) with a box to start a new thread, and its threads are listed in the side menu under the channel. Off: the channel shows the list of messages, as before. Same value in every language.",
+    landingContent: "Content of the channel's landing page, with the same blocks as a unit (text, images, videos, accordions, sliders). Only shown when Landing page is on.",
   },
   "api::event.event": {
     title: "Event title, shown in the calendar and the list.",

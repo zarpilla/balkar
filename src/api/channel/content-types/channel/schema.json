@@ -68,6 +68,34 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "landingPage": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "boolean",
+      "default": false
+    },
+    "landingContent": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        },
+        "translate": {
+          "translate": "translate"
+        }
+      },
+      "type": "dynamiczone",
+      "components": [
+        "content.text",
+        "content.markdown",
+        "content.image",
+        "content.video",
+        "content.accordion",
+        "content.slider"
+      ]
     }
   }
 }

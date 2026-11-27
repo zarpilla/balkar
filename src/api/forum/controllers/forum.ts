@@ -21,6 +21,17 @@ export default factories.createCoreController(
             "forum",
             "forum.channels",
             "forum.channels.users_permissions_users",
+            // Landing page of the channels (channel option landingPage), same blocks as a unit
+            "forum.channels.landingContent",
+            "forum.channels.landingContent.image",
+            "forum.channels.landingContent.video",
+            "forum.channels.landingContent.thumbnail",
+            "forum.channels.landingContent.transcript",
+            "forum.channels.landingContent.subtitle",
+            "forum.channels.landingContent.subtitle.localizations",
+            "forum.channels.landingContent.items",
+            "forum.channels.landingContent.items.image",
+            "forum.channels.landingContent.items.logo",
           ],
         }
       );
@@ -54,6 +65,7 @@ export default factories.createCoreController(
           // .filter((channel) => channel.publishedAt);
 
         channels.forEach((channel) => {
+          if (!channel.landingPage) delete channel.landingContent;
           channel.users_permissions_users = channel.users_permissions_users.map(
             (user) => {
               return {

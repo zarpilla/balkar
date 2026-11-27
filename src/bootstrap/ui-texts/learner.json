@@ -152,5 +152,20 @@
   "calendar-hide-past": { "en": "Hide past events", "ca": "Amaga els esdeveniments passats", "es": "Ocultar los eventos pasados" },
   "calendar-no-events": { "en": "There are no events yet.", "ca": "Encara no hi ha cap esdeveniment.", "es": "Todavía no hay ningún evento." },
   "calendar-no-upcoming": { "en": "There are no upcoming events.", "ca": "No hi ha cap esdeveniment previst.", "es": "No hay ningún evento previsto." },
-  "calendar-close": { "en": "Close", "ca": "Tanca", "es": "Cerrar" }
+  "calendar-close": { "en": "Close", "ca": "Tanca", "es": "Cerrar" },
+
+  "channel-threads": { "en": "Threads", "ca": "Fils", "es": "Hilos" },
+  "channel-no-threads": { "en": "No threads yet", "ca": "Encara no hi ha cap fil", "es": "Todavía no hay ningún hilo" },
+  "channel-new-thread": { "en": "Start a new thread", "ca": "Comença un fil nou", "es": "Empieza un hilo nuevo" },
+  "channel-new-thread-placeholder": {
+    "en": "Write the first message of the thread",
+    "ca": "Escriu el primer missatge del fil",
+    "es": "Escribe el primer mensaje del hilo"
+  },
+  "channel-thread-file": { "en": "File", "ca": "Fitxer", "es": "Archivo" },
+  "channel-thread-not-found": {
+    "en": "This thread doesn't exist or has been deleted.",
+    "ca": "Aquest fil no existeix o s'ha esborrat.",
+    "es": "Este hilo no existe o se ha borrado."
+  }
 }

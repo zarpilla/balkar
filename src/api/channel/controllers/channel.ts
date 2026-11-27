@@ -39,6 +39,7 @@ export default factories.createCoreController(
               "users_permissions_user.user_avatar.avatar",
               "children.users_permissions_user.user_avatar",
               "children.users_permissions_user.user_avatar.avatar",
+              "channel",
             ],
           }
         );
@@ -51,7 +52,9 @@ export default factories.createCoreController(
             : null;
           message.manager = message.users_permissions_user.manager;
           message.users_permissions_user = undefined;
-          message.channelId = parseInt(ctx.params.id);
+          // Replies are posted to this channel (the route has the uid, not the id)
+          message.channelId = message.channel?.id;
+          message.channel = undefined;
           message.children.forEach((child: any) => {
             child.userId = child.users_permissions_user.id;
             child.username = `${child.users_permissions_user.name} ${child.users_permissions_user.lastname}`;
